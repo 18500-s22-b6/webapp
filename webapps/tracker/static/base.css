@@ -1,0 +1,49 @@
+input, button {
+  font-size: x-large;
+}
+
+li {
+  font-size: xx-large;
+}
+
+label {
+  font-size: xx-large;
+  font-family: sans-serif;
+}
+
+a {
+  font-size: 150%;
+  font-family: sans-serif;
+  padding-left: 10px;
+  padding-top: 20px;
+}
+
+.title {
+  font-size: xx-large;
+  font-weight: bolder;
+  padding-bottom: 20px;
+}
+
+.sub-title {
+  font-size: xx-large;
+  padding-top: 10px;
+  padding-bottom: 5px;
+}
+
+.error {
+  font-size: x-large;
+  color:red;
+}
+
+{
+  font-size: xx-large;
+}
+
+.add-form {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.delete-form {
+  display: inline;
+}

@@ -1,0 +1,24 @@
+<!-- Splash page for non-logged in users -->
+
+{% extends "base.html" %}
+
+{% block user-info %}
+  {% load static %}
+  <!-- <link href="{% static 'ourlife.css' %}" rel="stylesheet" type="text/css"> -->
+{% endblock %}
+
+{% block content %}
+  <div class="splash">
+    <div class="splash_logo">
+      OL
+    </div>
+  </div>
+  <div class="text">
+    <p>ourlife</p>
+    <p class="subtext">the journal for you</p>
+    <button class="login-button">
+        Login
+      </a>
+    </button>
+  </div>
+{% endblock %}
