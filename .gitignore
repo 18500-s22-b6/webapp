@@ -4,7 +4,7 @@ client_secrets.json
 keys.ini
 
 db.sqlite3
-webapps/__pycache__
+*/__pycache__
 *.log
 *.pot
 *.pyc

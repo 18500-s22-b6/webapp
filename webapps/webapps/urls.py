@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from tracker import views # added
+from food_tracker import views # added
 
 urlpatterns = [
     path('admin/', admin.site.urls),
