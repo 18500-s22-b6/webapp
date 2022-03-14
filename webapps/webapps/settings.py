@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'food_tracker' # added
+    'food_tracker',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,24 @@ DATABASES = {
     }
 }
 
+# OAuth
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = KEY_CONFIG.get('GoogleOAuth2', 'key')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = KEY_CONFIG.get('GoogleOAuth2', 'secret')
+
+LOGIN_URL = '/login/google-oauth2/'
+LOGIN_REDIRECT_URL = '/profile'
+LOGOUT_REDIRECT_URL = '/'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['profile', 'email']
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = { 'prompt': 'select_account' }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -111,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
