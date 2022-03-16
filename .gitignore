@@ -8,3 +8,7 @@ db.sqlite3
 *.log
 *.pot
 *.pyc
+
+*/.DS_Store
+*.pem
+*.cert
