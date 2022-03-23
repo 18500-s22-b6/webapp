@@ -21,7 +21,7 @@ a {
 
 .user-info {
   width:  100%;
-  float:  right;
+  text-align:  right;
 }
 
 .title {
