@@ -1,0 +1,19 @@
+<!-- dashboard.html -->
+
+{% extends "base.html" %}
+
+{% block user-info %}
+    <h1>Hello, {{ user.first_name }}</h1>
+
+    <a href="{% url 'logout' %}">
+        <button>
+            Log Out
+        </button>
+    </a>
+{% endblock %}
+
+{% block sidebar %}
+    <h1>My cabinets</h1>
+    <h1>Recipes</h1>
+    <h1>Tracker status</h1>
+{% endblock %}

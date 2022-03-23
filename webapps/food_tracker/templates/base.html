@@ -1,9 +1,10 @@
 <!-- Copied from 17-437 base.html -->
 
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
     <link href="{% static 'base.css' %}" rel="stylesheet" type="text/css">
     <title>B6 - Food Tracker</title>
@@ -23,8 +24,13 @@
     {% if message %}
     {% endif %}
     <div>
+      {% block sidebar %}
+      {% endblock %}
+    </div>
+    <div>
       {% block content %}
       {% endblock %}
+
     </div>
   </body>
 </html>

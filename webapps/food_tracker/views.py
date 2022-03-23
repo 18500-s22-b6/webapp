@@ -12,3 +12,7 @@ def profile(request):
 @login_required
 def register(request):
   return render(request, 'registration.html')
+
+# @login_required # TODO: remove later
+def dashboard(request):
+  return render(request, 'dashboard.html', {})
