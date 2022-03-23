@@ -18,7 +18,7 @@ pip install django
 django-admin startproject webapps
 
 ***** Create Django app
-python3 manage.py startapp tracker
+python3 manage.py startapp food_tracker
 
 ***** Create database
 python3 manage.py migrate
@@ -26,4 +26,6 @@ python3 manage.py migrate
 ***** Run server
 python3 manage.py runserver 8080
 
-TEST REPO STATUS
+
+
+CSS Bootstrap Tutorial from https://www.tutorialrepublic.com/twitter-bootstrap-tutorial/
