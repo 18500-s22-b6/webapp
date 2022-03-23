@@ -16,3 +16,6 @@ def register(request):
 # @login_required # TODO: remove later
 def dashboard(request):
   return render(request, 'dashboard.html', {})
+
+def cabinet(request):
+  return render(request, 'inv.html', {})

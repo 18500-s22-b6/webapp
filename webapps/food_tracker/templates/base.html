@@ -15,22 +15,23 @@
       {% block page-title %}{% endblock %}
     </div>
 
-    <div id="id_header_div">
-      <div class="user-info">
-        {% block user-info %}
-        {% endblock %}
-      </div>
+    <div class="user-info">
+      {% block user-info %}
+      {% endblock %}
     </div>
+
     {% if message %}
     {% endif %}
-    <div>
-      {% block sidebar %}
-      {% endblock %}
-    </div>
-    <div>
-      {% block content %}
-      {% endblock %}
-
+    
+    <div class="row">
+      <div class="column sidebar">
+        {% block sidebar %}
+        {% endblock %}
+      </div>
+      <div class="column content">
+        {% block content %}
+        {% endblock %}
+      </div>
     </div>
   </body>
 </html>

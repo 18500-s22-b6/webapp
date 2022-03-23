@@ -1,11 +1,6 @@
-{% extends "base.html" %}
+{% extends "dashboard.html" %}
 
 {% block content %}
-    <h1>Hello, {{ user.first_name }}</h1>
-
-    <a href="{% url 'logout' %}">
-        <button>
-            Log Out
-        </button>
-    </a>
+<h1>Hello, {{ user.first_name}} {{ user.last_name }}</h1>
+<h1>You're at the Profile page</h1>
 {% endblock %}
