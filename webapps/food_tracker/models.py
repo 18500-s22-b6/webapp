@@ -6,5 +6,5 @@ class ItemEntry(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-    return "ItemEntry(id=" + str(self.id) + ", " \
+        return "ItemEntry(id=" + str(self.id) + ", " \
                       + "name=" + str(self.name) + ")"
