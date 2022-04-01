@@ -1,9 +1,10 @@
 <!-- Copied from 17-437 base.html -->
 
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
     <link href="{% static 'base.css' %}" rel="stylesheet" type="text/css">
     <title>B6 - Food Tracker</title>
@@ -14,17 +15,23 @@
       {% block page-title %}{% endblock %}
     </div>
 
-    <div id="id_header_div">
-      <div class="user-info">
-        {% block user-info %}
-        {% endblock %}
-      </div>
+    <div class="user-info">
+      {% block user-info %}
+      {% endblock %}
     </div>
+
     {% if message %}
     {% endif %}
-    <div>
-      {% block content %}
-      {% endblock %}
+    
+    <div class="row">
+      <div class="column sidebar">
+        {% block sidebar %}
+        {% endblock %}
+      </div>
+      <div class="column content">
+        {% block content %}
+        {% endblock %}
+      </div>
     </div>
   </body>
 </html>

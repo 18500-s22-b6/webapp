@@ -12,10 +12,16 @@ label {
 }
 
 a {
-  font-size: 150%;
+  /*font-size: 150%;
   font-family: sans-serif;
   padding-left: 10px;
-  padding-top: 20px;
+  padding-top: 20px; */
+  color:  inherit;
+}
+
+.user-info {
+  width:  100%;
+  text-align:  right;
 }
 
 .title {
@@ -35,8 +41,31 @@ a {
   color:red;
 }
 
-{
-  font-size: xx-large;
+/* Two-col layout:  https://devpractical.com/two-column-layout-html-css/  */
+.row {
+  width:  100%;
+  padding-right:  10px;
+  padding-left:  10px;
+}
+
+.sidebar, .content { 
+  width:  100%;
+}
+@media (min-width: 48em) {
+  .sidebar {
+    width: 30%;
+    float:left;
+    color:  darkgreen;
+  }
+  .content {
+    width: 70%;
+    float:right;
+  }
+  .row{
+    /*content:  "";*/
+    display:  table;
+    clear:  both;
+  }
 }
 
 .add-form {

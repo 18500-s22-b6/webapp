@@ -36,6 +36,13 @@ def logout_user(request):
       'https://graph.facebook.com/v13.0/me/permissions',
       params={'access_token': data['access_token']})
     print(response.json())
-  
+
   logout(request)
   return redirect('home')
+
+# @login_required # TODO: remove later
+def dashboard(request):
+  return render(request, 'dashboard.html', {})
+
+def cabinet(request):
+  return render(request, 'inv.html', {})
