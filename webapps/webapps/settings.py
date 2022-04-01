@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'food_tracker',
     'social_django',
-    'sslserver',
-    'phonenumber_field',
+    # 'sslserver',
+    # 'phonenumber_field',
 ]
 
 MIDDLEWARE = [
