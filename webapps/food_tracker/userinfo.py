@@ -62,6 +62,7 @@ class FacebookFetcher(UserInfoFetcher):
 
     def __init__(self, request):
         access_token = get_access_token(request, FACEBOOK)
+        self.request = request
         try:
             response = requests.get(
                 self.API_ENDPOINT, 
@@ -78,8 +79,6 @@ class FacebookFetcher(UserInfoFetcher):
                 **response,
                 'picture': response['picture']['data']['url'],
             }
-            
-            # self.data['picture'] = response['picture']['data']['url']
 
         except Exception as e:
             print(e)
