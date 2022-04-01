@@ -2,8 +2,7 @@
 # See ourlife > forms.py for similar model
 
 from django import forms
-from food_tracker.models import User
-
+from food_tracker.models import *
 
 # ALL_USERS = [(user.username, str(user.first_name + " " + user.last_name))
 #              for user in User.objects.all()]
@@ -22,3 +21,8 @@ class DeviceRegistrationForm(forms.Form):
   #                                              required=False,
   #                                              label="Share with:")
   # image_data = forms.CharField(widget=forms.HiddenInput(), required=False)
+  
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone_number']

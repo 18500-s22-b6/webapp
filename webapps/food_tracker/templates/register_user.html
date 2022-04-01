@@ -1,0 +1,7 @@
+<!-- Registering a user's personal details -->
+
+<form action="{% url 'register_user' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit">
+</form>

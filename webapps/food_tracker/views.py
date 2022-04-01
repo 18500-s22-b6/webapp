@@ -2,6 +2,9 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
+from food_tracker.models import *
+from food_tracker.forms import *
+
 import requests
 
 from .userinfo import get_userinfo
@@ -16,18 +19,44 @@ def profile(request):
   data = get_userinfo(request)
   print(data)
 
-  context = {
-    'user': {
-      **data,
-      'is_superuser': request.user.is_superuser,
-    }
-  }
-
-  return render(request, 'profile.html', context)
+  context = get_context_by_user_data(request, data)
+  
+  if User.objects.filter(email=data['email']):
+    return render(request, 'profile.html', context)
+  
+  return redirect('register_user')
 
 @login_required
 def register_user(request):
-  return render(request, 'registration.html')
+  data = get_userinfo(request)
+  context = get_context_by_user_data(request, data)
+  
+  try:
+    user = User.objects.get(email=data['email'])
+    form = UserForm(instance=user)
+  except Exception:
+    user = User(
+      first_name=data['first_name'],
+      last_name=data['last_name'],
+      email=data['email'],
+    )
+    form = UserForm()
+
+  context['form'] = form
+
+  if request.method == 'POST':
+    form = UserForm(request.POST)
+    if form.is_valid():
+      user.first_name = form.cleaned_data['first_name']
+      user.last_name = form.cleaned_data['last_name']
+      user.phone_number = form.cleaned_data['phone_number']
+      user.save()
+      return redirect('profile')
+    else:
+      context['form'] = form
+      return render(request, 'register_user.html', context)
+
+  return render(request, 'register_user.html', context)
 
 @login_required
 def logout_user(request):
@@ -83,3 +112,11 @@ def register_device(request):
   print("asdfasdfasdfasdf")
   return render(request, 'add_device.html', context)
 
+def get_context_by_user_data(request, data):
+  context = {
+    'user': {
+      **data,
+      'is_superuser': request.user.is_superuser,
+    }
+  }
+  return context
