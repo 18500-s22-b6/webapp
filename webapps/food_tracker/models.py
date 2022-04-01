@@ -24,9 +24,17 @@ class Device(models.Model):
                       + ", " + "key=" + str(self.key) \
                       + ")"
 
+# General item classes, in case of documentation discrepancy
+class Category(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+    user_gen = models.BooleanField()
+    creator = models.ForeignKey(User, on_delete=models.PROTECT)
+    desc_folder = models.CharField(max_length = 200) # extended max len
+
 # Instances of grocery items
 class ItemEntry(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True)
     location = models.ForeignKey(Device, on_delete=models.PROTECT)
     type = models.ForeignKey(Category, on_delete=models.PROTECT)
     name = models.CharField(max_length=50)
@@ -34,13 +42,3 @@ class ItemEntry(models.Model):
     def __str__(self):
         return "ItemEntry(id=" + str(self.id) + ", " \
                       + "name=" + str(self.name) + ")"
-
-
-
-# General item classes, in case of documentation discrepancy
-class Category(models.Model):
-    id = models.IntegerField(blank=True, null=True)
-    name = models.CharField(max_length=50)
-    user_gen = models.BooleanField()
-    creator = models.ForeignKey(User, on_delete=models.PROTECT)
-    desc_folder = models.CharField(max_length = 200) # extended max len

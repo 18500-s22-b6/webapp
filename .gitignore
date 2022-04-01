@@ -10,5 +10,6 @@ db.sqlite3
 *.pyc
 
 */.DS_Store
-*.pem
+*/*.pem
 *.cert
+webapps/cert.pem
