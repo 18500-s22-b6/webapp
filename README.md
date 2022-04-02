@@ -28,6 +28,7 @@ python3 manage.py runserver 8080
 
 
 Common bugs
+
 **no such table ...**
 python3 manage.py migrate --run-syncdb
 
