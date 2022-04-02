@@ -14,11 +14,16 @@
     </div>
   </div>
   <div class="text">
-    <p>Food Tracker</p>
-    <p class="subtext">A Home Cook's Best Friend</p>
-    <a href="{% url 'profile' %}">
+    <p>ourlife</p>
+    <p class="subtext">the journal for you</p>
+    <a href="{% url 'social:begin' 'google-oauth2' %}" role="button">
       <button class="login-button">
-          Login
+          Login with Google
+      </button>
+    </a>
+    <a href="{% url 'social:begin' 'facebook' %}" role="button">
+      <button class="login-button">
+          Login with Facebook
       </button>
     </a>
   </div>

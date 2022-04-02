@@ -1,0 +1,23 @@
+<!-- add_device.html -->
+<!-- Sends a POST request for tracker registration -->
+
+{% extends "dashboard.html" %}
+
+{% block content %}
+
+    <h1>Device registration</h1>
+    
+    {% if message %}
+    <h2> {{ message }} </h2>
+    
+    {% else %}
+    <form method="post" action="{% url 'add_device' %}">
+        <table>
+            {{form}}
+        </table>
+        {% csrf_token %} 
+        <button type="submit">Complete registration</button>
+    </form>
+    {% endif %}
+
+{% endblock %}
