@@ -1,5 +1,7 @@
 # webapp
 
+
+----------
 HOW TO RUN
 
 - Tutorial from here follows https://docs.djangoproject.com/en/4.0/intro/tutorial01/
@@ -15,13 +17,19 @@ python3 -m venv venv_18-500
 ***** Install Django: 
 pip install django
 
+***** Install required Django submodules:
+pip install django-phonenumber-field[phonenumbers]
+pip install social-auth-app-django
+
 ***** Create database: 
+python3 manage.py makemigrations
 python3 manage.py migrate
 
 ***** Run server: 
 python3 manage.py runserver 8000
 
 
+----------
 COMMON BUGS
 
 ***** no such table: 
@@ -31,6 +39,7 @@ python3 manage.py migrate --run-syncdb
 CSS Bootstrap Tutorial from https://www.tutorialrepublic.com/twitter-bootstrap-tutorial/
 
 
+----------
 INTERNAL DEVELOPMENT NOTES
 
 ***** Create Django project: 
