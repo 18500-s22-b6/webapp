@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.contrib import messages
 
 import requests
 
@@ -73,6 +74,12 @@ def logout_user(request):
 @login_required # TODO: remove later
 def dashboard(request):
   context = { 'devices': Device.objects.all() }
+
+  if 'message' in request.session:
+    context = { 'devices': Device.objects.all(), 
+              'message': request.session['message'] }
+    del request.session['message']
+
   return render(request, 'dashboard.html', context)
 
 @login_required
@@ -125,9 +132,19 @@ def register_device(request):
                       key=form.cleaned_data["key"])
   new_device.save()
 
-  print("asdfasdfasdfasdf")
-  context['message'] = "Registration successful!" 
-  return render(request, 'add_device.html', context)
+  # v1: Redirect to add_device
+  # Problem: refresh adds duplicate devices
+  # context['message'] = "Registration successful!" 
+  # return render(request, 'add_device.html', context)
+
+  # v2: Django messages
+  # TODO: update to use
+  # messages.success(request, "parameter")
+
+  # v3: functional 'session' workaround
+  # stackoverflow.com/questions/51155947/django-redirect-to-another-view-with-context
+  request.session['message'] = "Registration successful!"
+  return redirect('dashboard')
 
 def get_context_by_user_data(request, data):
   context = {

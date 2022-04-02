@@ -27,5 +27,9 @@ python3 manage.py migrate
 python3 manage.py runserver 8080
 
 
+Common bugs
+**no such table ...**
+python3 manage.py migrate --run-syncdb
+
 
 CSS Bootstrap Tutorial from https://www.tutorialrepublic.com/twitter-bootstrap-tutorial/
