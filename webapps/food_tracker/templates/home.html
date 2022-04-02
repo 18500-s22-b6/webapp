@@ -17,8 +17,14 @@
     <p class="title">Food Tracker</p>
     <p class="sub-title">A Home Cook's Best Friend</p>
     <a href="{% url 'profile' %}">
+    <a href="{% url 'social:begin' 'google-oauth2' %}" role="button">
       <button class="login-button">
-          Login
+          Login with Google
+      </button>
+    </a>
+    <a href="{% url 'social:begin' 'facebook' %}" role="button">
+      <button class="login-button">
+          Login with Facebook
       </button>
     </a>
   </div>
