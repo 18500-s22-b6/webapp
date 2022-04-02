@@ -24,3 +24,11 @@
     <h1>Tracker status</h1>
     <ul><li><a href="{% url 'add_device' %}">Register Device</a></li></ul>
 {% endblock %}
+
+{% block content %}
+    {% if message %}
+    <h2> {{ message }} </h2>
+    <!-- elif request.session.message -->
+    <!-- <h2> request.session.message </h2> -->
+    {% endif %}
+{% endblock %} 
