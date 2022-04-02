@@ -37,8 +37,11 @@ class ItemEntry(models.Model):
     id = models.AutoField(primary_key=True)
     location = models.ForeignKey(Device, on_delete=models.PROTECT)
     type = models.ForeignKey(Category, on_delete=models.PROTECT)
-    name = models.CharField(max_length=50)
+    thumbnail = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return "ItemEntry(id=" + str(self.id) + ", " \
-                      + "name=" + str(self.name) + ")"
+        return "ItemEntry(id=" + str(self.id) \
+                      + ", " + "location=" + str(self.location) \
+                      + ", " + "type=" + str(self.type) \
+                      + ", " + "thumbnail=" + str(self.thumbnail) \
+                      + ")"

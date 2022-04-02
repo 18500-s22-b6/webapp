@@ -6,6 +6,15 @@
 
     <h1>{{ device.name }}</h1>
     <ul>
+        <li>
+            <!-- Shamelessly stolen from 17-437 todolist2 -->
+            <form class="add-form" action="{% url 'add_item' device.id %}" method="post">
+                <label>Add Item:</label>
+                <input type="text" name="item" autofocus>
+                <input type="submit">
+                {% csrf_token %}
+            </form>
+        </li>
         {% for item in items %} 
         <li>{{ item.name }}</li>
         {% endfor %}
