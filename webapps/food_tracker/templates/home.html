@@ -10,12 +10,13 @@
 {% block content %}
   <div class="splash">
     <div class="splash_logo">
-      *insert logo here*
+      {% load static %} <img src="{% static "media/logo.png" %}" />
     </div>
   </div>
   <div class="text">
-    <p>ourlife</p>
-    <p class="subtext">the journal for you</p>
+    <p class="title">Food Tracker</p>
+    <p class="sub-title">A Home Cook's Best Friend</p>
+    <a href="{% url 'profile' %}">
     <a href="{% url 'social:begin' 'google-oauth2' %}" role="button">
       <button class="login-button">
           Login with Google
@@ -28,6 +29,6 @@
     </a>
   </div>
   <div class="blurb">
-    <p>How does it work?</p>
+    <p>Food Tracker is a revolutionary new service that allows you to keep track of your inventory while out shopping! This service requires a one time simple installation, after which, you'll never need to wory about your kitchen inventory every again!</p>
   </div>
 {% endblock %}
