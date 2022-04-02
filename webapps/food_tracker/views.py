@@ -2,14 +2,11 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
-from food_tracker.models import *
-from food_tracker.forms import *
-
 import requests
 
 from .userinfo import get_userinfo
 from .models import *
-from .forms import DeviceRegistrationForm
+from .forms import *
 
 def home(request):
   return render(request, 'home.html', {})
@@ -20,6 +17,7 @@ def profile(request):
   print(data)
 
   context = get_context_by_user_data(request, data)
+  context['devices'] = Device.objects.all()
   
   if User.objects.filter(email=data['email']):
     return render(request, 'profile.html', context)
@@ -74,42 +72,61 @@ def logout_user(request):
 
 @login_required # TODO: remove later
 def dashboard(request):
-  return render(request, 'dashboard.html', {})
+  context = { 'devices': Device.objects.all() }
+  return render(request, 'dashboard.html', context)
 
 @login_required
-def cabinet(request):
-  return render(request, 'inv.html', {})
+def cabinet(request, id):
+  # Request for a specific cabinet
+
+  dev = Device.objects.get(id=id)
+
+  print("request:")
+  print(request)
+  print("id: " + str(id))
+  context = { 'devices': Device.objects.all(), 
+              'device': Device.objects.get(id=id),
+              'items': ItemEntry.objects.filter(location=dev)}
+  return render(request, 'inv.html', context)
 
 @login_required
 def register_device(request):
+
+  ##### If GET, the user just clicked on the link
+  ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
-    context = {'form': DeviceRegistrationForm()}
-    # Logged in users shouldn't share posts with themselves
-    # context['form'].fields['shared_with'].queryset = \
-    #   context['form'].fields['shared_with'].queryset.exclude(id=request.user.id)
+    context = { 'form': DeviceRegistrationForm(), 
+                'devices': Device.objects.all() }
     return render(request, 'add_device.html', context)
 
+
+  ##### If POST, "submit" button was pressed
   form = DeviceRegistrationForm(request.POST)
-  # form.fields['shared_with'].queryset = form.fields['shared_with'].queryset.exclude(id=request.user.id)
   if not form.is_valid():
-    context = {'form': form}
+    context = {'form': form, 'devices': Device.objects.all()}
     return render(request, 'add_device.html', context)
 
-  new_user = User(first_name = "fn_TEST",
-                  last_name = "ln_TEST",
-                  phone_number = "pn_TEST", 
-                  email = "email@email.com")
-  new_user.save()
+  # temp_user = User(first_name = "fn_TEST",
+  #                 last_name = "ln_TEST",
+  #                 phone_number = "pn_TEST", 
+  #                 email = "email@email.com")
+  data = get_userinfo(request)
+  context = get_context_by_user_data(request, data)
+  context['devices'] = Device.objects.all()
+  
+  temp_user = User.objects.get(email=data['email']) 
+  # TODO: change when done debugging to email=data['email']
 
   new_device = Device(serial_number=form.cleaned_data["serial_number"],
                       status=form.cleaned_data["status"],
-                      owner=new_user, 
+                      owner=temp_user, 
                       name=form.cleaned_data["name"],
                       most_recent_image=None, 
                       key=form.cleaned_data["key"])
   new_device.save()
 
   print("asdfasdfasdfasdf")
+  context['message'] = "Registration successful!" 
   return render(request, 'add_device.html', context)
 
 def get_context_by_user_data(request, data):

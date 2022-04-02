@@ -4,14 +4,17 @@
 
 {% block content %}
 
-    <h1>Cabinet name</h1>
+    <h1>{{ device.name }}</h1>
     <ul>
-    <!-- {% for item in inv_list %}
+        {% for item in items %} 
         <li>{{ item.name }}</li>
-    {% endfor %}
-     -->
+        {% endfor %}
+    </ul>
+    
+    <!-- <h1>Cabinet name</h1>
+    <ul>
         <li>Spice 1</li>
         <li>Spice 2</li>
         <li>Spice 3</li>
-    </ul>
+    </ul> -->
 {% endblock %}
