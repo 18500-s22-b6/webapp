@@ -40,6 +40,10 @@ python3 manage.py migrate --run-syncdb
 - python3 manage.py migrate --run-syncdb
 - run server :-)
 
+***** Nonetype
+- Log out of website
+- Log back in again
+
 CSS Bootstrap Tutorial from https://www.tutorialrepublic.com/twitter-bootstrap-tutorial/
 
 
