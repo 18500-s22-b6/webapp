@@ -31,4 +31,17 @@
     <!-- elif request.session.message -->
     <!-- <h2> request.session.message </h2> -->
     {% endif %}
+    <ul>
+        {% for device in devices %}
+            <li>
+                <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
+                <form action="{% url 'del_cabinet' device.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="delete" type="submit">Delete</button>
+                </form>
+            </li>
+
+        {% endfor %}
+    </ul>
+
 {% endblock %} 

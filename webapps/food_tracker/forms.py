@@ -4,9 +4,6 @@
 from django import forms
 from food_tracker.models import *
 
-# ALL_USERS = [(user.username, str(user.first_name + " " + user.last_name))
-#              for user in User.objects.all()]
-
 class DeviceRegistrationForm(forms.Form):
     serial_number = forms.IntegerField() # TODO: CharField
     # TODO: some unique constraint

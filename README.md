@@ -36,6 +36,14 @@ COMMON BUGS
 ***** no such table: 
 python3 manage.py migrate --run-syncdb
 
+***** no column: 
+- DELETE db.sqlite3
+- python3 manage.py migrate --run-syncdb
+- run server :-)
+
+***** Nonetype
+- Log out of website
+- Log back in again
 
 CSS Bootstrap Tutorial from https://www.tutorialrepublic.com/twitter-bootstrap-tutorial/
 
@@ -48,3 +56,6 @@ django-admin startproject webapps
 
 ***** Create Django app: 
 python3 manage.py startapp food_tracker
+
+***** Create Django superuser
+python3 manage.py createsuperuser

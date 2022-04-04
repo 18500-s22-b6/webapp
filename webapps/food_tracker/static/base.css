@@ -37,6 +37,15 @@ a {
   text-align: center;
 }
 
+.details {
+  font-size: medium;
+  font-style: italic;
+}
+
+.delete {
+  font-size:  medium;
+}
+
 .error {
   font-size: x-large;
   color:red;

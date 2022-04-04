@@ -10,3 +10,5 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Device)
+admin.site.register(Category)
+admin.site.register(ItemEntry)
