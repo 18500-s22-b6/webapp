@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
@@ -94,9 +94,6 @@ def cabinet(request, id):
 
   dev = Device.objects.get(id=id)
 
-  print("request:")
-  print(request)
-  print("id: " + str(id))
   context = { 'devices': Device.objects.all(), 
               'device': Device.objects.get(id=id),
               'items': ItemEntry.objects.filter(location=dev)}
@@ -151,3 +148,88 @@ def register_device(request):
   # stackoverflow.com/questions/51155947/django-redirect-to-another-view-with-context
   request.session['message'] = "Registration successful!"
   return redirect('dashboard')
+
+@login_required
+def delete_device(request, id):
+# See addrbook2 for example
+
+  context = { 'devices': Device.objects.all() }
+
+  if request.method != 'POST':
+    message = 'Invalid request.  POST method must be used.'
+    context['message'] = message
+    return render(request, 'dashboard.html', context)
+
+  entry = get_object_or_404(Device, id=id)
+  message = 'Cabinet {0} has been deleted.'.format(entry.name)
+  entry.delete()
+
+  # OJO: recreate device list after deleting the device (duh)
+  context = { 'devices': Device.objects.all(), 
+              'message': message }
+
+  return render(request, 'dashboard.html', context)
+
+def get_context_by_user_data(request, data):
+  context = {
+    'user': {
+      **data,
+      'is_superuser': request.user.is_superuser,
+    }
+  }
+  return context
+
+@login_required
+def add_item(request, id):
+#KNOWN BUGS: empty field error redirect not working
+
+    # Set context with current list of items so we can easily return if we discover errors.
+    context = { 'items': ItemEntry.objects.all() }
+
+    # Adds the new item to the database if the request parameter is present
+    if 'item' not in request.POST or not request.POST['item']:
+        context['message'] = 'You must enter an item to add.'
+        return render(request, 'inv.html', context)
+
+    data = get_userinfo(request)
+    print(data)
+    user = User.objects.get(email=data['email']) 
+    loc = Device.objects.get(id=id)
+    new_cat = Category(name=request.POST['item'],
+                       user_gen=True, 
+                       creator=user, 
+                       desc_folder='n/a')
+    new_cat.save()
+
+    # cat = Category.objects.get(name="Custom")
+
+    new_item = ItemEntry(location=loc, 
+                         type=new_cat, # cat
+                         thumbnail="")
+    new_item.save()
+    
+    return redirect('cabinet', id)
+
+@login_required
+def delete_item(request, id):
+
+  context = { 'devices': Device.objects.all() }
+
+  if request.method != 'POST':
+    message = 'Invalid request.  POST method must be used.'
+    context['message'] = message
+    return render(request, 'inv.html', context)
+
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
+  # TODO: determine how necessary the message actually is
+  message = 'Item {0} has been deleted.'.format(entry.type.name)
+  entry.delete()
+
+  context = { 'devices': Device.objects.all(), 
+              'items': ItemEntry.objects.all(),
+              'message': message }
+  print(context)
+
+  # return render(request, 'inv.html', context)
+  return redirect('cabinet', cab_id)
