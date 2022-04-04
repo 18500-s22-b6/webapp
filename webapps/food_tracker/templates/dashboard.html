@@ -32,7 +32,7 @@
                 <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
                 <form action="{% url 'del_cabinet' device.id %}" method="post">
                     {% csrf_token %}
-                    <button type="submit">Delete</button>
+                    <button class="delete" type="submit">Delete</button>
                 </form>
             </li>
 

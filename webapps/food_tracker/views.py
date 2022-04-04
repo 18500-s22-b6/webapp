@@ -185,13 +185,46 @@ def add_item(request, id):
         context['message'] = 'You must enter an item to add.'
         return render(request, 'inv.html', context)
 
+    data = get_userinfo(request)
+    print(data)
+    user = User.objects.get(email=data['email']) 
     loc = Device.objects.get(id=id)
-    new_cat = Category(name=request.POST['item'])
-    cat = Category.objects.get(name="Custom")
+    new_cat = Category(name=request.POST['item'],
+                       user_gen=True, 
+                       creator=user, 
+                       desc_folder='n/a')
+    new_cat.save()
+
+    # cat = Category.objects.get(name="Custom")
 
     new_item = ItemEntry(location=loc, 
-                         type=cat, 
+                         type=new_cat, # cat
                          thumbnail="")
     new_item.save()
+    
     return redirect('cabinet', id)
+
+@login_required
+def delete_item(request, id):
+
+  context = { 'devices': Device.objects.all() }
+
+  if request.method != 'POST':
+    message = 'Invalid request.  POST method must be used.'
+    context['message'] = message
+    return render(request, 'inv.html', context)
+
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
+  # TODO: determine how necessary the message actually is
+  message = 'Item {0} has been deleted.'.format(entry.type.name)
+  entry.delete()
+
+  context = { 'devices': Device.objects.all(), 
+              'items': ItemEntry.objects.all(),
+              'message': message }
+  print(context)
+
+  # return render(request, 'inv.html', context)
+  return redirect('cabinet', cab_id)
 

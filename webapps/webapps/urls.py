@@ -32,5 +32,6 @@ urlpatterns = [
     path('cabinet/<int:id>', views.cabinet, name='cabinet'),
     path('add_device', views.register_device, name='add_device'), 
     path('del_cabinet/<int:id>', views.delete_device, name='del_cabinet'),
-    path('add_item/<int:id>', views.add_item, name='add_item')
+    path('add_item/<int:id>', views.add_item, name='add_item'),
+    path('del_item/<int:id>', views.delete_item, name='del_item'),
 ]
