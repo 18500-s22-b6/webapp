@@ -1,5 +1,12 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from food_tracker.models import *
 
-admin.site.register(User)
+class CustomUserAdmin(UserAdmin):
+    list_display = (
+        'username', 'email', 'first_name', 'last_name', 'is_staff',
+        'phone_number', 'image_url'
+        )
+
+admin.site.register(User, CustomUserAdmin)
 admin.site.register(Device)

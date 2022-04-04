@@ -1,0 +1,23 @@
+<!-- Splash page for non-logged in users -->
+
+{% extends "base.html" %}
+
+{% block user-info %}
+  {% load static %}
+  <!-- <link href="{% static 'ourlife.css' %}" rel="stylesheet" type="text/css"> -->
+{% endblock %}
+
+{% block content %}
+<div class="text">
+  <a href="{% url 'social:begin' 'google-oauth2' %}" role="button">
+    <button class="login-button">
+        Login with Google
+    </button>
+  </a>
+  <a href="{% url 'social:begin' 'facebook' %}" role="button">
+    <button class="login-button">
+        Login with Facebook
+    </button>
+  </a>
+</div>
+{% endblock %}
