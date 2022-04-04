@@ -29,7 +29,7 @@ def profile(request):
   if not request.user.phone_number:
     return redirect('register_user')
 
-  context = {'devices': Device.objects.all()}
+  context = {'devices': Device.objects.filter(owner=request.user)}
   
   if User.objects.filter(email=request.user.email):
     return render(request, 'profile.html', context)
