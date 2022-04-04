@@ -30,6 +30,6 @@ urlpatterns = [
     path('register_user', views.register_user, name='register_user'),
     # path('logout/', LogoutView.as_view(template_name="index.html"), name='logout'),
     path('logout/', views.logout_user, name='logout'),
-    path('cabinet/', views.cabinet, name='cabinet'),
+    path('cabinet/<int:id>', views.cabinet, name='cabinet'), #<int:id>
     path('add_device', views.register_device, name='add_device')
 ]

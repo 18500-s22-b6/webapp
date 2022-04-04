@@ -2,14 +2,12 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
-
-from food_tracker.models import *
-from food_tracker.forms import *
+from django.contrib import messages
 
 import requests
 
 from .models import *
-from .forms import DeviceRegistrationForm
+from .forms import *
 
 def home(request):
   if request.user.is_authenticated:
@@ -26,6 +24,11 @@ def login(request):
 def profile(request):
   if not request.user.phone_number:
     return redirect('register_user')
+
+  context = {'devices': Device.objects.all()}
+  
+  if User.objects.filter(email=request.user.email):
+    return render(request, 'profile.html', context)
   
   return render(request, 'profile.html')
 
@@ -65,40 +68,75 @@ def logout_user(request):
 
 @login_required # TODO: remove later
 def dashboard(request):
-  return render(request, 'dashboard.html', {})
+  context = { 'devices': Device.objects.all() }
+
+  if 'message' in request.session:
+    context = { 'devices': Device.objects.all(), 
+              'message': request.session['message'] }
+    del request.session['message']
+
+  return render(request, 'dashboard.html', context)
 
 @login_required
-def cabinet(request):
-  return render(request, 'inv.html', {})
+def cabinet(request, id):
+  # Request for a specific cabinet
+
+  dev = Device.objects.get(id=id)
+
+  print("request:")
+  print(request)
+  print("id: " + str(id))
+  context = { 'devices': Device.objects.all(), 
+              'device': Device.objects.get(id=id),
+              'items': ItemEntry.objects.filter(location=dev)}
+  return render(request, 'inv.html', context)
 
 @login_required
 def register_device(request):
+
+  ##### If GET, the user just clicked on the link
+  ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
-    context = {'form': DeviceRegistrationForm()}
-    # Logged in users shouldn't share posts with themselves
-    # context['form'].fields['shared_with'].queryset = \
-    #   context['form'].fields['shared_with'].queryset.exclude(id=request.user.id)
+    context = { 'form': DeviceRegistrationForm(), 
+                'devices': Device.objects.all() }
     return render(request, 'add_device.html', context)
 
+
+  ##### If POST, "submit" button was pressed
   form = DeviceRegistrationForm(request.POST)
-  # form.fields['shared_with'].queryset = form.fields['shared_with'].queryset.exclude(id=request.user.id)
   if not form.is_valid():
-    context = {'form': form}
+    context = {'form': form, 'devices': Device.objects.all()}
     return render(request, 'add_device.html', context)
 
-  new_user = User(first_name = "fn_TEST",
-                  last_name = "ln_TEST",
-                  phone_number = "pn_TEST", 
-                  email = "email@email.com")
-  new_user.save()
+  # temp_user = User(first_name = "fn_TEST",
+  #                 last_name = "ln_TEST",
+  #                 phone_number = "pn_TEST", 
+  #                 email = "email@email.com")
+
+  context = {'devices': Device.objects.all()}
+  
+  temp_user = User.objects.get(email=request.user.email) 
+  # TODO: change when done debugging to email=data['email']
 
   new_device = Device(serial_number=form.cleaned_data["serial_number"],
                       status=form.cleaned_data["status"],
-                      owner=new_user, 
+                      owner=temp_user, 
                       name=form.cleaned_data["name"],
                       most_recent_image=None, 
                       key=form.cleaned_data["key"])
   new_device.save()
 
-  print("asdfasdfasdfasdf")
-  return render(request, 'add_device.html', context)
+
+  # v1: Redirect to add_device
+  # Problem: refresh adds duplicate devices
+  # context['message'] = "Registration successful!" 
+  # return render(request, 'add_device.html', context)
+
+  # v2: Django messages
+  # TODO: update to use
+  # messages.success(request, "parameter")
+
+  # v3: functional 'session' workaround
+  # stackoverflow.com/questions/51155947/django-redirect-to-another-view-with-context
+  request.session['message'] = "Registration successful!"
+  return redirect('dashboard')

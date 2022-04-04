@@ -14,12 +14,21 @@
 {% endblock %}
 
 {% block sidebar %}
-    <h1><a href="{% url 'cabinet' %}">My cabinets</a></h1>
+    <h1><a href="{% url 'dashboard' %}">My cabinets</a></h1>
     <ul>
-        <li>Spice cabinet</li>
-        <li>Cabinet 2</li>
+        {% for device in devices %}
+            <li><a href="{% url 'cabinet' device.id %}">{{ device.name }}</a></li>
+        {% endfor %}
     </ul>
     <h1>Recipes</h1>
     <h1>Tracker status</h1>
-    <h1><a href="{% url 'add_device' %}">Register Device</a></h1>
+    <ul><li><a href="{% url 'add_device' %}">Register Device</a></li></ul>
 {% endblock %}
+
+{% block content %}
+    {% if message %}
+    <h2> {{ message }} </h2>
+    <!-- elif request.session.message -->
+    <!-- <h2> request.session.message </h2> -->
+    {% endif %}
+{% endblock %} 
