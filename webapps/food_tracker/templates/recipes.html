@@ -1,0 +1,26 @@
+<!-- recipes.html -->
+
+{% extends "dashboard.html" %}
+
+{% block content %}
+
+    <h1>Recipes</h1>
+    <ul>
+         for recipe in recipes %} 
+        <li> recipe.name }}</li>
+             for item in recipe %}
+            <ul>
+                <!-- OJO: "item" = Category, *NOT* ItemEntry -->
+                <li> item.name }}</li>
+            </ul>
+         endfor %}
+    </ul>
+    
+    <!-- <h1>Cabinet name</h1>
+    <ul>
+        <li>Spice 1</li>
+        <li>Spice 2</li>
+        <li>Spice 3</li>
+    </ul> -->
+{% endblock %}
+

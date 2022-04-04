@@ -15,7 +15,12 @@
 
 {% block sidebar %}
     <h1><a href="{% url 'dashboard' %}">My cabinets</a></h1>
-    <h1>Recipes</h1>
+    <ul>
+        {% for device in devices %}
+            <li><a href="{% url 'cabinet' device.id %}">{{ device.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <h1><a href="{% url 'recipes' %}">Recipes</a></h1>
     <h1>Tracker status</h1>
     <ul><li><a href="{% url 'add_device' %}">Register Device</a></li></ul>
 {% endblock %}

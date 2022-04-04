@@ -1,11 +1,10 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from django.contrib.auth.models import AbstractUser
 
-class User(models.Model):
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
-    phone_number = PhoneNumberField(unique = True, null = False, blank = False)
-    email = models.EmailField(max_length=200)
+class User(AbstractUser):
+    phone_number = PhoneNumberField(null = False, blank = False)
+    image_url = models.CharField(max_length=200)
 
 # Cabinet and Device are synonymous, in case of documentation discrepancy
 class Device(models.Model):
@@ -45,3 +44,10 @@ class ItemEntry(models.Model):
                       + ", " + "type=" + str(self.type) \
                       + ", " + "thumbnail=" + str(self.thumbnail) \
                       + ")"
+
+# User recipes
+class Recipe(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
+    name = models.CharField(max_length=50)
+    ingredients = models.ManyToManyField(Category, blank=True)
