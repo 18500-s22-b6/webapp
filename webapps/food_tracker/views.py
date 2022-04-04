@@ -33,20 +33,19 @@ def profile(request):
 def register_user(request):
   context = {}
   user = request.user
-  form = UserForm(instance = user)
-  context['form'] = form
 
   if request.method == 'POST':
     form = UserForm(request.POST)
     if form.is_valid():
-      user.first_name = form.cleaned_data['first_name']
-      user.last_name = form.cleaned_data['last_name']
-      user.phone_number = form.cleaned_data['phone_number']
+      for (key, value) in form.cleaned_data.items():
+        setattr(user, key, value)
       user.save()
       return redirect('profile')
     else:
       context['form'] = form
       return render(request, 'register_user.html', context)
+
+  context['form'] = UserForm(instance=user)
 
   return render(request, 'register_user.html', context)
 
