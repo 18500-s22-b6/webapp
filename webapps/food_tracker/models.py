@@ -41,3 +41,12 @@ class ItemEntry(models.Model):
     def __str__(self):
         return "ItemEntry(id=" + str(self.id) + ", " \
                       + "name=" + str(self.name) + ")"
+
+# User recipes
+class Recipe(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(User, on_delete=models.PROTECT)
+    name = models.CharField(max_length=50)
+    ingredients = models.ManyToManyField(Category, blank=True)
+
+

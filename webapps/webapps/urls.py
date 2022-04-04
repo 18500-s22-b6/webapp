@@ -25,6 +25,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('', include('social_django.urls', namespace='social')),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('recipes', views.recipes, name='recipes'), 
     path('login', views.login, name='login'),
     path('profile', views.profile, name='profile'),
     path('register_user', views.register_user, name='register_user'),

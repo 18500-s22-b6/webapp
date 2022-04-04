@@ -66,7 +66,7 @@ def logout_user(request):
   logout(request)
   return redirect('home')
 
-@login_required # TODO: remove later
+@login_required
 def dashboard(request):
   context = { 'devices': Device.objects.all() }
 
@@ -76,6 +76,17 @@ def dashboard(request):
     del request.session['message']
 
   return render(request, 'dashboard.html', context)
+
+@login_required
+def recipes(request):
+  context = { 'devices': Device.objects.all() }
+
+  if 'message' in request.session:
+    context = { 'devices': Device.objects.all(), 
+              'message': request.session['message'] }
+    del request.session['message']
+
+  return render(request, 'recipes.html', context)
 
 @login_required
 def cabinet(request, id):
