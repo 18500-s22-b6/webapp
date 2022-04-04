@@ -89,6 +89,36 @@ def recipes(request):
   return render(request, 'recipes.html', context)
 
 @login_required
+def add_recipe(request):
+  
+  ##### If GET, the user just clicked on the link
+  ##### i.e. just render the website, plain and simple
+  if request.method == 'GET':
+    context = { 'form': RecipeForm(), 
+                'devices': Device.objects.all() }
+    return render(request, 'add_recipe.html', context)
+  
+  ##### If POST, "submit" button was pressed
+  form = RecipeForm(request.POST)
+  if not form.is_valid():
+    context = {'form': form, 'devices': Device.objects.all()}
+    return render(request, 'add_recipe.html', context)
+
+  context = {'devices': Device.objects.all()}
+  
+  temp_user = User.objects.get(email=request.user.email) 
+  # TODO: change when done debugging to email=data['email']
+
+  new_recipe = Recipe(author = temp_user, 
+                      name = form.cleaned_data["name"], 
+                      ingredients = form.cleaned_data["ingredients"])
+  new_recipe.save()
+
+  request.session['message'] = "Registration successful!"
+  return redirect('recipes')
+  # return render(request, 'recipes.html', context)
+
+@login_required
 def cabinet(request, id):
   # Request for a specific cabinet
 

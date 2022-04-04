@@ -5,6 +5,7 @@
 {% block content %}
 
     <h1>Recipes</h1>
+    <a href="{% url 'add_recipe' %}">Add recipe</a>
     <ul>
          for recipe in recipes %} 
         <li> recipe.name }}</li>

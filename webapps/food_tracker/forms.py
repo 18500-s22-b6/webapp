@@ -35,3 +35,11 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'phone_number']
+
+class RecipeForm(forms.Form):
+    name = forms.CharField(max_length=50)
+    ingredients = forms.ModelMultipleChoiceField( \
+                                    queryset=Category.objects.all(), \
+                                    widget=forms.CheckboxSelectMultiple, \
+                                    required=False, \
+                                    label="Ingredients") \
