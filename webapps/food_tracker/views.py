@@ -9,6 +9,10 @@ import requests
 from .models import *
 from .forms import *
 
+# Device status
+NOT_REGISTERED = 0
+ONLINE = 1
+
 def home(request):
   if request.user.is_authenticated:
     return redirect('profile')
@@ -68,11 +72,11 @@ def logout_user(request):
 
 @login_required # TODO: remove later
 def dashboard(request):
-  context = { 'devices': Device.objects.all() }
+  context = {}
+  context['devices'] = Device.objects.filter(owner=request.user)
 
   if 'message' in request.session:
-    context = { 'devices': Device.objects.all(), 
-              'message': request.session['message'] }
+    context['message'] = request.session['message']
     del request.session['message']
 
   return render(request, 'dashboard.html', context)
@@ -80,52 +84,53 @@ def dashboard(request):
 @login_required
 def cabinet(request, id):
   # Request for a specific cabinet
+  context = {}
 
-  dev = Device.objects.get(id=id)
+  if not Device.objects.filter(id=id).exists():
+    request.session['message'] = 'Invalid device ID'
+    return redirect('dashboard')
 
-  print("request:")
-  print(request)
-  print("id: " + str(id))
-  context = { 'devices': Device.objects.all(), 
-              'device': Device.objects.get(id=id),
-              'items': ItemEntry.objects.filter(location=dev)}
+  device = Device.objects.get(id=id)
+  context = { 
+    'devices': Device.objects.filter(owner=request.user), 
+    'device': device,
+    'items': ItemEntry.objects.filter(location=device)
+  }
   return render(request, 'inv.html', context)
 
 @login_required
 def register_device(request):
+  context = {}
 
-  ##### If GET, the user just clicked on the link
-  ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
-    context = { 'form': DeviceRegistrationForm(), 
-                'devices': Device.objects.all() }
+    num = len(Device.objects.filter(owner=request.user))
+    form = DeviceRegistrationForm(initial={'name': f'device-{num}'})
+    context['form'] = form
     return render(request, 'add_device.html', context)
 
-
-  ##### If POST, "submit" button was pressed
   form = DeviceRegistrationForm(request.POST)
   if not form.is_valid():
-    context = {'form': form, 'devices': Device.objects.all()}
+    context['form'] = form
     return render(request, 'add_device.html', context)
 
-  # temp_user = User(first_name = "fn_TEST",
-  #                 last_name = "ln_TEST",
-  #                 phone_number = "pn_TEST", 
-  #                 email = "email@email.com")
-
-  context = {'devices': Device.objects.all()}
+  try:
+    device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
+  except Exception as e:
+    request.session['message'] = 'Invalid serial number'
+    return redirect('dashboard')
   
-  temp_user = User.objects.get(email=request.user.email) 
-  # TODO: change when done debugging to email=data['email']
-
-  new_device = Device(serial_number=form.cleaned_data["serial_number"],
-                      status=form.cleaned_data["status"],
-                      owner=temp_user, 
-                      name=form.cleaned_data["name"],
-                      most_recent_image=None, 
-                      key=form.cleaned_data["key"])
-  new_device.save()
-
+  if device.status != NOT_REGISTERED:
+    if device.owner == request.user:
+      request.session['message'] = 'You have already registered this device'
+    else:
+      request.session['message'] = 'Invalid serial number'
+    return redirect('dashboard')
+  
+  device.status = ONLINE
+  device.owner = request.user
+  for key, value in form.cleaned_data.items():
+    setattr(device, key, value)
+  device.save()
 
   # v1: Redirect to add_device
   # Problem: refresh adds duplicate devices
