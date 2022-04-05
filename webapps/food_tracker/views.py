@@ -77,16 +77,28 @@ def dashboard(request):
 
   return render(request, 'dashboard.html', context)
 
+
+
+
+
+
 @login_required
 def recipes(request):
-  context = { 'devices': Device.objects.all() }
+  context = { 'devices': Device.objects.all(), 
+              'recipes': Recipe.objects.filter() }
 
   if 'message' in request.session:
-    context = { 'devices': Device.objects.all(), 
-              'message': request.session['message'] }
+    context = { 'devices': Device.objects.all(),
+                'recipes': Recipe.objects.all(),
+                'message': request.session['message'] }
     del request.session['message']
 
   return render(request, 'recipes.html', context)
+
+
+
+
+
 
 @login_required
 def add_recipe(request):
@@ -106,13 +118,14 @@ def add_recipe(request):
 
   context = {'devices': Device.objects.all()}
   
-  temp_user = User.objects.get(email=request.user.email) 
+  user = request.user
   # TODO: change when done debugging to email=data['email']
 
-  new_recipe = Recipe(author = temp_user, 
-                      name = form.cleaned_data["name"], 
-                      ingredients = form.cleaned_data["ingredients"])
+  new_recipe = Recipe(author = user, 
+                      name = form.cleaned_data["name"])
+                      # ingredients = form.cleaned_data["ingredients"]
   new_recipe.save()
+  new_recipe.ingredients.set(form.cleaned_data["ingredients"])
 
   request.session['message'] = "Registration successful!"
   return redirect('recipes')
@@ -146,19 +159,13 @@ def register_device(request):
     context = {'form': form, 'devices': Device.objects.all()}
     return render(request, 'add_device.html', context)
 
-  # temp_user = User(first_name = "fn_TEST",
-  #                 last_name = "ln_TEST",
-  #                 phone_number = "pn_TEST", 
-  #                 email = "email@email.com")
-
   context = {'devices': Device.objects.all()}
   
-  temp_user = User.objects.get(email=request.user.email) 
-  # TODO: change when done debugging to email=data['email']
+  user = request.user
 
   new_device = Device(serial_number=form.cleaned_data["serial_number"],
                       status=form.cleaned_data["status"],
-                      owner=temp_user, 
+                      owner=user, 
                       name=form.cleaned_data["name"],
                       most_recent_image=None, 
                       key=form.cleaned_data["key"])
@@ -221,9 +228,10 @@ def add_item(request, id):
         context['message'] = 'You must enter an item to add.'
         return render(request, 'inv.html', context)
 
-    data = get_userinfo(request)
-    print(data)
-    user = User.objects.get(email=data['email']) 
+    # data = get_userinfo(request)
+    # print(data)
+    # user = User.objects.get(email=data['email']) 
+    user = request.user
     loc = Device.objects.get(id=id)
     new_cat = Category(name=request.POST['item'],
                        user_gen=True, 

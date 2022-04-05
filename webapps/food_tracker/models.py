@@ -2,9 +2,13 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import AbstractUser
 
+
+
 class User(AbstractUser):
     phone_number = PhoneNumberField(null = False, blank = False)
     image_url = models.CharField(max_length=200)
+
+
 
 # Cabinet and Device are synonymous, in case of documentation discrepancy
 class Device(models.Model):
@@ -23,6 +27,8 @@ class Device(models.Model):
                       + ", " + "key=" + str(self.key) \
                       + ")"
 
+
+
 # General item classes, in case of documentation discrepancy
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
@@ -30,6 +36,8 @@ class Category(models.Model):
     user_gen = models.BooleanField()
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     desc_folder = models.CharField(max_length = 200) # extended max len
+
+
 
 # Instances of grocery items
 class ItemEntry(models.Model):
@@ -44,6 +52,8 @@ class ItemEntry(models.Model):
                       + ", " + "type=" + str(self.type) \
                       + ", " + "thumbnail=" + str(self.thumbnail) \
                       + ")"
+
+
 
 # User recipes
 class Recipe(models.Model):

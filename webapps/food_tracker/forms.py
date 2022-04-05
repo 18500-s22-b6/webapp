@@ -4,6 +4,17 @@
 from django import forms
 from food_tracker.models import *
 
+#####
+# https://stackoverflow.com/questions/3695754/django-customizing-display-of-modelmultiplechoicefield
+from django.forms.models import ModelMultipleChoiceField
+
+class MyModelMultipleChoiceField(ModelMultipleChoiceField):
+
+    def label_from_instance(self, obj):
+        return "%s" % (obj.name)
+#####
+
+
 class DeviceRegistrationForm(forms.Form):
     serial_number = forms.IntegerField() # TODO: CharField
     # TODO: some unique constraint
@@ -35,7 +46,7 @@ class UserForm(forms.ModelForm):
 
 class RecipeForm(forms.Form):
     name = forms.CharField(max_length=50)
-    ingredients = forms.ModelMultipleChoiceField( \
+    ingredients = MyModelMultipleChoiceField( \
                                     queryset=Category.objects.all(), \
                                     widget=forms.CheckboxSelectMultiple, \
                                     required=False, \
