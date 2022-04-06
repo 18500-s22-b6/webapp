@@ -1,6 +1,15 @@
 <!-- recipes.html -->
+<!-- 
+
+TODO
+    - support writing items in recipes that aren't in the fridge (yet)
+    - mark presence of item somewhere with a checkmark
+    - make recipes editable
+    - add delete recipe button
+ -->
 
 {% extends "dashboard.html" %}
+{% load template_filters %}
 
 {% block content %}
 
@@ -9,14 +18,27 @@
     <ul>
          {% for recipe in recipes %} 
         <li>{{ recipe.name }}</li>
-            {% for item in recipe.ingredients.all %}
+
+            <!-- See teymplate_filters.py for more info -->
+            {% for ingr in recipe.ingredients.all %}
+            <!-- OJO: "ingr" = Category, *NOT* ItemEntry -->
             <ul>
-                <!-- OJO: "item" = Category, *NOT* ItemEntry -->
-                <li>{{ item.name }}</li>
+                <!-- <li>Basic print ingr.name }}</li> -->
+                
+                
+                {% if ingr in ItemEntry|in_cat:ingr %}
+                    <input type="checkbox" checked>if {{ ingr.name }}
+                    <!-- marked = True %} -->
+                {% else %}
+                    <input type="checkbox"> else {{ ingr.name }}
+                {% endif %}
             </ul>
             {% endfor %}
         {% endfor %}
     </ul>
+
+    
+    
     
     <!-- <h1>Cabinet name</h1>
     <ul>

@@ -89,11 +89,13 @@ def dashboard(request):
 @login_required
 def recipes(request):
   context = { 'devices': Device.objects.all(), 
-              'recipes': Recipe.objects.filter() }
+              'recipes': Recipe.objects.filter(), 
+              'items':ItemEntry.objects.all() }
 
   if 'message' in request.session:
     context = { 'devices': Device.objects.all(),
                 'recipes': Recipe.objects.all(),
+                'items':ItemEntry.objects.all(),
                 'message': request.session['message'] }
     del request.session['message']
 
