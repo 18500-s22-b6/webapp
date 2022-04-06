@@ -25,11 +25,16 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('', include('social_django.urls', namespace='social')),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('recipes', views.recipes, name='recipes'), 
+    path('add_recipe', views.add_recipe, name='add_recipe'),
     path('login', views.login, name='login'),
     path('profile', views.profile, name='profile'),
     path('register_user', views.register_user, name='register_user'),
     # path('logout/', LogoutView.as_view(template_name="index.html"), name='logout'),
     path('logout/', views.logout_user, name='logout'),
-    path('cabinet/<int:id>', views.cabinet, name='cabinet'), #<int:id>
-    path('add_device', views.register_device, name='add_device')
+    path('cabinet/<int:id>', views.cabinet, name='cabinet'),
+    path('add_device', views.register_device, name='add_device'), 
+    path('del_cabinet/<int:id>', views.delete_device, name='del_cabinet'),
+    path('add_item/<int:id>', views.add_item, name='add_item'),
+    path('del_item/<int:id>', views.delete_item, name='del_item'),
 ]
