@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'food_tracker',
     'social_django',
-    # 'sslserver',
-    # 'phonenumber_field',
+    'sslserver',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [
@@ -98,6 +98,19 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'food_tracker.pipeline.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'food_tracker.pipeline.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = KEY_CONFIG.get('GoogleOAuth2', 'key')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = KEY_CONFIG.get('GoogleOAuth2', 'secret')
 
@@ -114,6 +127,9 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['profile', 'email']
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = { 'prompt': 'select_account' }
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email', 'public_profile']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'email,picture.type(large),first_name,last_name'
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -133,6 +149,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'food_tracker.User' 
+
+# Phone number configs
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
+
+PHONENUMBER_DEFAULT_REGION = 'US'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

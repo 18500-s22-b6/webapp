@@ -1,0 +1,16 @@
+<!-- add_recipe.html -->
+
+{% extends "dashboard.html" %}
+
+{% block content %}
+
+    <h1>Add recipe</h1>
+    <form method="post" action="{% url 'add_recipe' %}">
+        <table>
+            {{form}}
+        </table>
+        {% csrf_token %} 
+        <button type="submit">Save</button>
+    </form>
+    
+{% endblock %}
