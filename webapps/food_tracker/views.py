@@ -89,16 +89,39 @@ def dashboard(request):
 @login_required
 def recipes(request):
   context = { 'devices': Device.objects.all(), 
-              'recipes': Recipe.objects.filter(), 
+              # 'recipes': Recipe.objects.filter(author=request.user), 
               'items':ItemEntry.objects.all() }
 
   if 'message' in request.session:
-    context = { 'devices': Device.objects.all(),
-                'recipes': Recipe.objects.all(),
-                'items':ItemEntry.objects.all(),
-                'message': request.session['message'] }
+    context['message'] = request.session['message']
     del request.session['message']
 
+  
+  d = {}
+  for recipe in Recipe.objects.all():
+    # d[0] represents ingr that exist
+    # d[1] represents ingr that are missing
+    d[recipe.name] = [[] , []]
+    for ingr in recipe.ingredients.all(): 
+      if(ItemEntry.objects.filter(type=ingr)):
+        d[recipe.name][0].append(ingr)
+      else: 
+        d[recipe.name][1].append(ingr)
+
+  context['recipes'] = d
+
+  # User hit the button to generate a shopping list
+  if request.method == 'POST':
+    name = request.POST.get('recipe')
+    l = d.get(name, None)
+    if l:
+      # TODO: print is a proxy for emailing the user
+      print(l[1])
+    else:
+      print(name + " doesn't exist")
+    return render(request, 'recipes.html', context)
+
+  # Otherwise, regular recipes viewer
   return render(request, 'recipes.html', context)
 
 
@@ -157,8 +180,12 @@ def cabinet(request, id):
 
 @login_required
 def register_device(request):
+# Assumption that all "approved" devices will already be added in the database
+# New registrations simply assign owner to existing devices
+
   context = {}
 
+  # First load (GET request), return empty form
   if request.method == 'GET':
     num = len(Device.objects.filter(owner=request.user))
     form = DeviceRegistrationForm(initial={'name': f'device-{num}'})
@@ -173,14 +200,14 @@ def register_device(request):
   try:
     device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
   except Exception as e:
-    request.session['message'] = 'Invalid serial number'
+    request.session['message'] = 'Invalid serial number (Error NF)'
     return redirect('dashboard')
   
   if device.status != NOT_REGISTERED:
     if device.owner == request.user:
       request.session['message'] = 'You have already registered this device'
     else:
-      request.session['message'] = 'Invalid serial number'
+      request.session['message'] = 'Invalid serial number (Error SE)'
     return redirect('dashboard')
   
   device.status = ONLINE
@@ -189,6 +216,7 @@ def register_device(request):
     setattr(device, key, value)
   device.save()
 
+  # MESSAGE: Inform the user of successful registration
   # v1: Redirect to add_device
   # Problem: refresh adds duplicate devices
   # context['message'] = "Registration successful!" 
@@ -288,3 +316,8 @@ def delete_item(request, id):
 
   # return render(request, 'inv.html', context)
   return redirect('cabinet', cab_id)
+
+def shopping_list(request):
+  context = {}
+
+  return 

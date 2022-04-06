@@ -16,24 +16,38 @@ TODO
     <h1>Recipes</h1>
     <a href="{% url 'add_recipe' %}">Add recipe</a>
     <ul>
-         {% for recipe in recipes %} 
-        <li>{{ recipe.name }}</li>
+         {% for name, recipe in recipes.items %} 
+        <li>{{ name }} 
+            <form method="post" action="{% url 'recipes' %}">
+                <input type = "hidden" name='recipe' value='{{name}}'> 
+                {% csrf_token %}
+                <button type="submit">send email</button>
+            </form>
+        </li>
 
-            <!-- See teymplate_filters.py for more info -->
-            {% for ingr in recipe.ingredients.all %}
+            <!-- See template_filters.py for more info -->
+            <!-- for type, ingrs in recipe.items %} -->
             <!-- OJO: "ingr" = Category, *NOT* ItemEntry -->
             <ul>
-                <!-- <li>Basic print ingr.name }}</li> -->
+                <!--  if ingr in ItemEntry|in_cat:ingr %} -->
+                {% for ingr in recipe.0 %}
+                    <li><input type="checkbox" checked> {{ ingr.name }}</li>
+                {% endfor %}
+                {% for ingr in recipe.1 %}
+                    <li><input type="checkbox"> {{ ingr.name }}</li>
+                {% endfor %}
                 
-                
-                {% if ingr in ItemEntry|in_cat:ingr %}
-                    <input type="checkbox" checked>if {{ ingr.name }}
-                    <!-- marked = True %} -->
-                {% else %}
-                    <input type="checkbox"> else {{ ingr.name }}
-                {% endif %}
+                <!-- else %} -->
+        
+                <!-- endif %} -->
             </ul>
-            {% endfor %}
+
+            <!-- endfor %} -->
+            <!--  for ingr in recipe.missing %} -->
+            <ul>
+
+                
+            </ul>
         {% endfor %}
     </ul>
 
