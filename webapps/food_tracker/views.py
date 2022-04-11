@@ -1,19 +1,14 @@
 import imp
-from urllib.error import HTTPError
 from http.client import METHOD_NOT_ALLOWED
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 
-import requests
-# from django.http import HttpResponse, Http400
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 import requests
 import json
 import jsonschema
