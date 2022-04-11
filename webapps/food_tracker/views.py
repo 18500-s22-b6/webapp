@@ -1,17 +1,23 @@
+import imp
 from http.client import METHOD_NOT_ALLOWED
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
-# from django.http import HttpResponse, Http400
+
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 import requests
 import json
 import jsonschema
 import hashlib
+
+#import cv module
+import sys
+sys.path.append("../../")
+import cv_code as cv_code
 
 from .models import *
 from .forms import *
@@ -43,10 +49,10 @@ def profile(request):
     return redirect('register_user')
 
   context = {'devices': Device.objects.filter(owner=request.user)}
-  
+
   if User.objects.filter(email=request.user.email):
     return render(request, 'profile.html', context)
-  
+
   return render(request, 'profile.html')
 
 @login_required
@@ -101,24 +107,24 @@ def dashboard(request):
 
 @login_required
 def recipes(request):
-  context = { 'devices': Device.objects.all(), 
-              # 'recipes': Recipe.objects.filter(author=request.user), 
+  context = { 'devices': Device.objects.all(),
+              # 'recipes': Recipe.objects.filter(author=request.user),
               'items':ItemEntry.objects.all() }
 
   if 'message' in request.session:
     context['message'] = request.session['message']
     del request.session['message']
 
-  
+
   d = {}
   for recipe in Recipe.objects.all():
     # d[0] represents ingr that exist
     # d[1] represents ingr that are missing
     d[recipe.name] = [[] , []]
-    for ingr in recipe.ingredients.all(): 
+    for ingr in recipe.ingredients.all():
       if(ItemEntry.objects.filter(type=ingr)):
         d[recipe.name][0].append(ingr)
-      else: 
+      else:
         d[recipe.name][1].append(ingr)
 
   context['recipes'] = d
@@ -144,14 +150,14 @@ def recipes(request):
 
 @login_required
 def add_recipe(request):
-  
+
   ##### If GET, the user just clicked on the link
   ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
-    context = { 'form': RecipeForm(), 
+    context = { 'form': RecipeForm(),
                 'devices': Device.objects.all() }
     return render(request, 'add_recipe.html', context)
-  
+
   ##### If POST, "submit" button was pressed
   form = RecipeForm(request.POST)
   if not form.is_valid():
@@ -159,11 +165,11 @@ def add_recipe(request):
     return render(request, 'add_recipe.html', context)
 
   context = {'devices': Device.objects.all()}
-  
+
   user = request.user
   # TODO: change when done debugging to email=data['email']
 
-  new_recipe = Recipe(author = user, 
+  new_recipe = Recipe(author = user,
                       name = form.cleaned_data["name"])
                       # ingredients = form.cleaned_data["ingredients"]
   new_recipe.save()
@@ -183,8 +189,8 @@ def cabinet(request, id):
     return redirect('dashboard')
 
   device = Device.objects.get(id=id)
-  context = { 
-    'devices': Device.objects.filter(owner=request.user), 
+  context = {
+    'devices': Device.objects.filter(owner=request.user),
     'device': device,
     'items': ItemEntry.objects.filter(location=device)
   }
@@ -215,14 +221,14 @@ def register_device(request):
   except Exception as e:
     request.session['message'] = 'Invalid serial number (Error NF)'
     return redirect('dashboard')
-  
+
   if device.status != NOT_REGISTERED:
     if device.owner == request.user:
       request.session['message'] = 'You have already registered this device'
     else:
-      request.session['message'] = 'Invalid serial number (Error SE)'
+      request.session['message'] = 'Device has already been registered (Error SE)'
     return redirect('dashboard')
-  
+
   device.status = ONLINE
   device.owner = request.user
   for key, value in form.cleaned_data.items():
@@ -232,7 +238,7 @@ def register_device(request):
   # MESSAGE: Inform the user of successful registration
   # v1: Redirect to add_device
   # Problem: refresh adds duplicate devices
-  # context['message'] = "Registration successful!" 
+  # context['message'] = "Registration successful!"
   # return render(request, 'add_device.html', context)
 
   # v2: Django messages
@@ -260,7 +266,7 @@ def delete_device(request, id):
   entry.delete()
 
   # OJO: recreate device list after deleting the device (duh)
-  context = { 'devices': Device.objects.all(), 
+  context = { 'devices': Device.objects.all(),
               'message': message }
 
   return render(request, 'dashboard.html', context)
@@ -273,6 +279,8 @@ def get_context_by_user_data(request, data):
     }
   }
   return context
+
+
 
 @login_required
 def add_item(request, id):
@@ -288,22 +296,22 @@ def add_item(request, id):
 
     # data = get_userinfo(request)
     # print(data)
-    # user = User.objects.get(email=data['email']) 
+    # user = User.objects.get(email=data['email'])
     user = request.user
     loc = Device.objects.get(id=id)
     new_cat = Category(name=request.POST['item'],
-                       user_gen=True, 
-                       creator=user, 
+                       user_gen=True,
+                       creator=user,
                        desc_folder='n/a')
     new_cat.save()
 
     # cat = Category.objects.get(name="Custom")
 
-    new_item = ItemEntry(location=loc, 
+    new_item = ItemEntry(location=loc,
                          type=new_cat, # cat
                          thumbnail="")
     new_item.save()
-    
+
     return redirect('cabinet', id)
 
 @login_required
@@ -322,7 +330,7 @@ def delete_item(request, id):
   message = 'Item {0} has been deleted.'.format(entry.type.name)
   entry.delete()
 
-  context = { 'devices': Device.objects.all(), 
+  context = { 'devices': Device.objects.all(),
               'items': ItemEntry.objects.all(),
               'message': message }
   print(context)
@@ -338,7 +346,7 @@ def update_inventory(request):
       }, status=METHOD_NOT_ALLOWED)
 
   data = json.loads(request.body.decode('utf-8'))
-  
+
   schema = {
     "type": "object",
     "properties": {
@@ -370,11 +378,11 @@ def update_inventory(request):
     return JsonResponse({
         'error': 'Invalid request'
       }, status=FORBIDDEN)
-    
+
   # TODO: decode image field
 
   # TODO: run CV component on the image
-  
+
   # TODO: update inventory
 
   return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
@@ -382,5 +390,7 @@ def update_inventory(request):
 def shopping_list(request):
   context = {}
 
-  return 
+  return
+
+
 
