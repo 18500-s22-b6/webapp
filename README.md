@@ -21,6 +21,7 @@ pip install django
 pip install django-phonenumber-field[phonenumbers]
 pip install social-auth-app-django
 pip install django-sslserver
+pip install jsonschema
 
 ***** Create database:
 python3 manage.py makemigrations
