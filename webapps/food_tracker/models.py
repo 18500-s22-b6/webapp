@@ -37,6 +37,9 @@ class Category(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     desc_folder = models.CharField(max_length = 200) # extended max len
 
+    def __str__(self):
+        return "" + self.name
+
 
 
 # Instances of grocery items

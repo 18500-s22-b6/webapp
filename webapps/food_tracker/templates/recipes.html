@@ -1,22 +1,58 @@
 <!-- recipes.html -->
+<!-- 
+
+TODO
+    - support writing items in recipes that aren't in the fridge (yet)
+    - mark presence of item somewhere with a checkmark
+    - make recipes editable
+    - add delete recipe button
+ -->
 
 {% extends "dashboard.html" %}
+{% load template_filters %}
 
 {% block content %}
 
     <h1>Recipes</h1>
     <a href="{% url 'add_recipe' %}">Add recipe</a>
     <ul>
-         {% for recipe in recipes %} 
-        <li>{{ recipe.name }}</li>
-            {% for item in recipe.ingredients.all %}
+         {% for name, recipe in recipes.items %} 
+        <li>{{ name }} 
+            <form method="post" action="{% url 'recipes' %}">
+                <input type = "hidden" name='recipe' value='{{name}}'> 
+                {% csrf_token %}
+                <button type="submit">send email</button>
+            </form>
+        </li>
+
+            <!-- See template_filters.py for more info -->
+            <!-- for type, ingrs in recipe.items %} -->
+            <!-- OJO: "ingr" = Category, *NOT* ItemEntry -->
             <ul>
-                <!-- OJO: "item" = Category, *NOT* ItemEntry -->
-                <li>{{ item.name }}</li>
+                <!--  if ingr in ItemEntry|in_cat:ingr %} -->
+                {% for ingr in recipe.0 %}
+                    <li><input type="checkbox" checked> {{ ingr.name }}</li>
+                {% endfor %}
+                {% for ingr in recipe.1 %}
+                    <li><input type="checkbox"> {{ ingr.name }}</li>
+                {% endfor %}
+                
+                <!-- else %} -->
+        
+                <!-- endif %} -->
             </ul>
-            {% endfor %}
+
+            <!-- endfor %} -->
+            <!--  for ingr in recipe.missing %} -->
+            <ul>
+
+                
+            </ul>
         {% endfor %}
     </ul>
+
+    
+    
     
     <!-- <h1>Cabinet name</h1>
     <ul>
