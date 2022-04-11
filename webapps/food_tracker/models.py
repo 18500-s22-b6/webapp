@@ -12,12 +12,12 @@ class User(AbstractUser):
 
 # Cabinet and Device are synonymous, in case of documentation discrepancy
 class Device(models.Model):
-    serial_number = models.IntegerField()
+    serial_number = models.CharField(max_length=32)
     status = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(blank=True, null=True, max_length = 50)
     most_recent_image = models.ImageField(blank=True, null=True)
-    key = models.CharField(max_length = 50)
+    key = models.CharField(max_length = 100)
 
     def __str__(self):
         return "Device(id=" + str(self.serial_number) \

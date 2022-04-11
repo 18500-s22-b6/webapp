@@ -1,5 +1,6 @@
 import imp
 from urllib.error import HTTPError
+from http.client import METHOD_NOT_ALLOWED
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
@@ -9,6 +10,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 import requests
+# from django.http import HttpResponse, Http400
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+import requests
+import json
+import jsonschema
+import hashlib
+
+#import cv module
 import sys
 sys.path.append("../../")
 import cv_code as cv_code
@@ -19,6 +30,12 @@ from .forms import *
 # Device status
 NOT_REGISTERED = 0
 ONLINE = 1
+
+# HTTP Status Codes
+SUCCESS = 200
+BAD_REQUEST = 400
+FORBIDDEN = 403
+METHOD_NOT_ALLOWED = 405
 
 def home(request):
   if request.user.is_authenticated:
@@ -326,35 +343,59 @@ def delete_item(request, id):
   # return render(request, 'inv.html', context)
   return redirect('cabinet', cab_id)
 
+@csrf_exempt
+def update_inventory(request):
+  if request.method != 'POST':
+    return JsonResponse({
+        'error': 'Only POST requests are supported'
+      }, status=METHOD_NOT_ALLOWED)
+
+  data = json.loads(request.body.decode('utf-8'))
+
+  schema = {
+    "type": "object",
+    "properties": {
+      "serial_number": {"type": "string"},
+      "image": {"type": "string"},
+      "secret": {"type": "string"},
+    },
+    "additionalProperties": False,
+    "required": ["serial_number", "image", "secret"],
+  }
+
+  try:
+    jsonschema.validate(instance=data, schema=schema)
+  except jsonschema.exceptions.ValidationError as err:
+    return JsonResponse({
+      'error': 'Invalid request body'
+    }, status=BAD_REQUEST)
+
+  try:
+    device = Device.objects.get(serial_number=data['serial_number'])
+    if device.status == NOT_REGISTERED:
+      raise Exception('Device is not registered')
+
+    hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
+    if hashed_str != device.key:
+      raise Exception('Invalid secret')
+  except Exception as e:
+    print(e)
+    return JsonResponse({
+        'error': 'Invalid request'
+      }, status=FORBIDDEN)
+
+  # TODO: decode image field
+
+  # TODO: run CV component on the image
+
+  # TODO: update inventory
+
+  return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+
 def shopping_list(request):
   context = {}
 
   return
 
-@csrf_exempt
-def RPI_post_request(request):
-
-  #verify correctness of request
-  if request.method != 'POST':
-    return HttpResponse('Invalid request.  POST method must be used.')
-  for required_field in ["Secret", "SerialID", "Image"]:
-    if required_field not in request.POST or not request.POST[required_field]:
-      return HttpResponse(f'Invalid request. {required_field} not provided.')
 
 
-  #verify secret and ID are valid:
-  try:
-    device = Device.objects.get(serial_number=request.POST['SerialID'])
-  except:
-    return HttpResponse(f'Invalid request. No device with specified SerialID.')
-  if device.secret != request.POST['Secret']:
-    return HttpResponse('Invalid secret.')
-
-  #now, we update the inventory list
-  #TODO: get additional items added by user
-  #TODO: get bg image for this device
-  cv_code.get_best_guess_or_none(request.POST['SerialID'], None)
-
-
-  return HttpResponse("succsess")
-  return HTTPError(400, "Bad Reqeust")
