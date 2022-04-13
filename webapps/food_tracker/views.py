@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
-
-
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import requests
@@ -31,6 +30,9 @@ SUCCESS = 200
 BAD_REQUEST = 400
 FORBIDDEN = 403
 METHOD_NOT_ALLOWED = 405
+
+# reCAPTCHA
+RECAPTCHA_VERIFICATION_URL = 'https://www.google.com/recaptcha/api/siteverify'
 
 def home(request):
   if request.user.is_authenticated:
@@ -204,6 +206,7 @@ def register_device(request):
 # New registrations simply assign owner to existing devices
 
   context = {}
+  context['site_key'] = settings.GOOGLE_RECAPTCHA_KEY
 
   # First load (GET request), return empty form
   if request.method == 'GET':
@@ -216,6 +219,20 @@ def register_device(request):
   if not form.is_valid():
     context['form'] = form
     return render(request, 'add_device.html', context)
+  
+  recaptcha_response = request.POST.get('g-recaptcha-response')
+  response = requests.post(
+    url=RECAPTCHA_VERIFICATION_URL,
+    data={
+      'secret': settings.GOOGLE_RECAPTCHA_SECRET,
+      'response': recaptcha_response,
+    }).json()
+  
+  if not response['success']:
+    context['form'] = form
+    request.session['message'] = 'reCAPTCHA failed'
+    return render(request, 'add_device.html', context)
+  
 
   try:
     device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
@@ -343,9 +360,10 @@ def update_inventory(request):
       "serial_number": {"type": "string"},
       "image": {"type": "string"},
       "secret": {"type": "string"},
+      "timestamp": {"type": "integer"},
     },
     "additionalProperties": False,
-    "required": ["serial_number", "image", "secret"],
+    "required": ["serial_number", "image", "secret", "timestamp"],
   }
 
   try:

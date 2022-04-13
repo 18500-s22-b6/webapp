@@ -18,6 +18,7 @@ class Device(models.Model):
     name = models.CharField(blank=True, null=True, max_length = 50)
     most_recent_image = models.ImageField(blank=True, null=True)
     key = models.CharField(max_length = 100)
+    last_update = models.IntegerField(default=0)
 
     def __str__(self):
         return "Device(id=" + str(self.serial_number) \

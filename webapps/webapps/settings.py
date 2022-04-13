@@ -91,6 +91,10 @@ DATABASES = {
     }
 }
 
+# reCAPTCHA
+GOOGLE_RECAPTCHA_KEY = KEY_CONFIG.get('reCAPTCHA_v2', 'key')
+GOOGLE_RECAPTCHA_SECRET = KEY_CONFIG.get('reCAPTCHA_v2', 'secret')
+
 # OAuth
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
