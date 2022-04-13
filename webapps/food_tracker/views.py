@@ -107,7 +107,7 @@ def dashboard(request):
 
 @login_required
 def recipes(request):
-  context = { 'devices': Device.objects.all(),
+  context = { 'devices': Device.objects.filter(owner=request.user),
               # 'recipes': Recipe.objects.filter(author=request.user),
               'items':ItemEntry.objects.all() }
 
@@ -155,16 +155,17 @@ def add_recipe(request):
   ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
     context = { 'form': RecipeForm(),
-                'devices': Device.objects.all() }
+                'devices': Device.objects.filter(owner=request.user) }
     return render(request, 'add_recipe.html', context)
 
   ##### If POST, "submit" button was pressed
   form = RecipeForm(request.POST)
   if not form.is_valid():
-    context = {'form': form, 'devices': Device.objects.all()}
+    context = { 'form': form, 
+                'devices': Device.objects.filter(owner=request.user) }
     return render(request, 'add_recipe.html', context)
 
-  context = {'devices': Device.objects.all()}
+  context = {'devices': Device.objects.filter(owner=request.user) }
 
   user = request.user
   # TODO: change when done debugging to email=data['email']
@@ -182,7 +183,7 @@ def add_recipe(request):
 @login_required
 def cabinet(request, id):
   # Request for a specific cabinet
-  context = {}
+  context = { 'devices': Device.objects.filter(owner=request.user) }
 
   if not Device.objects.filter(id=id).exists():
     request.session['message'] = 'Invalid device ID'
@@ -254,7 +255,7 @@ def register_device(request):
 def delete_device(request, id):
 # See addrbook2 for example
 
-  context = { 'devices': Device.objects.all() }
+  context = { 'devices': Device.objects.filter(owner=request.user) }
 
   if request.method != 'POST':
     message = 'Invalid request.  POST method must be used.'
@@ -266,7 +267,7 @@ def delete_device(request, id):
   entry.delete()
 
   # OJO: recreate device list after deleting the device (duh)
-  context = { 'devices': Device.objects.all(),
+  context = { 'devices': Device.objects.filter(owner=request.user),
               'message': message }
 
   return render(request, 'dashboard.html', context)
@@ -317,7 +318,7 @@ def add_item(request, id):
 @login_required
 def delete_item(request, id):
 
-  context = { 'devices': Device.objects.all() }
+  context = { 'devices': Device.objects.filter(owner=request.user) }
 
   if request.method != 'POST':
     message = 'Invalid request.  POST method must be used.'
@@ -330,7 +331,7 @@ def delete_item(request, id):
   message = 'Item {0} has been deleted.'.format(entry.type.name)
   entry.delete()
 
-  context = { 'devices': Device.objects.all(),
+  context = { 'devices': Device.objects.filter(owner=request.user),
               'items': ItemEntry.objects.all(),
               'message': message }
   print(context)
