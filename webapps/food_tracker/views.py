@@ -13,11 +13,15 @@ import requests
 import json
 import jsonschema
 import hashlib
+import io
+from PIL import Image
+import base64
+from django.core.files.base import ContentFile
 
 #import cv module
 import sys
-sys.path.append("../../")
-import cv_code as cv_code
+sys.path.append("../cv_code")
+import cv_code_main as cv_code
 
 from .models import *
 from .forms import *
@@ -379,13 +383,34 @@ def update_inventory(request):
         'error': f'Invalid request: {e}'
       }, status=FORBIDDEN)
 
-  # TODO: decode image field
+  # convert image back to PIL object
+  img_bytes = base64.b64decode(data["image"].encode('utf-8'))
+  cur_img_bytes_io = io.BytesIO(img_bytes)
+  #update device image field
+  image_field = device.most_recent_image
+  old_bg_path = image_field.path
+  device.most_recent_image.save("tmp/bg.png", ContentFile(cur_img_bytes_io.getvalue()), save=True)
+  device.save()
 
-  # TODO: run CV component on the image
+  #if we have no previous bg image, this is the first bg image
+  if old_bg_path is None:
+    return JsonResponse({'success': 'bg image updated'}, status=SUCCESS)
 
-  # TODO: update inventory
+  new_image_path = image_field.path
 
-  return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+  #TODO: supply the iconic images which this user has registered as third argument
+  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, None)
+
+  if best_guess is not None:
+    # TODO: update inventory
+    return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+  else:
+    # TODO: handle case where user needs to give input
+    return JsonResponse({
+        'error': f'TODO'
+      }, status=FORBIDDEN)
+
+
 
 def shopping_list(request):
   context = {}

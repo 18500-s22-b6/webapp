@@ -14,3 +14,4 @@ db.sqlite3
 */*.pem
 *.cert
 webapps/cert.pem
+tmp/
