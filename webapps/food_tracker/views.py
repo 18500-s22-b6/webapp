@@ -357,7 +357,6 @@ def update_inventory(request):
     "additionalProperties": False,
     "required": ["serial_number", "image", "secret"],
   }
-
   try:
     jsonschema.validate(instance=data, schema=schema)
   except jsonschema.exceptions.ValidationError as err:
@@ -370,13 +369,14 @@ def update_inventory(request):
     if device.status == NOT_REGISTERED:
       raise Exception('Device is not registered')
 
-    hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
-    if hashed_str != device.key:
+    #TODO: do we need to hash this?
+    # hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
+    if data['secret'] != device.key:
       raise Exception('Invalid secret')
   except Exception as e:
     print(e)
     return JsonResponse({
-        'error': 'Invalid request'
+        'error': f'Invalid request: {e}'
       }, status=FORBIDDEN)
 
   # TODO: decode image field
