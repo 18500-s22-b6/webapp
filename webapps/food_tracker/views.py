@@ -388,7 +388,10 @@ def update_inventory(request):
   cur_img_bytes_io = io.BytesIO(img_bytes)
   #update device image field
   image_field = device.most_recent_image
-  old_bg_path = image_field.path
+  try:
+    old_bg_path = image_field.path
+  except:
+    old_bg_path = None
   device.most_recent_image.save("tmp/bg.png", ContentFile(cur_img_bytes_io.getvalue()), save=True)
   device.save()
 
@@ -402,13 +405,27 @@ def update_inventory(request):
   best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, None)
 
   if best_guess is not None:
-    # TODO: update inventory
+    #TODO: update this to use existing category if appropriate
+    new_cat = Category(name=best_guess,
+                       user_gen=True,
+                       creator=device.owner,
+                       desc_folder='n/a')
+    new_cat.save()
+
+    # cat = Category.objects.get(name="Custom")
+
+    new_item = ItemEntry(location=device,
+                          type=new_cat, # cat
+                          thumbnail="")
+    new_item.save()
     return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
   else:
     # TODO: handle case where user needs to give input
     return JsonResponse({
         'error': f'TODO'
       }, status=FORBIDDEN)
+
+
 
 
 
