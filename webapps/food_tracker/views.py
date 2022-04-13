@@ -1,4 +1,3 @@
-import imp
 from http.client import METHOD_NOT_ALLOWED
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -14,9 +13,9 @@ import jsonschema
 import hashlib
 
 #import cv module
-import sys
-sys.path.append("../../")
-import cv_code as cv_code
+# import sys
+# sys.path.append("../../")
+# import cv_code as cv_code
 
 from .models import *
 from .forms import *
@@ -237,14 +236,14 @@ def register_device(request):
   try:
     device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
   except Exception as e:
-    request.session['message'] = 'Invalid serial number (Error NF)'
+    request.session['message'] = 'Invalid serial number'
     return redirect('dashboard')
 
   if device.status != NOT_REGISTERED:
     if device.owner == request.user:
       request.session['message'] = 'You have already registered this device'
     else:
-      request.session['message'] = 'Device has already been registered (Error SE)'
+      request.session['message'] = 'Device has already been registered'
     return redirect('dashboard')
 
   device.status = ONLINE
@@ -279,15 +278,20 @@ def delete_device(request, id):
     context['message'] = message
     return render(request, 'dashboard.html', context)
 
-  entry = get_object_or_404(Device, id=id)
-  message = 'Cabinet {0} has been deleted.'.format(entry.name)
-  entry.delete()
+  device = get_object_or_404(Device, id=id)
+  if device.owner != request.user:
+    return redirect('dashboard')
+
+  message = 'Cabinet {0} has been deleted.'.format(device.name)
+  device.owner = None
+  device.status = NOT_REGISTERED
+  device.save()
 
   # OJO: recreate device list after deleting the device (duh)
   context = { 'devices': Device.objects.filter(owner=request.user),
               'message': message }
 
-  return render(request, 'dashboard.html', context)
+  return redirect('dashboard')
 
 @login_required
 def add_item(request, id):
