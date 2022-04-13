@@ -265,15 +265,6 @@ def delete_device(request, id):
 
   return render(request, 'dashboard.html', context)
 
-def get_context_by_user_data(request, data):
-  context = {
-    'user': {
-      **data,
-      'is_superuser': request.user.is_superuser,
-    }
-  }
-  return context
-
 @login_required
 def add_item(request, id):
 #KNOWN BUGS: empty field error redirect not working
