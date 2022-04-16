@@ -25,6 +25,7 @@ import cv_code_main as cv_code
 
 from .models import *
 from .forms import *
+import numpy as np
 
 # Device status
 NOT_REGISTERED = 0
@@ -405,31 +406,51 @@ def update_inventory(request):
   iconic_images = list(IconicImage.objects.all().filter(user=device.owner))
   iconic_dict = dict()
   for iconic_image in iconic_images:
-    iconic_dict[iconic_image.category.name] = iconic_image.path
+    iconic_dict[iconic_image.category.name] = iconic_image.image.path
 
   #TODO: supply the iconic images which this user has registered as third argument
   best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)
 
-  if best_guess is not None:
-    #TODO: update this to use existing category if appropriate
-    new_cat = Category(name=best_guess,
-                       user_gen=True,
-                       creator=device.owner,
-                       desc_folder='n/a')
-    new_cat.save()
+  if isinstance(best_guess, str):
+
+    try:
+      cat = Category.objects.get(name=best_guess)
+    except:
+      cat = Category(name=best_guess,
+                        user_gen=True,
+                        creator=device.owner,
+                        desc_folder='n/a')
+      cat.save()
 
     # cat = Category.objects.get(name="Custom")
 
     new_item = ItemEntry(location=device,
-                          type=new_cat, # cat
+                          type=cat, # cat
                           thumbnail="")
     new_item.save()
     return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
   else:
-    # TODO: handle case where user needs to give input
-    return JsonResponse({
-        'error': f'TODO'
-      }, status=FORBIDDEN)
+    assert isinstance(best_guess, np.ndarray)
+    # In this case, we create an Iconic image for this user, with the default category "UNKNOWN ITEM"
+
+    #create unknown Item category if it doesn't exist
+    try:
+      unknown_cat = Category.objects.get(name="UNKNOWN ITEM")
+    except:
+      unknown_cat = Category(name="UNKNOWN ITEM",
+                       user_gen=True,
+                       creator=device.owner,
+                       desc_folder='n/a')
+      unknown_cat.save()
+
+    new_iconic_img = IconicImage(user=device.owner,
+                                  category=unknown_cat,
+                                  image = best_guess,
+                                  )
+
+    new_iconic_img.save()
+
+    return JsonResponse({'success': 'Unable to identify item'}, status=SUCCESS)
 
 
 

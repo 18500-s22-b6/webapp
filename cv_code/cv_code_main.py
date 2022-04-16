@@ -620,7 +620,11 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
         best_guess_dict[img_name] = best_guess
 
     #TODO: have some heuristic check when somthing is removed rather than added
-    return best_guess_dict["post_diff"]
+    if False:
+        return best_guess_dict["post_diff"]
+    else:
+        #if we couldn't identify it, return the diff
+        return post_diff
 
 
 
