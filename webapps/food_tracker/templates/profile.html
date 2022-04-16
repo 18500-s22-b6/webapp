@@ -3,6 +3,11 @@
 {% block content %}
     <h1>Hello, {{ user.first_name }} {{ user.email }}</h1>
     <img src="{{ user.picture }}" width="100px">
+    {% if message %}
+    <h2> {{ message }} </h2>
+    <!-- elif request.session.message -->
+    <!-- <h2> request.session.message </h2> -->
+    {% endif %}
 
     <a href="{% url 'logout' %}">
         <button>

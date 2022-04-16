@@ -7,7 +7,7 @@ from food_tracker.models import *
 
 #####
 # https://stackoverflow.com/questions/3695754/django-customizing-display-of-modelmultiplechoicefield
-from django.forms.models import ModelMultipleChoiceField
+from django.forms.models import ModelMultipleChoiceField, ModelChoiceField
 
 class MyModelMultipleChoiceField(ModelMultipleChoiceField):
 
@@ -56,7 +56,7 @@ class RecipeForm(forms.Form):
                                     label="Ingredients")
 
 class ImageIdForm(forms.Form):
-    category = MyModelMultipleChoiceField( \
+    category = ModelChoiceField( \
                                     queryset=Category.objects.all(), \
                                     widget=forms.Select, \
                                     required=True, \

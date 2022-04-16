@@ -56,8 +56,12 @@ def profile(request):
 
   context = {
     'devices': Device.objects.filter(owner=request.user),
-    "unkown_items": IconicImage.objects.filter(user=request.user), #TODO: filter by category
+    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"), #TODO: filter by category
     }
+
+  if 'message' in request.session:
+    context['message'] = request.session['message']
+    del request.session['message']
 
   if User.objects.filter(email=request.user.email):
     return render(request, 'profile.html', context)
@@ -426,7 +430,6 @@ def update_inventory(request):
                         desc_folder='n/a')
       cat.save()
 
-    # cat = Category.objects.get(name="Custom")
 
     new_item = ItemEntry(location=device,
                           type=cat, # cat
@@ -453,9 +456,15 @@ def update_inventory(request):
                        desc_folder='n/a')
       unknown_cat.save()
 
+    new_item = ItemEntry(location=device,
+                          type=unknown_cat, # cat
+                          thumbnail="")
+    new_item.save()
+
     new_iconic_img = IconicImage(user=device.owner,
                                   category=unknown_cat,
                                   image = img_file,
+                                  associated_item_entry = new_item,
                                   )
     #This addition image save is needed. I don't know if there is a better way to do this.
     new_iconic_img.image.save(f"unknown.png", img_file, save=True)
@@ -483,8 +492,11 @@ def id_unknown_item(request, id):
   form.cleaned_data["category"]
 
   entry.category = form.cleaned_data["category"]
+  entry.associated_item_entry.type = form.cleaned_data["category"]
 
   entry.save()
+  entry.associated_item_entry.save()
+
 
   request.session['message'] = "Identification successful!"
   return redirect('profile')

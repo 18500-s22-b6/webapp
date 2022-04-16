@@ -69,6 +69,8 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Category, blank=True)
 
 # User registered Iconic images
+# May have an associated ItemEntry, which will have it's category updated
+# When the image is identified by the
 class IconicImage(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
@@ -77,5 +79,6 @@ class IconicImage(models.Model):
     )
     image = models.ImageField(upload_to= f'images/user_registered_iconic_images/')
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.PROTECT, blank=True, null=True)
 
 
