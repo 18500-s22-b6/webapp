@@ -1,6 +1,7 @@
 # forms.py
 # See ourlife > forms.py for similar model
 
+from unicodedata import category
 from django import forms
 from food_tracker.models import *
 
@@ -19,7 +20,7 @@ class DeviceRegistrationForm(forms.ModelForm):
     # serial_number = forms.IntegerField() # TODO: CharField
     # TODO: some unique constraint
     # status = forms.IntegerField()
-    # owner = forms.Model(User, on_delete=models.PROTECT) 
+    # owner = forms.Model(User, on_delete=models.PROTECT)
     ##### We don't need to ask the user who the owner is
     # name = forms.CharField(max_length = 50)
     # key = forms.CharField(required=True, max_length = 50)
@@ -53,3 +54,10 @@ class RecipeForm(forms.Form):
                                     widget=forms.CheckboxSelectMultiple, \
                                     required=False, \
                                     label="Ingredients")
+
+class ImageIdForm(forms.Form):
+    category = MyModelMultipleChoiceField( \
+                                    queryset=Category.objects.all(), \
+                                    widget=forms.Select, \
+                                    required=True, \
+                                    label="Please identify the above item")

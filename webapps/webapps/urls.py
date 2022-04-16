@@ -40,4 +40,5 @@ urlpatterns = [
     path('add_item/<int:id>', views.add_item, name='add_item'),
     path('del_item/<int:id>', views.delete_item, name='del_item'),
     path('update_inventory', views.update_inventory, name='update_inventory'),
+    path('id_unknown_item/<int:id>', views.id_unknown_item, name='id_unknown_item'),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

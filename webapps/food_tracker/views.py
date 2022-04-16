@@ -464,6 +464,31 @@ def update_inventory(request):
     return JsonResponse({'success': 'Unable to identify item'}, status=SUCCESS)
 
 
+@login_required
+def id_unknown_item(request, id):
+  entry = get_object_or_404(IconicImage, id=id, user=request.user)
+
+  if request.method == 'GET':
+    context = {"entry": entry, 'form': ImageIdForm(), "id": id}
+    return render(request, 'id_unknown_item.html', context)
+
+  ##### If POST, "submit" button was pressed
+  form = ImageIdForm(request.POST)
+  if not form.is_valid():
+    #TODO: raise a proper error
+    context = {"entry": entry, 'form': ImageIdForm(), "id": id}
+    return render(request, 'id_unknown_item.html', context)
+
+
+  form.cleaned_data["category"]
+
+  entry.category = form.cleaned_data["category"]
+
+  entry.save()
+
+  request.session['message'] = "Identification successful!"
+  return redirect('profile')
+
 
 
 

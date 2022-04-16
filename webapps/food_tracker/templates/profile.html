@@ -11,7 +11,7 @@
     </a>
     <ul>
         {% for unknown_item in unkown_items %}
-            <li> <img src= "{{ unknown_item.image.url }}" />
+            <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
             </li>
         {% endfor %}
     </ul>
