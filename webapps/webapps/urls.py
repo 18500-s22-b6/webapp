@@ -23,7 +23,7 @@ from food_tracker import views
 urlpatterns = [
     path('admin', admin.site.urls),
     path('', views.home, name='home'),
-    path('', include('social_django.urls', namespace='social')),
+    # path('', include('social_django.urls', namespace='social')),
     path('dashboard', views.dashboard, name='dashboard'),
     path('recipes', views.recipes, name='recipes'),
     path('add_recipe', views.add_recipe, name='add_recipe'),
@@ -38,4 +38,12 @@ urlpatterns = [
     path('add_item/<int:id>', views.add_item, name='add_item'),
     path('del_item/<int:id>', views.delete_item, name='del_item'),
     path('update_inventory', views.update_inventory, name='update_inventory'),
+    
+
+    path('ajax-add-item', views.ajax_add_item, name='ajax-add-item'),
+    path('ajax-del_item/<int:id>', views.ajax_del_item, name='ajax-del-item'),
+    path('get-list', views.get_list_json_dumps_serializer), 
+    # path('get_list-django-serializer', views.get_list_django_serializer), 
+    # path('get-list-xml', views.get_list_xml), 
+    # path('get-list-xml-template', views.get_list_xml_template)
 ]

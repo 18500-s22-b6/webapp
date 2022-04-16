@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
@@ -47,6 +47,7 @@ def login(request):
 
 @login_required
 def profile(request):
+  # If this is their first time logging in
   if not request.user.phone_number:
     return redirect('register_user')
 
@@ -90,6 +91,9 @@ def logout_user(request):
 
   logout(request)
   return redirect('home')
+
+
+
 
 @login_required
 def dashboard(request):
@@ -302,33 +306,64 @@ def get_context_by_user_data(request, data):
 def add_item(request, id):
 #KNOWN BUGS: empty field error redirect not working
 
-    # Set context with current list of items so we can easily return if we discover errors.
-    context = { 'items': ItemEntry.objects.all() }
+  # Set context with current list of items so we can easily return if we discover errors.
+  context = { 'items': ItemEntry.objects.all() }
 
-    # Adds the new item to the database if the request parameter is present
-    if 'item' not in request.POST or not request.POST['item']:
-        context['message'] = 'You must enter an item to add.'
-        return render(request, 'inv.html', context)
+  # Adds the new item to the database if the request parameter is present
+  if not 'item' in request.POST or not request.POST['item']:
+    context['message'] = 'You must enter an item to add.'
+    return render(request, 'inv.html', context)
 
-    # data = get_userinfo(request)
-    # print(data)
-    # user = User.objects.get(email=data['email'])
-    user = request.user
-    loc = Device.objects.get(id=id)
-    new_cat = Category(name=request.POST['item'],
-                       user_gen=True,
-                       creator=user,
-                       desc_folder='n/a')
-    new_cat.save()
+  user = request.user
+  loc = Device.objects.get(id=id)
+  new_cat = Category(name=request.POST['item'],
+                     user_gen=True,
+                     creator=user,
+                     desc_folder='n/a')
+  new_cat.save()
 
-    # cat = Category.objects.get(name="Custom")
+  # cat = Category.objects.get(name="Custom")
 
-    new_item = ItemEntry(location=loc,
-                         type=new_cat, # cat
-                         thumbnail="")
-    new_item.save()
+  new_item = ItemEntry(location=loc,
+                       type=new_cat, # cat
+                       thumbnail="")
+  new_item.save()
 
-    return redirect('cabinet', id)
+  return redirect('cabinet', id)
+
+
+@login_required
+def ajax_add_item(request, id):
+  
+  # Set context with current list of items so we can easily return if we discover errors.
+  context = { 'items': ItemEntry.objects.all() }
+
+  # Adds the new item to the database if the request parameter is present
+  if not 'item' in request.POST or not request.POST['item']:
+    context['message'] = 'You must enter an item to add.'
+    return render(request, 'inv.html', context)
+
+  user = request.user
+  loc = Device.objects.get(id=id)
+  new_cat = Category(name=request.POST['item'],
+                     user_gen=True,
+                     creator=user,
+                     desc_folder='n/a')
+  new_cat.save()
+
+  # cat = Category.objects.get(name="Custom")
+
+  new_item = ItemEntry(location=loc,
+                       type=new_cat, # cat
+                       thumbnail="")
+  new_item.save()
+
+  new_item = AjaxItem(text=request.POST['item'], location=loc, 
+                      type=new_cat, thumbnail="")
+  new_item.save()
+
+  return get_list_json_dumps_serializer
+
 
 @login_required
 def delete_item(request, id):
@@ -352,6 +387,11 @@ def delete_item(request, id):
   print(context)
 
   # return render(request, 'inv.html', context)
+  return redirect('cabinet', cab_id)
+
+def ajax_del_item(request, id): 
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
   return redirect('cabinet', cab_id)
 
 @csrf_exempt
@@ -408,5 +448,18 @@ def shopping_list(request):
 
   return
 
+def get_list_json_dumps_serializer(request):
+  response_data = []
+  for model_item in ItemEntry.objects.all():
+    my_item = {
+      'id': model_item.id, 
+      'location': model_item.location, 
+      'type': model_item.type,
+    }
+    response_data.append(my_item)
+  response_json = json.dumps(response_data, default=vars)
 
+  response = HttpResponse(response_json, content_type='application/json')
+  response['Access-Control-Allow-Origin'] = '*'
+  return response
 
