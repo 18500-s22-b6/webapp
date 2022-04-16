@@ -1,0 +1,2714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="robots" content="NONE,NOARCHIVE">
+  <title>TypeError
+          at /update_inventory</title>
+  <style type="text/css">
+    html * { padding:0; margin:0; }
+    body * { padding:10px 20px; }
+    body * * { padding:0; }
+    body { font:small sans-serif; background-color:#fff; color:#000; }
+    body>div { border-bottom:1px solid #ddd; }
+    h1 { font-weight:normal; }
+    h2 { margin-bottom:.8em; }
+    h3 { margin:1em 0 .5em 0; }
+    h4 { margin:0 0 .5em 0; font-weight: normal; }
+    code, pre { font-size: 100%; white-space: pre-wrap; }
+    summary { cursor: pointer; }
+    table { border:1px solid #ccc; border-collapse: collapse; width:100%; background:white; }
+    tbody td, tbody th { vertical-align:top; padding:2px 3px; }
+    thead th {
+      padding:1px 6px 1px 3px; background:#fefefe; text-align:left;
+      font-weight:normal; font-size:11px; border:1px solid #ddd;
+    }
+    tbody th { width:12em; text-align:right; color:#666; padding-right:.5em; }
+    table.vars { margin:5px 0 2px 40px; }
+    table.vars td, table.req td { font-family:monospace; }
+    table td.code { width:100%; }
+    table td.code pre { overflow:hidden; }
+    table.source th { color:#666; }
+    table.source td { font-family:monospace; white-space:pre; border-bottom:1px solid #eee; }
+    ul.traceback { list-style-type:none; color: #222; }
+    ul.traceback li.frame { padding-bottom:1em; color:#4f4f4f; }
+    ul.traceback li.user { background-color:#e0e0e0; color:#000 }
+    div.context { padding:10px 0; overflow:hidden; }
+    div.context ol { padding-left:30px; margin:0 10px; list-style-position: inside; }
+    div.context ol li { font-family:monospace; white-space:pre; color:#777; cursor:pointer; padding-left: 2px; }
+    div.context ol li pre { display:inline; }
+    div.context ol.context-line li { color:#464646; background-color:#dfdfdf; padding: 3px 2px; }
+    div.context ol.context-line li span { position:absolute; right:32px; }
+    .user div.context ol.context-line li { background-color:#bbb; color:#000; }
+    .user div.context ol li { color:#666; }
+    div.commands, summary.commands { margin-left: 40px; }
+    div.commands a, summary.commands { color:#555; text-decoration:none; }
+    .user div.commands a { color: black; }
+    #summary { background: #ffc; }
+    #summary h2 { font-weight: normal; color: #666; }
+    #explanation { background:#eee; }
+    #template, #template-not-exist { background:#f6f6f6; }
+    #template-not-exist ul { margin: 0 0 10px 20px; }
+    #template-not-exist .postmortem-section { margin-bottom: 3px; }
+    #unicode-hint { background:#eee; }
+    #traceback { background:#eee; }
+    #requestinfo { background:#f6f6f6; padding-left:120px; }
+    #summary table { border:none; background:transparent; }
+    #requestinfo h2, #requestinfo h3 { position:relative; margin-left:-100px; }
+    #requestinfo h3 { margin-bottom:-1em; }
+    .error { background: #ffc; }
+    .specific { color:#cc3300; font-weight:bold; }
+    h2 span.commands { font-size:.7em; font-weight:normal; }
+    span.commands a:link {color:#5E5694;}
+    pre.exception_value { font-family: sans-serif; color: #575757; font-size: 1.5em; margin: 10px 0 10px 0; }
+    .append-bottom { margin-bottom: 10px; }
+    .fname { user-select: all; }
+  </style>
+  
+  <script>
+    function hideAll(elems) {
+      for (var e = 0; e < elems.length; e++) {
+        elems[e].style.display = 'none';
+      }
+    }
+    window.onload = function() {
+      hideAll(document.querySelectorAll('ol.pre-context'));
+      hideAll(document.querySelectorAll('ol.post-context'));
+      hideAll(document.querySelectorAll('div.pastebin'));
+    }
+    function toggle() {
+      for (var i = 0; i < arguments.length; i++) {
+        var e = document.getElementById(arguments[i]);
+        if (e) {
+          e.style.display = e.style.display == 'none' ? 'block': 'none';
+        }
+      }
+      return false;
+    }
+    function switchPastebinFriendly(link) {
+      s1 = "Switch to copy-and-paste view";
+      s2 = "Switch back to interactive view";
+      link.textContent = link.textContent.trim() == s1 ? s2: s1;
+      toggle('browserTraceback', 'pastebinTraceback');
+      return false;
+    }
+  </script>
+  
+</head>
+<body>
+<div id="summary">
+  <h1>TypeError
+       at /update_inventory</h1>
+  <pre class="exception_value">object of type &#x27;NoneType&#x27; has no len()</pre>
+  <table class="meta">
+
+    <tr>
+      <th>Request Method:</th>
+      <td>POST</td>
+    </tr>
+    <tr>
+      <th>Request URL:</th>
+      <td>http://localhost:8000/update_inventory</td>
+    </tr>
+
+    <tr>
+      <th>Django Version:</th>
+      <td>4.0.3</td>
+    </tr>
+
+    <tr>
+      <th>Exception Type:</th>
+      <td>TypeError</td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Value:</th>
+      <td><pre>object of type &#x27;NoneType&#x27; has no len()</pre></td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Location:</th>
+      <td><span class="fname">/Users/keatondrebes/Desktop/webapp/webapps/../cv_code/cv_code_main.py</span>, line 420, in perform_pairwise_comparisons_arbitrary</td>
+    </tr>
+
+    <tr>
+      <th>Python Executable:</th>
+      <td>/Users/keatondrebes/miniconda3/envs/school_env/bin/python</td>
+    </tr>
+    <tr>
+      <th>Python Version:</th>
+      <td>3.9.12</td>
+    </tr>
+    <tr>
+      <th>Python Path:</th>
+      <td><pre>[&#x27;/Users/keatondrebes/Desktop/webapp/webapps&#x27;,
+ &#x27;/Users/keatondrebes/miniconda3/envs/school_env/lib/python39.zip&#x27;,
+ &#x27;/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9&#x27;,
+ &#x27;/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/lib-dynload&#x27;,
+ &#x27;/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages&#x27;,
+ &#x27;../cv_code&#x27;]</pre></td>
+    </tr>
+    <tr>
+      <th>Server time:</th>
+      <td>Sat, 16 Apr 2022 14:05:25 -0400</td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+<div id="traceback">
+  <h2>Traceback <span class="commands"><a href="#" onclick="return switchPastebinFriendly(this);">
+    Switch to copy-and-paste view</a></span>
+  </h2>
+  <div id="browserTraceback">
+    <ul class="traceback">
+      
+        
+        <li class="frame django">
+          
+            <code class="fname">/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages/django/core/handlers/exception.py</code>, line 55, in inner
+          
+
+          
+            <div class="context" id="c4920013568">
+              
+                <ol start="48" class="pre-context" id="pre4920013568">
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>        return inner</pre></li>
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>    else:</pre></li>
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>        @wraps(get_response)</pre></li>
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>        def inner(request):</pre></li>
+                
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="55" class="context-line">
+                <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>                response = get_response(request)</pre> <span>â¦</span></li>
+              </ol>
+              
+                <ol start='56' class="post-context" id="post4920013568">
+                  
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>            except Exception as exc:</pre></li>
+                  
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>                response = response_for_exception(request, exc)</pre></li>
+                  
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>            return response</pre></li>
+                  
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre>        return inner</pre></li>
+                  
+                  <li onclick="toggle('pre4920013568', 'post4920013568')"><pre></pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4920013568">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>exc</td>
+                    <td class="code"><pre>TypeError(&quot;object of type &#x27;NoneType&#x27; has no len()&quot;)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>get_response</td>
+                    <td class="code"><pre>&lt;bound method BaseHandler._get_response of &lt;django.core.handlers.wsgi.WSGIHandler object at 0x1068da910&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: POST &#x27;/update_inventory&#x27;&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame django">
+          
+            <code class="fname">/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages/django/core/handlers/base.py</code>, line 197, in _get_response
+          
+
+          
+            <div class="context" id="c4920013184">
+              
+                <ol start="190" class="pre-context" id="pre4920013184">
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>        if response is None:</pre></li>
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>            wrapped_callback = self.make_view_atomic(callback)</pre></li>
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>            # If it is an asynchronous view, run it in a subthread.</pre></li>
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>            if asyncio.iscoroutinefunction(wrapped_callback):</pre></li>
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>                wrapped_callback = async_to_sync(wrapped_callback)</pre></li>
+                
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>            try:</pre></li>
+                
+                </ol>
+              
+              <ol start="197" class="context-line">
+                <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>                response = wrapped_callback(request, *callback_args, **callback_kwargs)</pre> <span>â¦</span></li>
+              </ol>
+              
+                <ol start='198' class="post-context" id="post4920013184">
+                  
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>            except Exception as e:</pre></li>
+                  
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>                response = self.process_exception_by_middleware(e, request)</pre></li>
+                  
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>                if response is None:</pre></li>
+                  
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>                    raise</pre></li>
+                  
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4920013184', 'post4920013184')"><pre>        # Complain if the view returned None (a common error).</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4920013184">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>callback</td>
+                    <td class="code"><pre>&lt;function update_inventory at 0x125328550&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_args</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>middleware_method</td>
+                    <td class="code"><pre>&lt;bound method CsrfViewMiddleware.process_view of &lt;CsrfViewMiddleware get_response=convert_exception_to_response.&lt;locals&gt;.inner&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: POST &#x27;/update_inventory&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>response</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x1068da910&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>wrapped_callback</td>
+                    <td class="code"><pre>&lt;function update_inventory at 0x125328550&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame django">
+          
+            <code class="fname">/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages/django/views/decorators/csrf.py</code>, line 54, in wrapped_view
+          
+
+          
+            <div class="context" id="c4922027520">
+              
+                <ol start="47" class="pre-context" id="pre4922027520">
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>def csrf_exempt(view_func):</pre></li>
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>    &quot;&quot;&quot;Mark a view function as being exempt from the CSRF view protection.&quot;&quot;&quot;</pre></li>
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>    # view_func.csrf_exempt = True would also work, but decorators are nicer</pre></li>
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>    # if they don&#x27;t have side effects, so return a new function.</pre></li>
+                
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>    def wrapped_view(*args, **kwargs):</pre></li>
+                
+                </ol>
+              
+              <ol start="54" class="context-line">
+                <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>        return view_func(*args, **kwargs)</pre> <span>â¦</span></li>
+              </ol>
+              
+                <ol start='55' class="post-context" id="post4922027520">
+                  
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>    wrapped_view.csrf_exempt = True</pre></li>
+                  
+                  <li onclick="toggle('pre4922027520', 'post4922027520')"><pre>    return wraps(view_func)(wrapped_view)</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4922027520">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>args</td>
+                    <td class="code"><pre>(&lt;WSGIRequest: POST &#x27;/update_inventory&#x27;&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>view_func</td>
+                    <td class="code"><pre>&lt;function update_inventory at 0x125328430&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/keatondrebes/Desktop/webapp/webapps/food_tracker/views.py</code>, line 412, in update_inventory
+          
+
+          
+            <div class="context" id="c4922027328">
+              
+                <ol start="405" class="pre-context" id="pre4922027328">
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>  iconic_images = list(IconicImage.objects.all().filter(user=device.owner))</pre></li>
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>  iconic_dict = dict()</pre></li>
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>  for iconic_image in iconic_images:</pre></li>
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>    iconic_dict[iconic_image.category.name] = iconic_image.image.path</pre></li>
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>  #TODO: supply the iconic images which this user has registered as third argument</pre></li>
+                
+                </ol>
+              
+              <ol start="412" class="context-line">
+                <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)</pre> <span>â¦</span></li>
+              </ol>
+              
+                <ol start='413' class="post-context" id="post4922027328">
+                  
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>  if isinstance(best_guess, str):</pre></li>
+                  
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>    try:</pre></li>
+                  
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>      cat = Category.objects.get(name=best_guess)</pre></li>
+                  
+                  <li onclick="toggle('pre4922027328', 'post4922027328')"><pre>    except:</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4922027328">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>cur_img_bytes_io</td>
+                    <td class="code"><pre>&lt;_io.BytesIO object at 0x1259c9c70&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>data</td>
+                    <td class="code"><pre>{&#x27;image&#x27;: &#x27;/9j/4WQeRXhpZgAATU0AKgAAAAgACgEAAAQAAAABAAAKAAEBAAQAAAABAAAFoAEPAAIAAAAMAAAAhgEQAAIAAAAKAAAAkgEaAAUAAAABAAAAnAEbAAUAAAABAAAApAEoAAMAAAABAAIAAAEyAAIAAAAUAAAArAITAAMAAAABAAEAAIdpAAQAAAABAAAAwAAAA6BSYXNwYmVycnlQaQBSUF9vdjU2NDcAAAAASAAAAAEAAABIAAAAATIwMjI6MDQ6MDEgMTI6MjA6MzgAABeCmgAFAAAAAQAAAdqCnQAFAAAAAQAAAeKIIgADAAAAAQADAACIJwADAAAAAQBkAACQAAAHAAAABDAyMjCQAwACAAAAFAAAAeqQBAACAAAAFAAAAf6RAQAHAAAABAECAwCSAQAKAAAAAQAAAhKSAgAFAAAAAQAAAhqSAwAKAAAAAQAAAiKSBQAFAAAAAQAAAiqSBwADAAAAAQACAACSCQADAAAAAQAAAACSCgAFAAAAAQAAAjKSfAAHAAABUwAAAjqgAAAHAAAABDAxMDCgAQADAAAAAQABAACgAgAEAAAAAQAACgCgAwAEAAAAAQAABaCgBQAEAAAAAQAAA46kAgADAAAAAQAAAACkAwADAAAAAQAAAAAAAAAAAAAoDgAPQkAAAHE4AAAnEDIwMjI6MDQ6MDEgMTI6MjA6MzgAMjAyMjowNDowMSAxMjoyMDozOAAAZNM1AA9CQAAAd/EAACcQAAABCgAAAGQAAHfxAAAnEAAAjIgAACcQZXY9LTEgbWx1eD0tMSBleHA9MTAyNTQgYWc9MjU2IGZvY3VzPTI1NSBnYWluX3I9MS4wNzggZ2Fpbl9iPTIuMTMyIGdyZWVubmVzcz0wIGNjbT04ODEwLC0zOTI0LC03ODIsLTE2NTYsNjM4OCwtNjM0LDUxOCwtNDMzOCw3OTI4LDAsMCwwIG1kPTAgdGc9MjU1IDI1NSBvdGg9MCAwIGI9MCBmPTI1NSAyNTUgZmk9MCBJU1AgQnVpbGQgRGF0ZTogRmViIDI1IDIwMjEsIDEyOjExOjI5IFZDX0JVSUxEX0lEX1ZFUlNJT046IDU2NGU1ZjliODUyYjIzYTMzMGIxNzY0YmNmMGIyZDAyMmEyMGFmZDAgKGNsZWFuKSBWQ19CVUlMRF9JRF9VU0VSOiBkb20gVkNfQlVJTERfSURfQlJBTkNIOiBiY20yNzExXzIgAAABAAEAAgAAAARSOTgAAAAAAAAIAQAABAAAAAEAAABAAQEABAAAAAEAAAAwAQMAAwAAAAEABgAAARoABQAAAAEAAAQGARsABQAAAAEAAAQOASgAAwAAAAEAAgAAAgEABAAAAAEAAAQWAgIABAAAAAEAAGAAAAAAAAAAAEgAAAABAAAASAAAAAH/2P/bAIQAAgECAgIBAgICAgICAgIDBQMDAwMDBgQFBAUHBggIBwYHBwgJDAoICQsJBwcKDgoLDAwNDQ0ICg4PDg0PDA0NDAECAgIDAwMGAwMGDAgHCAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwM/8AAEQgAMABAAwEiAAIRAQMRAf/EAaIAAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKCxAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6AQADAQEBAQEBAQEBAAAAAAAAAQIDBAUGBwgJCgsRAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8A/Cn4dW8k17JdrD5y2I3IjBWWSVztjQhuOvJBOCFIr3KzaDxL490Xw7bSm/iljZ7wRb2KDY24ySLjYdwTOP72Dg5x4bo5uLfTtOt7aREa7L3Duu4YwSvz4HIUIW74ya/R79jv4IeK5Phd/aNlpwn1C50R/ET2wfMn2VJij7QcYlL+YSmAX8sld2UWhVlGDguv+a/4btrt1Od0JSmqj2X+T+/voeWfsD/Ci/8AFSxeKbCWCS28MaZrEpsGlZDeXCWO+2iAGAUMwQvuf7qAKATuH0T/AMFXfC2m+DvgZq/ij4YW+kf2BqunQra6hGHkeXSb5Y/M8mTAOHLp1PMahjhsAfFfxQ1+78G6t4g8HeEfEOp29hqDsmoLZ308Uao6sktmyiTZJldqyMwJbGz5cSCT7S/Zs8ZnXv2EfAfgf4rNYW9j4hudQ8L+ELq6mupbjV7aARb7dycrGE+2LBC4kUbUEYRSitKmrrm9P+B933nVOpJtSX+Xff8ArbyPzM8L+GINW8PeKb261aHTLrSdLTUtMjmIzqkzX9rAbaPc6ncsVxLP8gc7YX425ZPvb4S/DPUfD37L3gzTPEttbXS6rpq6lG0YdlKzyG4jGWAIdQ6HI6MMqTwa8t+Gvwt0nxP8bf8AhEPh7cT2vw/g1OC61jWrsi4juJ4g6oIGwu5EWaULggOXY5KhGH63/tb/AA+8I2vhvTtW8K6PY6PoHi6ZLWWKxtz5NtfCFVt5gqt5cETLEYDhAWdoxn+9liG40fmn/Xre9/LzuTVqRdTazPw0+MnhHVPC3i3ULS5sYG0RraRdO1CYFYlVpUbyvkOI9pZAvmcboywGDx5L4jhilsXitUc2lzELi1dm3bmDMpIyeM7cYxn+Z/Qz9pXw7DqPhjVdNv7Y7hG8brsBZeCGxwee4x3Ar89JNG1CDwzLfwzxNo2na0tqlypZ0LSofnwVyBtjXOcH5l+X0tVKuIpexhG9lfRX2u7t67LTouVepyQpKFTnvu/z329L9e56L+zjoNrq3xY8J2epWd0IplgkHkW+5C4CtGXPQKdpUnnl8HGSR+v3xF8eaf8ABz4XfGfXrl7HSNS07wbpvhPwxLc8iXVZLUh4kRUc7gYTLgqFPIZlG5l/OD9i7ToNZ+KGi6rbRytDos8cIkACqHKuB9fkcEcnhx6jP6k+KfhJ4Q+J+j/GL4d+PLufWbzw9cx6tDcWtwYbmO7RJIo7xQCw+cNOArh165BIowkU5OT6W+//AC7mlWbcVDVXv8vv6n5I/sa+DNK8UfEe48XfEi9ltfht4dmN/wCIdSuZmQ3Lbgfs4dcyO7lhkJlyG2gh3TP1p4z8T+Lfiz+0UPhT8PPC0eo/Cey1seJLDwrNo9rYWttai2SG4Z3j80W8A3TAMrY8yYOEEzKi+K/Fr4V+KLHTPCfhPSNLW8tvD2om5VNOR1g1S4MiqJ7rJYxSBFJJYMoVtiOAdo/Sf9hr4ey/Bnx/8OZJ9f1TxUvxWOoadq9vZ3IjQXzRiW2C27lVFpbwQXHz5MheR3x86ovYoU4UY1L3m+na3f8AP7rLqh1KjrSjb3V173/q1vva2PHtc8PweFryGz061g0+wtDtSGFOijtx3z1POcep4+xP2QbzSvHHwT8ReEtTuFur6azZQfMKOquzbM+UVfgg7WBDDBIYHcx8R/bV0s6b471CJxtiDbkbjbglvl657AnIH3uCeg8x+B3xCm8I63JPaXLxqEaFgjbRjGOD2x7d/wBM2lUpvmOed4zujzz9sy2uo9Y1GNJZdM1S9t3jaeSz8sxXSgp5ohZj8uQHUbmDAghmBBP5x/Em0OjeBtV8K3DTajNYFbsXNyfLRmwQCnzdNi8Dc2WyMdK+7v2lfEkF82o69qVybO0Vpbl2câ¦ &lt;trimmed 2490365 bytes string&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>device</td>
+                    <td class="code"><pre>&lt;Device: Device(id=123456, status=1, owner=kdrebes, name=device-0, key=secretkey)&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_dict</td>
+                    <td class="code"><pre>{&#x27;UNKNOWN ITEM&#x27;: &#x27;/Users/keatondrebes/Desktop/webapp/webapps/[]&#x27;}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_image</td>
+                    <td class="code"><pre>&lt;IconicImage: IconicImage object (1)&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_images</td>
+                    <td class="code"><pre>[&lt;IconicImage: IconicImage object (1)&gt;]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>image_field</td>
+                    <td class="code"><pre>&lt;ImageFieldFile: images/user_bg_images/tmp/bg_LpyJQsk.png&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>img_bytes</td>
+                    <td class="code"><pre>(b&#x27;\xff\xd8\xff\xe1d\x1eExif\x00\x00MM\x00*\x00\x00\x00\x08\x00\n\x01\x00&#x27;
+ b&#x27;\x00\x04\x00\x00\x00\x01\x00\x00\n\x00\x01\x01\x00\x04\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x05\xa0\x01\x0f\x00\x02\x00\x00\x00\x0c\x00\x00&#x27;
+ b&#x27;\x00\x86\x01\x10\x00\x02\x00\x00\x00\n\x00\x00\x00\x92\x01\x1a&#x27;
+ b&#x27;\x00\x05\x00\x00\x00\x01\x00\x00\x00\x9c\x01\x1b\x00\x05\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x00\xa4\x01(\x00\x03\x00\x00\x00\x01\x00\x02\x00\x00\x012&#x27;
+ b&#x27;\x00\x02\x00\x00\x00\x14\x00\x00\x00\xac\x02\x13\x00\x03\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x01\x00\x00\x87i\x00\x04\x00\x00\x00\x01\x00\x00&#x27;
+ b&#x27;\x00\xc0\x00\x00\x03\xa0RaspberryPi\x00RP_ov5647\x00\x00\x00\x00H&#x27;
+ b&#x27;\x00\x00\x00\x01\x00\x00\x00H\x00\x00\x00\x012022:04:01 12:20:38\x00&#x27;
+ b&#x27;\x00\x17\x82\x9a\x00\x05\x00\x00\x00\x01\x00\x00\x01\xda\x82\x9d&#x27;
+ b&#x27;\x00\x05\x00\x00\x00\x01\x00\x00\x01\xe2\x88&quot;\x00\x03\x00\x00&#x27;
+ b&quot;\x00\x01\x00\x03\x00\x00\x88&#x27;\x00\x03\x00\x00\x00\x01\x00d\x00\x00\x90\x00&quot;
+ b&#x27;\x00\x07\x00\x00\x00\x040220\x90\x03\x00\x02\x00\x00\x00\x14\x00\x00&#x27;
+ b&#x27;\x01\xea\x90\x04\x00\x02\x00\x00\x00\x14\x00\x00\x01\xfe\x91\x01&#x27;
+ b&#x27;\x00\x07\x00\x00\x00\x04\x01\x02\x03\x00\x92\x01\x00\n\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x02\x12\x92\x02\x00\x05\x00\x00\x00\x01\x00\x00&#x27;
+ b&#x27;\x02\x1a\x92\x03\x00\n\x00\x00\x00\x01\x00\x00\x02&quot;\x92\x05\x00\x05\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x02*\x92\x07\x00\x03\x00\x00\x00\x01\x00\x02\x00\x00\x92\t&#x27;
+ b&#x27;\x00\x03\x00\x00\x00\x01\x00\x00\x00\x00\x92\n\x00\x05\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x022\x92|\x00\x07\x00\x00\x01S\x00\x00\x02:\xa0\x00&#x27;
+ b&#x27;\x00\x07\x00\x00\x00\x040100\xa0\x01\x00\x03\x00\x00\x00\x01\x00\x01&#x27;
+ b&#x27;\x00\x00\xa0\x02\x00\x04\x00\x00\x00\x01\x00\x00\n\x00\xa0\x03&#x27;
+ b&#x27;\x00\x04\x00\x00\x00\x01\x00\x00\x05\xa0\xa0\x05\x00\x04\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x03\x8e\xa4\x02\x00\x03\x00\x00\x00\x01\x00\x00&#x27;
+ b&#x27;\x00\x00\xa4\x03\x00\x03\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00&#x27;
+ b&quot;\x00\x00\x00\x00(\x0e\x00\x0fB@\x00\x00q8\x00\x00&#x27;\x102022:04:01 12:20:3&quot;
+ b&#x27;8\x002022:04:01 12:20:38\x00\x00d\xd35\x00\x0fB@\x00\x00w\xf1\x00\x00&#x27;
+ b&quot;&#x27;\x10\x00\x00\x01\n\x00\x00\x00d\x00\x00w\xf1\x00\x00&#x27;\x10\x00\x00&quot;
+ b&quot;\x8c\x88\x00\x00&#x27;\x10ev=-1 mlux=-1 exp=10254 ag=256 focus=255 gain_r=1.078 &quot;
+ b&#x27;gain_b=2.132 greenness=0 ccm=8810,-3924,-782,-1656,6388,-634,518,-4338,7928,&#x27;
+ b&#x27;0,0,0 md=0 tg=255 255 oth=0 0 b=0 f=255 255 fi=0 ISP Build Date: Feb 25 2021&#x27;
+ b&#x27;, 12:11:29 VC_BUILD_ID_VERSION: 564e5f9b852b23a330b1764bcf0b2d022a20afd0 (cl&#x27;
+ b&#x27;ean) VC_BUILD_ID_USER: dom VC_BUILD_ID_BRANCH: bcm2711_2 \x00\x00\x01&#x27;
+ b&#x27;\x00\x01\x00\x02\x00\x00\x00\x04R98\x00\x00\x00\x00\x00\x00\x08\x01\x00&#x27;
+ b&#x27;\x00\x04\x00\x00\x00\x01\x00\x00\x00@\x01\x01\x00\x04\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x00\x000\x01\x03\x00\x03\x00\x00\x00\x01\x00\x06&#x27;
+ b&#x27;\x00\x00\x01\x1a\x00\x05\x00\x00\x00\x01\x00\x00\x04\x06\x01\x1b&#x27;
+ b&#x27;\x00\x05\x00\x00\x00\x01\x00\x00\x04\x0e\x01(\x00\x03\x00\x00&#x27;
+ b&#x27;\x00\x01\x00\x02\x00\x00\x02\x01\x00\x04\x00\x00\x00\x01\x00\x00&#x27;
+ b&#x27;\x04\x16\x02\x02\x00\x04\x00\x00\x00\x01\x00\x00`\x00\x00\x00&#x27;
+ b&#x27;\x00\x00\x00\x00\x00H\x00\x00\x00\x01\x00\x00\x00H\x00\x00\x00\x01\xff\xd8&#x27;
+ b&#x27;\xff\xdb\x00\x84\x00\x02\x01\x02\x02\x02\x01\x02\x02\x02\x02\x02&#x27;
+ b&#x27;\x02\x02\x02\x03\x05\x03\x03\x03\x03\x03\x06\x04\x05\x04\x05\x07&#x27;
+ b&#x27;\x06\x08\x08\x07\x06\x07\x07\x08\t\x0c\n\x08\t\x0b\t\x07\x07\n\x0e\n&#x27;
+ b&#x27;\x0b\x0c\x0c\r\r\r\x08\n\x0e\x0f\x0e\r\x0f\x0c\r\r\x0c\x01\x02\x02&#x27;
+ b&#x27;\x02\x03\x03\x03\x06\x03\x03\x06\x0c\x08\x07\x08\x0c\x0c\x0c\x0c&#x27;
+ b&#x27;\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c&#x27;
+ b&#x27;\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c&#x27;
+ b&#x27;\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\xff\xc0&#x27;
+ b&#x27;\x00\x11\x08\x000\x00@\x03\x01&quot;\x00\x02\x11\x01\x03\x11\x01\xff\xc4\x01&#x27;
+ b&#x27;\xa2\x00\x00\x01\x05\x01\x01\x01\x01\x01\x01\x00\x00\x00\x00\x00&#x27;
+ b&#x27;\x00\x00\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x10\x00\x02\x01\x03\x03&#x27;
+ b&#x27;\x02\x04\x03\x05\x05\x04\x04\x00\x00\x01}\x01\x02\x03\x00\x04\x11\x05\x12!&#x27;
+ b&#x27;1A\x06\x13Qa\x07&quot;q\x142\x81\x91\xa1\x08#B\xb1\xc1\x15R\xd1\xf0$3br\x82&#x27;
+ b&quot;\t\n\x16\x17\x18\x19\x1a%&amp;&#x27;()*456789:CDEFGHIJSTUVWXYZcdefghijstuvwxyz&quot;
+ b&#x27;\x83\x84\x85\x86\x87\x88\x89\x8a\x92\x93\x94\x95\x96\x97\x98\xâ¦ &lt;trimmed 5796100 bytes string&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>new_image_path</td>
+                    <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp/webapps/images/user_bg_images/tmp/bg_LpyJQsk.png&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>old_bg_path</td>
+                    <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp/webapps/images/user_bg_images/tmp/bg_hEi0nxG.png&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest: POST &#x27;/update_inventory&#x27;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>schema</td>
+                    <td class="code"><pre>{&#x27;additionalProperties&#x27;: False,
+ &#x27;properties&#x27;: {&#x27;image&#x27;: {&#x27;type&#x27;: &#x27;string&#x27;},
+                &#x27;secret&#x27;: {&#x27;type&#x27;: &#x27;string&#x27;},
+                &#x27;serial_number&#x27;: {&#x27;type&#x27;: &#x27;string&#x27;}},
+ &#x27;required&#x27;: [&#x27;serial_number&#x27;, &#x27;image&#x27;, &#x27;secret&#x27;],
+ &#x27;type&#x27;: &#x27;object&#x27;}</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/keatondrebes/Desktop/webapp/webapps/../cv_code/cv_code_main.py</code>, line 609, in get_best_guess_or_none
+          
+
+          
+            <div class="context" id="c4922027136">
+              
+                <ol start="602" class="pre-context" id="pre4922027136">
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>    target_dict = dict()</pre></li>
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>    for img, img_name in [(pre_dif, &quot;pre_dif&quot;), (post_diff, &quot;post_diff&quot;)]:</pre></li>
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>        key_points = alg.detect(img,None)</pre></li>
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>        kp, desc = alg.compute(img, key_points)</pre></li>
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>        target_dict[img_name] = (kp, desc)</pre></li>
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre></pre></li>
+                
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre></pre></li>
+                
+                </ol>
+              
+              <ol start="609" class="context-line">
+                <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)</pre> <span>â¦</span></li>
+              </ol>
+              
+                <ol start='610' class="post-context" id="post4922027136">
+                  
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>    best_guess_dict = dict()</pre></li>
+                  
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>    for img_name, iconic_map in matches_dict.items():</pre></li>
+                  
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>        best_guess = &quot;&quot;</pre></li>
+                  
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>        best_guess_ratio = -1</pre></li>
+                  
+                  <li onclick="toggle('pre4922027136', 'post4922027136')"><pre>        for iconic_img, (num_total_desc, num_matches) in iconic_map.items():</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4922027136">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>additional_iconic_classes</td>
+                    <td class="code"><pre>{&#x27;UNKNOWN ITEM&#x27;: &#x27;/Users/keatondrebes/Desktop/webapp/webapps/[]&#x27;}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>alg</td>
+                    <td class="code"><pre>&lt;SIFT 0x12535db30&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>bg_image</td>
+                    <td class="code"><pre>array([[[26, 26, 17],
+        [25, 27, 17],
+        [25, 27, 17],
+        ...,
+        [ 0,  0,  0],
+        [ 0,  0,  0],
+        [ 0,  0,  0]],
+
+       [[25, 26, 17],
+        [25, 26, 17],
+        [25, 26, 17],
+        ...,
+        [ 0,  0,  0],
+        [ 0,  0,  0],
+        [ 0,  0,  0]],
+
+       [[25, 26, 17],
+        [25, 26, 17],
+        [25, 26, 17],
+        ...,
+        [ 0,  0,  0],
+        [ 0,  0,  0],
+        [ 0,  0,  0]],
+
+       ...,
+
+       [[45, 46, 37],
+        [45, 46, 37],
+        [45, 46, 37],
+        ...,
+        [35, 60, 56],
+        [35, 60, 55],
+        [35, 60, 55]],
+
+       [[44, 45, 36],
+        [44, 45, 36],
+        [44, 45, 36],
+        ...,
+        [32, 53, 50],
+        [32, 53, 50],
+        [32, 53, 50]],
+
+       [[42, 43, 34],
+        [42, 43, 34],
+        [42, 43, 34],
+        ...,
+        [32, 55, 50],
+        [32, 55, 50],
+        [32, 55, 50]]], dtype=uint8)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>bg_image_path</td>
+                    <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp/webapps/images/user_bg_images/tmp/bg_hEi0nxG.png&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>desc</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_dict</td>
+                    <td class="code"><pre>{&#x27;Applesauce&#x27;: ((&lt;KeyPoint 0x1259fd690&gt;,
+                 &lt;KeyPoint 0x1259fd6c0&gt;,
+                 &lt;KeyPoint 0x1259fd6f0&gt;,
+                 &lt;KeyPoint 0x1259fd720&gt;,
+                 &lt;KeyPoint 0x1259fd750&gt;,
+                 &lt;KeyPoint 0x1259fd780&gt;,
+                 &lt;KeyPoint 0x1259fd7b0&gt;,
+                 &lt;KeyPoint 0x1259fd7e0&gt;,
+                 &lt;KeyPoint 0x1259fd810&gt;,
+                 &lt;KeyPoint 0x1259fd840&gt;,
+                 &lt;KeyPoint 0x1259fd870&gt;,
+                 &lt;KeyPoint 0x1259fd8a0&gt;,
+                 &lt;KeyPoint 0x1259fd8d0&gt;,
+                 &lt;KeyPoint 0x1259fd900&gt;,
+                 &lt;KeyPoint 0x1259fd930&gt;,
+                 &lt;KeyPoint 0x1259fd960&gt;,
+                 &lt;KeyPoint 0x1259fd990&gt;,
+                 &lt;KeyPoint 0x1259fd9c0&gt;,
+                 &lt;KeyPoint 0x1259fd9f0&gt;,
+                 &lt;KeyPoint 0x1259fda20&gt;,
+                 &lt;KeyPoint 0x1259fda50&gt;,
+                 &lt;KeyPoint 0x1259fda80&gt;,
+                 &lt;KeyPoint 0x1259fdab0&gt;,
+                 &lt;KeyPoint 0x1259fdae0&gt;,
+                 &lt;KeyPoint 0x1259fdb10&gt;,
+                 &lt;KeyPoint 0x1259fdb40&gt;,
+                 &lt;KeyPoint 0x1259fdb70&gt;,
+                 &lt;KeyPoint 0x1259fdba0&gt;,
+                 &lt;KeyPoint 0x1259fdbd0&gt;,
+                 &lt;KeyPoint 0x1259fdc00&gt;,
+                 &lt;KeyPoint 0x1259fdc30&gt;,
+                 &lt;KeyPoint 0x1259fdc60&gt;,
+                 &lt;KeyPoint 0x1259fdc90&gt;,
+                 &lt;KeyPoint 0x1259fdcc0&gt;,
+                 &lt;KeyPoint 0x1259fdcf0&gt;,
+                 &lt;KeyPoint 0x1259fdd20&gt;,
+                 &lt;KeyPoint 0x1259fdd50&gt;,
+                 &lt;KeyPoint 0x1259fdd80&gt;,
+                 &lt;KeyPoint 0x1259fddb0&gt;,
+                 &lt;KeyPoint 0x1259fdde0&gt;,
+                 &lt;KeyPoint 0x1259fde10&gt;,
+                 &lt;KeyPoint 0x1259fde40&gt;,
+                 &lt;KeyPoint 0x1259fde70&gt;,
+                 &lt;KeyPoint 0x1259fdea0&gt;,
+                 &lt;KeyPoint 0x1259fded0&gt;,
+                 &lt;KeyPoint 0x1259fdf00&gt;,
+                 &lt;KeyPoint 0x1259fdf30&gt;,
+                 &lt;KeyPoint 0x1259fdf60&gt;,
+                 &lt;KeyPoint 0x1259fdf90&gt;,
+                 &lt;KeyPoint 0x1259fdfc0&gt;,
+                 &lt;KeyPoint 0x1259fe030&gt;,
+                 &lt;KeyPoint 0x1259fe060&gt;,
+                 &lt;KeyPoint 0x1259fe090&gt;,
+                 &lt;KeyPoint 0x1259fe0c0&gt;,
+                 &lt;KeyPoint 0x1259fe0f0&gt;,
+                 &lt;KeyPoint 0x1259fe120&gt;,
+                 &lt;KeyPoint 0x1259fe150&gt;,
+                 &lt;KeyPoint 0x1259fe180&gt;,
+                 &lt;KeyPoint 0x1259fe1b0&gt;,
+                 &lt;KeyPoint 0x1259fe1e0&gt;,
+                 &lt;KeyPoint 0x1259fe210&gt;,
+                 &lt;KeyPoint 0x1259fe240&gt;,
+                 &lt;KeyPoint 0x1259fe270&gt;,
+                 &lt;KeyPoint 0x1259fe2a0&gt;,
+                 &lt;KeyPoint 0x1259fe2d0&gt;,
+                 &lt;KeyPoint 0x1259fe300&gt;,
+                 &lt;KeyPoint 0x1259fe330&gt;,
+                 &lt;KeyPoint 0x1259fe360&gt;,
+                 &lt;KeyPoint 0x1259fe390&gt;,
+                 &lt;KeyPoint 0x1259fe3c0&gt;,
+                 &lt;KeyPoint 0x1259fe3f0&gt;,
+                 &lt;KeyPoint 0x1259fe420&gt;,
+                 &lt;KeyPoint 0x1259fe450&gt;,
+                 &lt;KeyPoint 0x1259fe480&gt;,
+                 &lt;KeyPoint 0x1259fe4b0&gt;,
+                 &lt;KeyPoint 0x1259fe4e0&gt;,
+                 &lt;KeyPoint 0x1259fe510&gt;,
+                 &lt;KeyPoint 0x1259fe540&gt;,
+                 &lt;KeyPoint 0x1259fe570&gt;,
+                 &lt;KeyPoint 0x1259fe5a0&gt;,
+                 &lt;KeyPoint 0x1259fe5d0&gt;,
+                 &lt;KeyPoint 0x1259fe600&gt;,
+                 &lt;KeyPoint 0x1259fe630&gt;,
+                 &lt;KeyPoint 0x1259fe660&gt;,
+                 &lt;KeyPoint 0x1259fe690&gt;,
+                 &lt;KeyPoint 0x1259fe6c0&gt;,
+                 &lt;KeyPoint 0x1259fe6f0&gt;,
+                 &lt;KeyPoint 0x1259fe720&gt;,
+                 &lt;KeyPoint 0x1259fe750&gt;,
+                 &lt;KeyPoint 0x1259fe780&gt;,
+                 &lt;KeyPoint 0x1259fe7b0&gt;,
+                 &lt;KeyPoint 0x1259fe7e0&gt;,
+                 &lt;KeyPoint 0x1259fe810&gt;,
+                 &lt;KeyPoint 0x1259fe840&gt;,
+                 &lt;KeyPoint 0x1259fe870&gt;,
+                 &lt;KeyPoint 0x1259fe8a0&gt;,
+                 &lt;KeyPoint 0x1259fe8d0&gt;,
+                 &lt;KeyPoint 0x1259fe900&gt;,
+                 &lt;KeyPoint 0x1259fe930&gt;,
+                 &lt;KeyPoint 0x1259fe96â¦ &lt;trimmed 379562 bytes string&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>img</td>
+                    <td class="code"><pre>array([], shape=(0, 0, 3), dtype=uint8)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>img_name</td>
+                    <td class="code"><pre>&#x27;post_diff&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>items_already_present_in_shelf</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>key_points</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>kp</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>new_iconic_img_path</td>
+                    <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp/webapps/[]&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>new_iconic_name</td>
+                    <td class="code"><pre>&#x27;UNKNOWN ITEM&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>new_image_path</td>
+                    <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp/webapps/images/user_bg_images/tmp/bg_LpyJQsk.png&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>new_img</td>
+                    <td class="code"><pre>array([[[26, 26, 17],
+        [25, 27, 17],
+        [25, 27, 17],
+        ...,
+        [ 0,  0,  0],
+        [ 0,  0,  0],
+        [ 0,  0,  0]],
+
+       [[25, 26, 17],
+        [25, 26, 17],
+        [25, 26, 17],
+        ...,
+        [ 0,  0,  0],
+        [ 0,  0,  0],
+        [ 0,  0,  0]],
+
+       [[25, 26, 17],
+        [25, 26, 17],
+        [25, 26, 17],
+        ...,
+        [ 0,  0,  0],
+        [ 0,  0,  0],
+        [ 0,  0,  0]],
+
+       ...,
+
+       [[45, 46, 37],
+        [45, 46, 37],
+        [45, 46, 37],
+        ...,
+        [35, 60, 56],
+        [35, 60, 55],
+        [35, 60, 55]],
+
+       [[44, 45, 36],
+        [44, 45, 36],
+        [44, 45, 36],
+        ...,
+        [32, 53, 50],
+        [32, 53, 50],
+        [32, 53, 50]],
+
+       [[42, 43, 34],
+        [42, 43, 34],
+        [42, 43, 34],
+        ...,
+        [32, 55, 50],
+        [32, 55, 50],
+        [32, 55, 50]]], dtype=uint8)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>post_diff</td>
+                    <td class="code"><pre>array([], shape=(0, 0, 3), dtype=uint8)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>pre_dif</td>
+                    <td class="code"><pre>array([], shape=(0, 0, 3), dtype=uint8)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>target_dict</td>
+                    <td class="code"><pre>{&#x27;post_diff&#x27;: ((), None), &#x27;pre_dif&#x27;: ((), None)}</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+        
+        <li class="frame user">
+          
+            <code class="fname">/Users/keatondrebes/Desktop/webapp/webapps/../cv_code/cv_code_main.py</code>, line 420, in perform_pairwise_comparisons_arbitrary
+          
+
+          
+            <div class="context" id="c4919551616">
+              
+                <ol start="413" class="pre-context" id="pre4919551616">
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>        for iconic_image_class, iconic_class_kp_descriptors in iconic_dict.items():</pre></li>
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>            _, all_iconic_descriptors = iconic_class_kp_descriptors</pre></li>
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>            matches = matcher.knnMatch(target_class_descriptors, all_iconic_descriptors, k=2) # knnMatch is needed</pre></li>
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>            good = 0</pre></li>
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>            for (m1, m2) in matches: # for every descriptor, take closest two matches</pre></li>
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>                if m1.distance &lt; 0.7 * m2.distance: # best match has to be this much closer than second best</pre></li>
+                
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>                    good = good + 1</pre></li>
+                
+                </ol>
+              
+              <ol start="420" class="context-line">
+                <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>            good_matches_dict[iconic_image_class] = (len(all_iconic_descriptors), good)</pre> <span>â¦</span></li>
+              </ol>
+              
+                <ol start='421' class="post-context" id="post4919551616">
+                  
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>        output_dict[target_image_name] = good_matches_dict</pre></li>
+                  
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>    return output_dict</pre></li>
+                  
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre></pre></li>
+                  
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>def perform_pairwise_comparisons_labeled(iconic_dict, target_dict):</pre></li>
+                  
+                  <li onclick="toggle('pre4919551616', 'post4919551616')"><pre>    #perform pairwise comparison between every image in the iconic dict, and every image in the target dict</pre></li>
+                  
+              </ol>
+              
+            </div>
+          
+
+          
+            
+              <details>
+                <summary class="commands">Local vars</summary>
+            
+            <table class="vars" id="v4919551616">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>_</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>all_iconic_descriptors</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>good</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>good_matches_dict</td>
+                    <td class="code"><pre>{&#x27;Applesauce&#x27;: (1000, 0),
+ &#x27;BakingPowder&#x27;: (1000, 0),
+ &#x27;Beans&#x27;: (803, 0),
+ &#x27;Cereal&#x27;: (1000, 0),
+ &#x27;Crackers&#x27;: (683, 0),
+ &#x27;CrushedTomatos&#x27;: (1000, 0),
+ &#x27;Milk&#x27;: (906, 0),
+ &#x27;Shredded cheese&#x27;: (1000, 0),
+ &#x27;Spaghetti&#x27;: (1000, 0),
+ &#x27;Yogurt&#x27;: (1000, 0)}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_class_kp_descriptors</td>
+                    <td class="code"><pre>((), None)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_dict</td>
+                    <td class="code"><pre>{&#x27;Applesauce&#x27;: ((&lt;KeyPoint 0x1259fd690&gt;,
+                 &lt;KeyPoint 0x1259fd6c0&gt;,
+                 &lt;KeyPoint 0x1259fd6f0&gt;,
+                 &lt;KeyPoint 0x1259fd720&gt;,
+                 &lt;KeyPoint 0x1259fd750&gt;,
+                 &lt;KeyPoint 0x1259fd780&gt;,
+                 &lt;KeyPoint 0x1259fd7b0&gt;,
+                 &lt;KeyPoint 0x1259fd7e0&gt;,
+                 &lt;KeyPoint 0x1259fd810&gt;,
+                 &lt;KeyPoint 0x1259fd840&gt;,
+                 &lt;KeyPoint 0x1259fd870&gt;,
+                 &lt;KeyPoint 0x1259fd8a0&gt;,
+                 &lt;KeyPoint 0x1259fd8d0&gt;,
+                 &lt;KeyPoint 0x1259fd900&gt;,
+                 &lt;KeyPoint 0x1259fd930&gt;,
+                 &lt;KeyPoint 0x1259fd960&gt;,
+                 &lt;KeyPoint 0x1259fd990&gt;,
+                 &lt;KeyPoint 0x1259fd9c0&gt;,
+                 &lt;KeyPoint 0x1259fd9f0&gt;,
+                 &lt;KeyPoint 0x1259fda20&gt;,
+                 &lt;KeyPoint 0x1259fda50&gt;,
+                 &lt;KeyPoint 0x1259fda80&gt;,
+                 &lt;KeyPoint 0x1259fdab0&gt;,
+                 &lt;KeyPoint 0x1259fdae0&gt;,
+                 &lt;KeyPoint 0x1259fdb10&gt;,
+                 &lt;KeyPoint 0x1259fdb40&gt;,
+                 &lt;KeyPoint 0x1259fdb70&gt;,
+                 &lt;KeyPoint 0x1259fdba0&gt;,
+                 &lt;KeyPoint 0x1259fdbd0&gt;,
+                 &lt;KeyPoint 0x1259fdc00&gt;,
+                 &lt;KeyPoint 0x1259fdc30&gt;,
+                 &lt;KeyPoint 0x1259fdc60&gt;,
+                 &lt;KeyPoint 0x1259fdc90&gt;,
+                 &lt;KeyPoint 0x1259fdcc0&gt;,
+                 &lt;KeyPoint 0x1259fdcf0&gt;,
+                 &lt;KeyPoint 0x1259fdd20&gt;,
+                 &lt;KeyPoint 0x1259fdd50&gt;,
+                 &lt;KeyPoint 0x1259fdd80&gt;,
+                 &lt;KeyPoint 0x1259fddb0&gt;,
+                 &lt;KeyPoint 0x1259fdde0&gt;,
+                 &lt;KeyPoint 0x1259fde10&gt;,
+                 &lt;KeyPoint 0x1259fde40&gt;,
+                 &lt;KeyPoint 0x1259fde70&gt;,
+                 &lt;KeyPoint 0x1259fdea0&gt;,
+                 &lt;KeyPoint 0x1259fded0&gt;,
+                 &lt;KeyPoint 0x1259fdf00&gt;,
+                 &lt;KeyPoint 0x1259fdf30&gt;,
+                 &lt;KeyPoint 0x1259fdf60&gt;,
+                 &lt;KeyPoint 0x1259fdf90&gt;,
+                 &lt;KeyPoint 0x1259fdfc0&gt;,
+                 &lt;KeyPoint 0x1259fe030&gt;,
+                 &lt;KeyPoint 0x1259fe060&gt;,
+                 &lt;KeyPoint 0x1259fe090&gt;,
+                 &lt;KeyPoint 0x1259fe0c0&gt;,
+                 &lt;KeyPoint 0x1259fe0f0&gt;,
+                 &lt;KeyPoint 0x1259fe120&gt;,
+                 &lt;KeyPoint 0x1259fe150&gt;,
+                 &lt;KeyPoint 0x1259fe180&gt;,
+                 &lt;KeyPoint 0x1259fe1b0&gt;,
+                 &lt;KeyPoint 0x1259fe1e0&gt;,
+                 &lt;KeyPoint 0x1259fe210&gt;,
+                 &lt;KeyPoint 0x1259fe240&gt;,
+                 &lt;KeyPoint 0x1259fe270&gt;,
+                 &lt;KeyPoint 0x1259fe2a0&gt;,
+                 &lt;KeyPoint 0x1259fe2d0&gt;,
+                 &lt;KeyPoint 0x1259fe300&gt;,
+                 &lt;KeyPoint 0x1259fe330&gt;,
+                 &lt;KeyPoint 0x1259fe360&gt;,
+                 &lt;KeyPoint 0x1259fe390&gt;,
+                 &lt;KeyPoint 0x1259fe3c0&gt;,
+                 &lt;KeyPoint 0x1259fe3f0&gt;,
+                 &lt;KeyPoint 0x1259fe420&gt;,
+                 &lt;KeyPoint 0x1259fe450&gt;,
+                 &lt;KeyPoint 0x1259fe480&gt;,
+                 &lt;KeyPoint 0x1259fe4b0&gt;,
+                 &lt;KeyPoint 0x1259fe4e0&gt;,
+                 &lt;KeyPoint 0x1259fe510&gt;,
+                 &lt;KeyPoint 0x1259fe540&gt;,
+                 &lt;KeyPoint 0x1259fe570&gt;,
+                 &lt;KeyPoint 0x1259fe5a0&gt;,
+                 &lt;KeyPoint 0x1259fe5d0&gt;,
+                 &lt;KeyPoint 0x1259fe600&gt;,
+                 &lt;KeyPoint 0x1259fe630&gt;,
+                 &lt;KeyPoint 0x1259fe660&gt;,
+                 &lt;KeyPoint 0x1259fe690&gt;,
+                 &lt;KeyPoint 0x1259fe6c0&gt;,
+                 &lt;KeyPoint 0x1259fe6f0&gt;,
+                 &lt;KeyPoint 0x1259fe720&gt;,
+                 &lt;KeyPoint 0x1259fe750&gt;,
+                 &lt;KeyPoint 0x1259fe780&gt;,
+                 &lt;KeyPoint 0x1259fe7b0&gt;,
+                 &lt;KeyPoint 0x1259fe7e0&gt;,
+                 &lt;KeyPoint 0x1259fe810&gt;,
+                 &lt;KeyPoint 0x1259fe840&gt;,
+                 &lt;KeyPoint 0x1259fe870&gt;,
+                 &lt;KeyPoint 0x1259fe8a0&gt;,
+                 &lt;KeyPoint 0x1259fe8d0&gt;,
+                 &lt;KeyPoint 0x1259fe900&gt;,
+                 &lt;KeyPoint 0x1259fe930&gt;,
+                 &lt;KeyPoint 0x1259fe96â¦ &lt;trimmed 379562 bytes string&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>iconic_image_class</td>
+                    <td class="code"><pre>&#x27;UNKNOWN ITEM&#x27;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>matcher</td>
+                    <td class="code"><pre>&lt;BFMatcher 0x125704f70&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>matches</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>output_dict</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>target_class_descriptors</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>target_dict</td>
+                    <td class="code"><pre>{&#x27;post_diff&#x27;: ((), None), &#x27;pre_dif&#x27;: ((), None)}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>target_image_kp_descriptors</td>
+                    <td class="code"><pre>((), None)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>target_image_name</td>
+                    <td class="code"><pre>&#x27;pre_dif&#x27;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+            </details>
+          
+        </li>
+      
+    </ul>
+  </div>
+
+  <form action="https://dpaste.com/" name="pasteform" id="pasteform" method="post">
+  <div id="pastebinTraceback" class="pastebin">
+    <input type="hidden" name="language" value="PythonConsole">
+    <input type="hidden" name="title"
+      value="TypeError at /update_inventory">
+    <input type="hidden" name="source" value="Django Dpaste Agent">
+    <input type="hidden" name="poster" value="Django">
+    <textarea name="content" id="traceback_area" cols="140" rows="25">
+Environment:
+
+
+Request Method: POST
+Request URL: http://localhost:8000/update_inventory
+
+Django Version: 4.0.3
+Python Version: 3.9.12
+Installed Applications:
+[&#x27;django.contrib.admin&#x27;,
+ &#x27;django.contrib.auth&#x27;,
+ &#x27;django.contrib.contenttypes&#x27;,
+ &#x27;django.contrib.sessions&#x27;,
+ &#x27;django.contrib.messages&#x27;,
+ &#x27;django.contrib.staticfiles&#x27;,
+ &#x27;food_tracker&#x27;,
+ &#x27;social_django&#x27;,
+ &#x27;sslserver&#x27;,
+ &#x27;phonenumber_field&#x27;]
+Installed Middleware:
+[&#x27;django.middleware.security.SecurityMiddleware&#x27;,
+ &#x27;django.contrib.sessions.middleware.SessionMiddleware&#x27;,
+ &#x27;django.middleware.common.CommonMiddleware&#x27;,
+ &#x27;django.middleware.csrf.CsrfViewMiddleware&#x27;,
+ &#x27;django.contrib.auth.middleware.AuthenticationMiddleware&#x27;,
+ &#x27;django.contrib.messages.middleware.MessageMiddleware&#x27;,
+ &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;,
+ &#x27;social_django.middleware.SocialAuthExceptionMiddleware&#x27;]
+
+
+
+Traceback (most recent call last):
+  File "/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/keatondrebes/miniconda3/envs/school_env/lib/python3.9/site-packages/django/views/decorators/csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "/Users/keatondrebes/Desktop/webapp/webapps/food_tracker/views.py", line 412, in update_inventory
+    best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)
+  File "/Users/keatondrebes/Desktop/webapp/webapps/../cv_code/cv_code_main.py", line 609, in get_best_guess_or_none
+    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
+  File "/Users/keatondrebes/Desktop/webapp/webapps/../cv_code/cv_code_main.py", line 420, in perform_pairwise_comparisons_arbitrary
+    good_matches_dict[iconic_image_class] = (len(all_iconic_descriptors), good)
+
+Exception Type: TypeError at /update_inventory
+Exception Value: object of type &#x27;NoneType&#x27; has no len()
+</textarea>
+  <br><br>
+  <input type="submit" value="Share this traceback on a public website">
+  </div>
+</form>
+
+</div>
+
+
+<div id="requestinfo">
+  <h2>Request information</h2>
+
+
+  
+    <h3 id="user-info">USER</h3>
+    <p>AnonymousUser</p>
+  
+
+  <h3 id="get-info">GET</h3>
+  
+    <p>No GET data</p>
+  
+
+  <h3 id="post-info">POST</h3>
+  
+    <p>No POST data</p>
+  
+  <h3 id="files-info">FILES</h3>
+  
+    <p>No FILES data</p>
+  
+
+
+  <h3 id="cookie-info">COOKIES</h3>
+  
+    <p>No cookie data</p>
+  
+
+  <h3 id="meta-info">META</h3>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>COLORFGBG</td>
+          <td class="code"><pre>&#x27;7;0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COLORTERM</td>
+          <td class="code"><pre>&#x27;truecolor&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMAND_MODE</td>
+          <td class="code"><pre>&#x27;unix2003&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_BUILD_SYSROOT</td>
+          <td class="code"><pre>&#x27;/opt/MacOSX11.0.sdk&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_DEFAULT_ENV</td>
+          <td class="code"><pre>&#x27;school_env&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_EXE</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/miniconda3/bin/conda&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_MKL_INTERFACE_LAYER_BACKUP</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_PREFIX</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/miniconda3/envs/school_env&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_PREFIX_1</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/miniconda3&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_PROMPT_MODIFIER</td>
+          <td class="code"><pre>&#x27;(school_env) &#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_PYTHON_EXE</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/miniconda3/bin/python&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONDA_SHLVL</td>
+          <td class="code"><pre>&#x27;2&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_LENGTH</td>
+          <td class="code"><pre>&#x27;2490363&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_TYPE</td>
+          <td class="code"><pre>&#x27;application/json&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DISPLAY</td>
+          <td class="code"><pre>&#x27;/private/tmp/com.apple.launchd.JSchIYjpB6/org.macosforge.xquartz:0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DJANGO_SETTINGS_MODULE</td>
+          <td class="code"><pre>&#x27;webapps.settings&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>GATEWAY_INTERFACE</td>
+          <td class="code"><pre>&#x27;CGI/1.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>GSETTINGS_SCHEMA_DIR</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/miniconda3/envs/school_env/share/glib-2.0/schemas&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>GSETTINGS_SCHEMA_DIR_CONDA_BACKUP</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOME</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT</td>
+          <td class="code"><pre>&#x27;*/*&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT_ENCODING</td>
+          <td class="code"><pre>&#x27;gzip, deflate, br&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_CONNECTION</td>
+          <td class="code"><pre>&#x27;keep-alive&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_HOST</td>
+          <td class="code"><pre>&#x27;localhost:8000&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_USER_AGENT</td>
+          <td class="code"><pre>&#x27;python-requests/2.27.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ITERM_PROFILE</td>
+          <td class="code"><pre>&#x27;Default&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ITERM_SESSION_ID</td>
+          <td class="code"><pre>&#x27;w0t0p0:F19AF0BE-D76F-47A5-A653-7332A6C28FC9&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANG</td>
+          <td class="code"><pre>&#x27;en_US.UTF-8&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LC_TERMINAL</td>
+          <td class="code"><pre>&#x27;iTerm2&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LC_TERMINAL_VERSION</td>
+          <td class="code"><pre>&#x27;3.4.15&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGNAME</td>
+          <td class="code"><pre>&#x27;keatondrebes&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MACOSX_DEPLOYMENT_TARGET</td>
+          <td class="code"><pre>&#x27;11.0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MKL_INTERFACE_LAYER</td>
+          <td class="code"><pre>&#x27;LP64,GNU&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NUMBA_DEVELOPER_MODE</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>OLDPWD</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH</td>
+          <td class="code"><pre>(&#x27;/Users/keatondrebes/miniconda3/envs/school_env/bin:/Users/keatondrebes/miniconda3/condabin:/Users/keatondrebes/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware &#x27;
+ &#x27;Fusion.app/Contents/Public:/Library/TeX/texbin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH_INFO</td>
+          <td class="code"><pre>&#x27;/update_inventory&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PWD</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/Desktop/webapp/webapps&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>QUERY_STRING</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_ADDR</td>
+          <td class="code"><pre>&#x27;127.0.0.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_HOST</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REQUEST_METHOD</td>
+          <td class="code"><pre>&#x27;POST&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>RUN_MAIN</td>
+          <td class="code"><pre>&#x27;true&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SCRIPT_NAME</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_NAME</td>
+          <td class="code"><pre>&#x27;1.0.0.127.in-addr.arpa&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PORT</td>
+          <td class="code"><pre>&#x27;8000&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PROTOCOL</td>
+          <td class="code"><pre>&#x27;HTTP/1.1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_SOFTWARE</td>
+          <td class="code"><pre>&#x27;WSGIServer/0.2&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHELL</td>
+          <td class="code"><pre>&#x27;/bin/zsh&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHLVL</td>
+          <td class="code"><pre>&#x27;1&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SSH_AUTH_SOCK</td>
+          <td class="code"><pre>&#x27;/private/tmp/com.apple.launchd.l2nDDH0eLy/Listeners&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM</td>
+          <td class="code"><pre>&#x27;xterm-256color&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM_PROGRAM</td>
+          <td class="code"><pre>&#x27;iTerm.app&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM_PROGRAM_VERSION</td>
+          <td class="code"><pre>&#x27;3.4.15&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TERM_SESSION_ID</td>
+          <td class="code"><pre>&#x27;w0t0p0:F19AF0BE-D76F-47A5-A653-7332A6C28FC9&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TMPDIR</td>
+          <td class="code"><pre>&#x27;/var/folders/yz/bhxfdx_50rx1y003d175d_1h0000gn/T/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TZ</td>
+          <td class="code"><pre>&#x27;America/New_York&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>UNAME</td>
+          <td class="code"><pre>&#x27;Darwin&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USER</td>
+          <td class="code"><pre>&#x27;keatondrebes&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>XPC_FLAGS</td>
+          <td class="code"><pre>&#x27;0x0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>XPC_SERVICE_NAME</td>
+          <td class="code"><pre>&#x27;0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>_</td>
+          <td class="code"><pre>&#x27;/Users/keatondrebes/miniconda3/envs/school_env/bin/python&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>_CE_CONDA</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>_CE_M</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>__CFBundleIdentifier</td>
+          <td class="code"><pre>&#x27;com.googlecode.iterm2&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>__CF_USER_TEXT_ENCODING</td>
+          <td class="code"><pre>&#x27;0x1F5:0x0:0x0&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.errors</td>
+          <td class="code"><pre>&lt;_io.TextIOWrapper name=&#x27;&lt;stderr&gt;&#x27; mode=&#x27;w&#x27; encoding=&#x27;utf-8&#x27;&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.file_wrapper</td>
+          <td class="code"><pre>&lt;class &#x27;wsgiref.util.FileWrapper&#x27;&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.input</td>
+          <td class="code"><pre>&lt;django.core.handlers.wsgi.LimitedStream object at 0x125761760&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multiprocess</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multithread</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.run_once</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.url_scheme</td>
+          <td class="code"><pre>&#x27;http&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.version</td>
+          <td class="code"><pre>(1, 0)</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+
+  <h3 id="settings-info">Settings</h3>
+  <h4>Using settings module <code>webapps.settings</code></h4>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Setting</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>ABSOLUTE_URL_OVERRIDES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ADMINS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ALLOWED_HOSTS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>APPEND_SLASH</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTHENTICATION_BACKENDS</td>
+          <td class="code"><pre>(&#x27;social_core.backends.google.GoogleOAuth2&#x27;,
+ &#x27;social_core.backends.facebook.FacebookOAuth2&#x27;,
+ &#x27;django.contrib.auth.backends.ModelBackend&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTH_PASSWORD_VALIDATORS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTH_USER_MODEL</td>
+          <td class="code"><pre>&#x27;food_tracker.User&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>BASE_DIR</td>
+          <td class="code"><pre>PosixPath(&#x27;/Users/keatondrebes/Desktop/webapp/webapps&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHES</td>
+          <td class="code"><pre>{&#x27;default&#x27;: {&#x27;BACKEND&#x27;: &#x27;django.core.cache.backends.locmem.LocMemCache&#x27;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_ALIAS</td>
+          <td class="code"><pre>&#x27;default&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_KEY_PREFIX</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_SECONDS</td>
+          <td class="code"><pre>600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_AGE</td>
+          <td class="code"><pre>31449600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_NAME</td>
+          <td class="code"><pre>&#x27;csrftoken&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_PATH</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_SAMESITE</td>
+          <td class="code"><pre>&#x27;Lax&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_FAILURE_VIEW</td>
+          <td class="code"><pre>&#x27;django.views.csrf.csrf_failure&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_HEADER_NAME</td>
+          <td class="code"><pre>&#x27;HTTP_X_CSRFTOKEN&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_TRUSTED_ORIGINS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_USE_SESSIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASES</td>
+          <td class="code"><pre>{&#x27;default&#x27;: {&#x27;ATOMIC_REQUESTS&#x27;: False,
+             &#x27;AUTOCOMMIT&#x27;: True,
+             &#x27;CONN_MAX_AGE&#x27;: 0,
+             &#x27;ENGINE&#x27;: &#x27;django.db.backends.sqlite3&#x27;,
+             &#x27;HOST&#x27;: &#x27;&#x27;,
+             &#x27;NAME&#x27;: PosixPath(&#x27;/Users/keatondrebes/Desktop/webapp/webapps/db.sqlite3&#x27;),
+             &#x27;OPTIONS&#x27;: {},
+             &#x27;PASSWORD&#x27;: &#x27;********************&#x27;,
+             &#x27;PORT&#x27;: &#x27;&#x27;,
+             &#x27;TEST&#x27;: {&#x27;CHARSET&#x27;: None,
+                      &#x27;COLLATION&#x27;: None,
+                      &#x27;MIGRATE&#x27;: True,
+                      &#x27;MIRROR&#x27;: None,
+                      &#x27;NAME&#x27;: None},
+             &#x27;TIME_ZONE&#x27;: None,
+             &#x27;USER&#x27;: &#x27;&#x27;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_ROUTERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATA_UPLOAD_MAX_NUMBER_FIELDS</td>
+          <td class="code"><pre>1000</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_FORMAT</td>
+          <td class="code"><pre>&#x27;N j, Y, P&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_INPUT_FORMATS</td>
+          <td class="code"><pre>[&#x27;%Y-%m-%d %H:%M:%S&#x27;,
+ &#x27;%Y-%m-%d %H:%M:%S.%f&#x27;,
+ &#x27;%Y-%m-%d %H:%M&#x27;,
+ &#x27;%m/%d/%Y %H:%M:%S&#x27;,
+ &#x27;%m/%d/%Y %H:%M:%S.%f&#x27;,
+ &#x27;%m/%d/%Y %H:%M&#x27;,
+ &#x27;%m/%d/%y %H:%M:%S&#x27;,
+ &#x27;%m/%d/%y %H:%M:%S.%f&#x27;,
+ &#x27;%m/%d/%y %H:%M&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_FORMAT</td>
+          <td class="code"><pre>&#x27;N j, Y&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_INPUT_FORMATS</td>
+          <td class="code"><pre>[&#x27;%Y-%m-%d&#x27;,
+ &#x27;%m/%d/%Y&#x27;,
+ &#x27;%m/%d/%y&#x27;,
+ &#x27;%b %d %Y&#x27;,
+ &#x27;%b %d, %Y&#x27;,
+ &#x27;%d %b %Y&#x27;,
+ &#x27;%d %b, %Y&#x27;,
+ &#x27;%B %d %Y&#x27;,
+ &#x27;%B %d, %Y&#x27;,
+ &#x27;%d %B %Y&#x27;,
+ &#x27;%d %B, %Y&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG_PROPAGATE_EXCEPTIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DECIMAL_SEPARATOR</td>
+          <td class="code"><pre>&#x27;.&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_AUTO_FIELD</td>
+          <td class="code"><pre>&#x27;django.db.models.BigAutoField&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_CHARSET</td>
+          <td class="code"><pre>&#x27;utf-8&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_EXCEPTION_REPORTER</td>
+          <td class="code"><pre>&#x27;django.views.debug.ExceptionReporter&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_EXCEPTION_REPORTER_FILTER</td>
+          <td class="code"><pre>&#x27;django.views.debug.SafeExceptionReporterFilter&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FILE_STORAGE</td>
+          <td class="code"><pre>&#x27;django.core.files.storage.FileSystemStorage&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FROM_EMAIL</td>
+          <td class="code"><pre>&#x27;webmaster@localhost&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_INDEX_TABLESPACE</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_TABLESPACE</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DISALLOWED_USER_AGENTS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_BACKEND</td>
+          <td class="code"><pre>&#x27;django.core.mail.backends.smtp.EmailBackend&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST</td>
+          <td class="code"><pre>&#x27;localhost&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_PASSWORD</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_USER</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_PORT</td>
+          <td class="code"><pre>25</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SSL_CERTFILE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SSL_KEYFILE</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SUBJECT_PREFIX</td>
+          <td class="code"><pre>&#x27;[Django] &#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_TIMEOUT</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_LOCALTIME</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_SSL</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_TLS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_DIRECTORY_PERMISSIONS</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_HANDLERS</td>
+          <td class="code"><pre>[&#x27;django.core.files.uploadhandler.MemoryFileUploadHandler&#x27;,
+ &#x27;django.core.files.uploadhandler.TemporaryFileUploadHandler&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_PERMISSIONS</td>
+          <td class="code"><pre>420</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_TEMP_DIR</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIRST_DAY_OF_WEEK</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIXTURE_DIRS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORCE_SCRIPT_NAME</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORMAT_MODULE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORM_RENDERER</td>
+          <td class="code"><pre>&#x27;django.forms.renderers.DjangoTemplates&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>IGNORABLE_404_URLS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INSTALLED_APPS</td>
+          <td class="code"><pre>[&#x27;django.contrib.admin&#x27;,
+ &#x27;django.contrib.auth&#x27;,
+ &#x27;django.contrib.contenttypes&#x27;,
+ &#x27;django.contrib.sessions&#x27;,
+ &#x27;django.contrib.messages&#x27;,
+ &#x27;django.contrib.staticfiles&#x27;,
+ &#x27;food_tracker&#x27;,
+ &#x27;social_django&#x27;,
+ &#x27;sslserver&#x27;,
+ &#x27;phonenumber_field&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INTERNAL_IPS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>KEY_CONFIG</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES</td>
+          <td class="code"><pre>[(&#x27;af&#x27;, &#x27;Afrikaans&#x27;),
+ (&#x27;ar&#x27;, &#x27;Arabic&#x27;),
+ (&#x27;ar-dz&#x27;, &#x27;Algerian Arabic&#x27;),
+ (&#x27;ast&#x27;, &#x27;Asturian&#x27;),
+ (&#x27;az&#x27;, &#x27;Azerbaijani&#x27;),
+ (&#x27;bg&#x27;, &#x27;Bulgarian&#x27;),
+ (&#x27;be&#x27;, &#x27;Belarusian&#x27;),
+ (&#x27;bn&#x27;, &#x27;Bengali&#x27;),
+ (&#x27;br&#x27;, &#x27;Breton&#x27;),
+ (&#x27;bs&#x27;, &#x27;Bosnian&#x27;),
+ (&#x27;ca&#x27;, &#x27;Catalan&#x27;),
+ (&#x27;cs&#x27;, &#x27;Czech&#x27;),
+ (&#x27;cy&#x27;, &#x27;Welsh&#x27;),
+ (&#x27;da&#x27;, &#x27;Danish&#x27;),
+ (&#x27;de&#x27;, &#x27;German&#x27;),
+ (&#x27;dsb&#x27;, &#x27;Lower Sorbian&#x27;),
+ (&#x27;el&#x27;, &#x27;Greek&#x27;),
+ (&#x27;en&#x27;, &#x27;English&#x27;),
+ (&#x27;en-au&#x27;, &#x27;Australian English&#x27;),
+ (&#x27;en-gb&#x27;, &#x27;British English&#x27;),
+ (&#x27;eo&#x27;, &#x27;Esperanto&#x27;),
+ (&#x27;es&#x27;, &#x27;Spanish&#x27;),
+ (&#x27;es-ar&#x27;, &#x27;Argentinian Spanish&#x27;),
+ (&#x27;es-co&#x27;, &#x27;Colombian Spanish&#x27;),
+ (&#x27;es-mx&#x27;, &#x27;Mexican Spanish&#x27;),
+ (&#x27;es-ni&#x27;, &#x27;Nicaraguan Spanish&#x27;),
+ (&#x27;es-ve&#x27;, &#x27;Venezuelan Spanish&#x27;),
+ (&#x27;et&#x27;, &#x27;Estonian&#x27;),
+ (&#x27;eu&#x27;, &#x27;Basque&#x27;),
+ (&#x27;fa&#x27;, &#x27;Persian&#x27;),
+ (&#x27;fi&#x27;, &#x27;Finnish&#x27;),
+ (&#x27;fr&#x27;, &#x27;French&#x27;),
+ (&#x27;fy&#x27;, &#x27;Frisian&#x27;),
+ (&#x27;ga&#x27;, &#x27;Irish&#x27;),
+ (&#x27;gd&#x27;, &#x27;Scottish Gaelic&#x27;),
+ (&#x27;gl&#x27;, &#x27;Galician&#x27;),
+ (&#x27;he&#x27;, &#x27;Hebrew&#x27;),
+ (&#x27;hi&#x27;, &#x27;Hindi&#x27;),
+ (&#x27;hr&#x27;, &#x27;Croatian&#x27;),
+ (&#x27;hsb&#x27;, &#x27;Upper Sorbian&#x27;),
+ (&#x27;hu&#x27;, &#x27;Hungarian&#x27;),
+ (&#x27;hy&#x27;, &#x27;Armenian&#x27;),
+ (&#x27;ia&#x27;, &#x27;Interlingua&#x27;),
+ (&#x27;id&#x27;, &#x27;Indonesian&#x27;),
+ (&#x27;ig&#x27;, &#x27;Igbo&#x27;),
+ (&#x27;io&#x27;, &#x27;Ido&#x27;),
+ (&#x27;is&#x27;, &#x27;Icelandic&#x27;),
+ (&#x27;it&#x27;, &#x27;Italian&#x27;),
+ (&#x27;ja&#x27;, &#x27;Japanese&#x27;),
+ (&#x27;ka&#x27;, &#x27;Georgian&#x27;),
+ (&#x27;kab&#x27;, &#x27;Kabyle&#x27;),
+ (&#x27;kk&#x27;, &#x27;Kazakh&#x27;),
+ (&#x27;km&#x27;, &#x27;Khmer&#x27;),
+ (&#x27;kn&#x27;, &#x27;Kannada&#x27;),
+ (&#x27;ko&#x27;, &#x27;Korean&#x27;),
+ (&#x27;ky&#x27;, &#x27;Kyrgyz&#x27;),
+ (&#x27;lb&#x27;, &#x27;Luxembourgish&#x27;),
+ (&#x27;lt&#x27;, &#x27;Lithuanian&#x27;),
+ (&#x27;lv&#x27;, &#x27;Latvian&#x27;),
+ (&#x27;mk&#x27;, &#x27;Macedonian&#x27;),
+ (&#x27;ml&#x27;, &#x27;Malayalam&#x27;),
+ (&#x27;mn&#x27;, &#x27;Mongolian&#x27;),
+ (&#x27;mr&#x27;, &#x27;Marathi&#x27;),
+ (&#x27;ms&#x27;, &#x27;Malay&#x27;),
+ (&#x27;my&#x27;, &#x27;Burmese&#x27;),
+ (&#x27;nb&#x27;, &#x27;Norwegian BokmÃ¥l&#x27;),
+ (&#x27;ne&#x27;, &#x27;Nepali&#x27;),
+ (&#x27;nl&#x27;, &#x27;Dutch&#x27;),
+ (&#x27;nn&#x27;, &#x27;Norwegian Nynorsk&#x27;),
+ (&#x27;os&#x27;, &#x27;Ossetic&#x27;),
+ (&#x27;pa&#x27;, &#x27;Punjabi&#x27;),
+ (&#x27;pl&#x27;, &#x27;Polish&#x27;),
+ (&#x27;pt&#x27;, &#x27;Portuguese&#x27;),
+ (&#x27;pt-br&#x27;, &#x27;Brazilian Portuguese&#x27;),
+ (&#x27;ro&#x27;, &#x27;Romanian&#x27;),
+ (&#x27;ru&#x27;, &#x27;Russian&#x27;),
+ (&#x27;sk&#x27;, &#x27;Slovak&#x27;),
+ (&#x27;sl&#x27;, &#x27;Slovenian&#x27;),
+ (&#x27;sq&#x27;, &#x27;Albanian&#x27;),
+ (&#x27;sr&#x27;, &#x27;Serbian&#x27;),
+ (&#x27;sr-latn&#x27;, &#x27;Serbian Latin&#x27;),
+ (&#x27;sv&#x27;, &#x27;Swedish&#x27;),
+ (&#x27;sw&#x27;, &#x27;Swahili&#x27;),
+ (&#x27;ta&#x27;, &#x27;Tamil&#x27;),
+ (&#x27;te&#x27;, &#x27;Telugu&#x27;),
+ (&#x27;tg&#x27;, &#x27;Tajik&#x27;),
+ (&#x27;th&#x27;, &#x27;Thai&#x27;),
+ (&#x27;tk&#x27;, &#x27;Turkmen&#x27;),
+ (&#x27;tr&#x27;, &#x27;Turkish&#x27;),
+ (&#x27;tt&#x27;, &#x27;Tatar&#x27;),
+ (&#x27;udm&#x27;, &#x27;Udmurt&#x27;),
+ (&#x27;uk&#x27;, &#x27;Ukrainian&#x27;),
+ (&#x27;ur&#x27;, &#x27;Urdu&#x27;),
+ (&#x27;uz&#x27;, &#x27;Uzbek&#x27;),
+ (&#x27;vi&#x27;, &#x27;Vietnamese&#x27;),
+ (&#x27;zh-hans&#x27;, &#x27;Simplified Chinese&#x27;),
+ (&#x27;zh-hant&#x27;, &#x27;Traditional Chinese&#x27;)]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES_BIDI</td>
+          <td class="code"><pre>[&#x27;he&#x27;, &#x27;ar&#x27;, &#x27;ar-dz&#x27;, &#x27;fa&#x27;, &#x27;ur&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_CODE</td>
+          <td class="code"><pre>&#x27;en-us&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_AGE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_NAME</td>
+          <td class="code"><pre>&#x27;django_language&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_PATH</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_SAMESITE</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOCALE_PATHS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING_CONFIG</td>
+          <td class="code"><pre>&#x27;logging.config.dictConfig&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_REDIRECT_URL</td>
+          <td class="code"><pre>&#x27;/profile&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_URL</td>
+          <td class="code"><pre>&#x27;/login&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGOUT_REDIRECT_URL</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MANAGERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_ROOT</td>
+          <td class="code"><pre>&#x27;&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_URL</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MESSAGE_STORAGE</td>
+          <td class="code"><pre>&#x27;django.contrib.messages.storage.fallback.FallbackStorage&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIDDLEWARE</td>
+          <td class="code"><pre>[&#x27;django.middleware.security.SecurityMiddleware&#x27;,
+ &#x27;django.contrib.sessions.middleware.SessionMiddleware&#x27;,
+ &#x27;django.middleware.common.CommonMiddleware&#x27;,
+ &#x27;django.middleware.csrf.CsrfViewMiddleware&#x27;,
+ &#x27;django.contrib.auth.middleware.AuthenticationMiddleware&#x27;,
+ &#x27;django.contrib.messages.middleware.MessageMiddleware&#x27;,
+ &#x27;django.middleware.clickjacking.XFrameOptionsMiddleware&#x27;,
+ &#x27;social_django.middleware.SocialAuthExceptionMiddleware&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIGRATION_MODULES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MONTH_DAY_FORMAT</td>
+          <td class="code"><pre>&#x27;F j&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NUMBER_GROUPING</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_HASHERS</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_RESET_TIMEOUT</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PHONENUMBER_DB_FORMAT</td>
+          <td class="code"><pre>&#x27;NATIONAL&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PHONENUMBER_DEFAULT_REGION</td>
+          <td class="code"><pre>&#x27;US&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PREPEND_WWW</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ROOT_URLCONF</td>
+          <td class="code"><pre>&#x27;webapps.urls&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECRET_KEY</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_CONTENT_TYPE_NOSNIFF</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_CROSS_ORIGIN_OPENER_POLICY</td>
+          <td class="code"><pre>&#x27;same-origin&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_INCLUDE_SUBDOMAINS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_PRELOAD</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_HSTS_SECONDS</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_PROXY_SSL_HEADER</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_REDIRECT_EXEMPT</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_REFERRER_POLICY</td>
+          <td class="code"><pre>&#x27;same-origin&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_SSL_HOST</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECURE_SSL_REDIRECT</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_EMAIL</td>
+          <td class="code"><pre>&#x27;root@localhost&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_CACHE_ALIAS</td>
+          <td class="code"><pre>&#x27;default&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_AGE</td>
+          <td class="code"><pre>1209600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_NAME</td>
+          <td class="code"><pre>&#x27;sessionid&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_PATH</td>
+          <td class="code"><pre>&#x27;/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_SAMESITE</td>
+          <td class="code"><pre>&#x27;Lax&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_ENGINE</td>
+          <td class="code"><pre>&#x27;django.contrib.sessions.backends.db&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_EXPIRE_AT_BROWSER_CLOSE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_FILE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SAVE_EVERY_REQUEST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SERIALIZER</td>
+          <td class="code"><pre>&#x27;django.contrib.sessions.serializers.JSONSerializer&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SETTINGS_MODULE</td>
+          <td class="code"><pre>&#x27;webapps.settings&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATETIME_FORMAT</td>
+          <td class="code"><pre>&#x27;m/d/Y P&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATE_FORMAT</td>
+          <td class="code"><pre>&#x27;m/d/Y&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SIGNING_BACKEND</td>
+          <td class="code"><pre>&#x27;django.core.signing.TimestampSigner&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SILENCED_SYSTEM_CHECKS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_FACEBOOK_KEY</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS</td>
+          <td class="code"><pre>{&#x27;fields&#x27;: &#x27;email,picture.type(large),first_name,last_name&#x27;}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_FACEBOOK_SCOPE</td>
+          <td class="code"><pre>[&#x27;email&#x27;, &#x27;public_profile&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_FACEBOOK_SECRET</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS</td>
+          <td class="code"><pre>{&#x27;prompt&#x27;: &#x27;select_account&#x27;}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_GOOGLE_OAUTH2_KEY</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE</td>
+          <td class="code"><pre>[&#x27;profile&#x27;, &#x27;email&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET</td>
+          <td class="code"><pre>&#x27;********************&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_PIPELINE</td>
+          <td class="code"><pre>(&#x27;social_core.pipeline.social_auth.social_details&#x27;,
+ &#x27;social_core.pipeline.social_auth.social_uid&#x27;,
+ &#x27;social_core.pipeline.social_auth.auth_allowed&#x27;,
+ &#x27;food_tracker.pipeline.social_user&#x27;,
+ &#x27;social_core.pipeline.user.get_username&#x27;,
+ &#x27;social_core.pipeline.social_auth.associate_by_email&#x27;,
+ &#x27;social_core.pipeline.user.create_user&#x27;,
+ &#x27;social_core.pipeline.social_auth.associate_user&#x27;,
+ &#x27;food_tracker.pipeline.load_extra_data&#x27;,
+ &#x27;social_core.pipeline.user.user_details&#x27;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SOCIAL_AUTH_URL_NAMESPACE</td>
+          <td class="code"><pre>&#x27;social&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_DIRS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_FINDERS</td>
+          <td class="code"><pre>[&#x27;django.contrib.staticfiles.finders.FileSystemFinder&#x27;,
+ &#x27;django.contrib.staticfiles.finders.AppDirectoriesFinder&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_STORAGE</td>
+          <td class="code"><pre>&#x27;django.contrib.staticfiles.storage.StaticFilesStorage&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_ROOT</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_URL</td>
+          <td class="code"><pre>&#x27;/static/&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATES</td>
+          <td class="code"><pre>[{&#x27;APP_DIRS&#x27;: True,
+  &#x27;BACKEND&#x27;: &#x27;django.template.backends.django.DjangoTemplates&#x27;,
+  &#x27;DIRS&#x27;: [],
+  &#x27;OPTIONS&#x27;: {&#x27;context_processors&#x27;: [&#x27;django.template.context_processors.debug&#x27;,
+                                     &#x27;django.template.context_processors.request&#x27;,
+                                     &#x27;django.contrib.auth.context_processors.auth&#x27;,
+                                     &#x27;django.contrib.messages.context_processors.messages&#x27;,
+                                     &#x27;social_django.context_processors.backends&#x27;]}}]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_NON_SERIALIZED_APPS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_RUNNER</td>
+          <td class="code"><pre>&#x27;django.test.runner.DiscoverRunner&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>&#x27;,&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_FORMAT</td>
+          <td class="code"><pre>&#x27;P&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_INPUT_FORMATS</td>
+          <td class="code"><pre>[&#x27;%H:%M:%S&#x27;, &#x27;%H:%M:%S.%f&#x27;, &#x27;%H:%M&#x27;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_ZONE</td>
+          <td class="code"><pre>&#x27;America/New_York&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_DEPRECATED_PYTZ</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_I18N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_L10N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_TZ</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_HOST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_PORT</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>WSGI_APPLICATION</td>
+          <td class="code"><pre>&#x27;webapps.wsgi.application&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>X_FRAME_OPTIONS</td>
+          <td class="code"><pre>&#x27;DENY&#x27;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>YEAR_MONTH_FORMAT</td>
+          <td class="code"><pre>&#x27;F Y&#x27;</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+</div>
+
+  <div id="explanation">
+    <p>
+      Youâre seeing this error because you have <code>DEBUG = True</code> in your
+      Django settings file. Change that to <code>False</code>, and Django will
+      display a standard page generated by the handler for this status code.
+    </p>
+  </div>
+
+</body>
+</html>
