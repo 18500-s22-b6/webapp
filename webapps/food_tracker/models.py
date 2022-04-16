@@ -12,12 +12,12 @@ class User(AbstractUser):
 
 # Cabinet and Device are synonymous, in case of documentation discrepancy
 class Device(models.Model):
-    serial_number = models.CharField(max_length=32)
-    status = models.IntegerField()
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-    name = models.CharField(blank=True, null=True, max_length = 50)
-    most_recent_image = models.ImageField(blank=True, null=True)
-    key = models.CharField(max_length = 100)
+    serial_number = models.IntegerField(blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    owner = models.ForeignKey(User, on_delete=models.PROTECT)
+    name = models.CharField(max_length = 50)
+    most_recent_image = models.ImageField()
+    key = models.CharField(max_length = 50)
 
     def __str__(self):
         return "Device(id=" + str(self.serial_number) \
@@ -26,10 +26,6 @@ class Device(models.Model):
                       + ", " + "name=" + str(self.name) \
                       + ", " + "key=" + str(self.key) \
                       + ")"
-    
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
 
 
 
@@ -40,9 +36,6 @@ class Category(models.Model):
     user_gen = models.BooleanField()
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     desc_folder = models.CharField(max_length = 200) # extended max len
-
-    def __str__(self):
-        return "" + self.name
 
 
 

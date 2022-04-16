@@ -2,21 +2,18 @@
 // Pulled from 437 ajax_todolist/todo.js
 // See 437 hw2 for impl details
 
-"use strict"
-
 // Sends a new request to update the to-do list
 function getList() {
-    let xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) return
-        updatePage(xhr)
-    }
-
-    xhr.open("GET", "/get-list", true)
-    xhr.send()
+    $.ajax({
+        url: "/get-list",
+        dataType : "json",
+        success: updateList,
+        error: updateError
+    });
 }
 
-function updatePage(xhr) {
+
+function updateError(xhr) {
     // Normal operation
     if (xhr.status == 200) {
         let response = JSON.parse(xhr.responseText)
@@ -41,10 +38,8 @@ function updatePage(xhr) {
 }
 
 function displayError(message) {
-    let errorElement = document.getElementById("error")
-    errorElement.innerHTML = message
+    $("#error").html(message);
 }
-
 function updateList(items) {
 
     console.log("items: " + items)
@@ -59,6 +54,7 @@ function updateList(items) {
     // Adds each new todo-list item to the list
     for (let i = 0; i < items.length; i++) {
         let item = items[i]
+        let type = item.type
 
         // Builds a new HTML list item for the todo-list
         let deleteButton
@@ -70,10 +66,14 @@ function updateList(items) {
 
         let element = document.createElement("li")
         element.innerHTML = deleteButton +
-                            sanitize(item.text) +
+                            sanitize(type.name) +
                             ' <span class="details">' +
-                            "(id=" + item.id + ", ip_addr=" + item.ip_addr + ", user=" + item.user + ")" +
-                            '</span>'
+                            "(id=" + type.id 
+                            + ", location=" + item.location.name
+                            + ", type=" + item.type.name
+                            + ", thumbnail=" + item.thumbnail
+                            + ")"
+                            + '</span>'
 
         // Adds the todo-list item to the HTML list
         list.appendChild(element)
