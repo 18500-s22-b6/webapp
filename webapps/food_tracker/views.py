@@ -20,7 +20,8 @@ from django.core.files.base import ContentFile
 
 #import cv module
 import sys
-sys.path.append("../cv_code")
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "cv_code"))
 import cv_code_main as cv_code
 
 from .models import *
