@@ -20,7 +20,8 @@ from django.core.files.base import ContentFile
 
 #import cv module
 import sys
-sys.path.append("../cv_code")
+import os
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../cv_code"))
 import cv_code_main as cv_code
 
 from .models import *
@@ -165,7 +166,7 @@ def add_recipe(request):
   ##### If POST, "submit" button was pressed
   form = RecipeForm(request.POST)
   if not form.is_valid():
-    context = { 'form': form, 
+    context = { 'form': form,
                 'devices': Device.objects.filter(owner=request.user) }
     return render(request, 'add_recipe.html', context)
 
