@@ -2,6 +2,7 @@
 env/
 client_secrets.json
 keys.ini
+keys.ini.sample
 
 db.sqlite3
 */__pycache__
