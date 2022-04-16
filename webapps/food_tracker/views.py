@@ -165,7 +165,7 @@ def add_recipe(request):
   ##### If POST, "submit" button was pressed
   form = RecipeForm(request.POST)
   if not form.is_valid():
-    context = { 'form': form, 
+    context = { 'form': form,
                 'devices': Device.objects.filter(owner=request.user) }
     return render(request, 'add_recipe.html', context)
 
@@ -402,8 +402,13 @@ def update_inventory(request):
 
   new_image_path = image_field.path
 
+  iconic_images = list(IconicImage.objects.all().filter(user=device.owner))
+  iconic_dict = dict()
+  for iconic_image in iconic_images:
+    iconic_dict[iconic_image.category.name] = iconic_image.path
+
   #TODO: supply the iconic images which this user has registered as third argument
-  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, None)
+  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)
 
   if best_guess is not None:
     #TODO: update this to use existing category if appropriate

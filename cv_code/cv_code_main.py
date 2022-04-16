@@ -493,7 +493,7 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
         #default to SIFT since that did the best
         alg = cv.xfeatures2d.SIFT_create(N_DESC)
 
-    image_dir = os.path.join(os.getcwd(), "Images")
+    image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Images")
     image_class_folders = os.listdir(image_dir)
     out_dict = dict()
     for image_class in image_class_folders:
@@ -573,26 +573,32 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
     for img_name, best_guess in sorted(best_guess_dict.items()):
         print(f"{img_name}: {best_guess}")
 
-def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes=None):
+def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
     """
     This is the only function that should be called externally to this module.
     Takes a path to the bg image, the new image, and a optional
-    dict mapping additionally registered item names --> descriptors.
+    dict mapping additionally registered item names --> iconic image path.
 
     Returns the best guess for the image, or None if it isn't known with enough
     certainty (IE, need to ask user for clarification).
     """
-
-    if additional_iconic_classes is not None:
-        raise Exception("TODO!")
 
     alg = cv.xfeatures2d.SIFT_create(N_DESC)
 
     new_img = Calibrate.undistort_img(cv.imread(new_image_path, 1))
     bg_image = Calibrate.undistort_img(cv.imread(bg_image_path, 1))
 
-    (pre_dif, post_diff) = diff.get_largest_dif(bg_image, new_img)
 
+    iconic_dict = read_images_desc_subfolder("Iconic")
+
+    #add additionally supplied iconic classes
+    for new_iconic_name, new_iconic_img_path in additional_iconic_classes.items():
+        img = cv.imread(new_iconic_img_path, 1)
+        key_points = alg.detect(img,None)
+        kp, desc = alg.compute(img, key_points)
+        iconic_dict[new_iconic_name] = (kp, desc)
+
+    (pre_dif, post_diff) = diff.get_largest_dif(bg_image, new_img)
     target_dict = dict()
     for img, img_name in [(pre_dif, "pre_dif"), (post_diff, "post_diff")]:
         key_points = alg.detect(img,None)
@@ -600,9 +606,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
         target_dict[img_name] = (kp, desc)
 
 
-
-    iconic_dict = read_images_desc_folder("Iconic")
-    matches_dict = perform_pairwise_comparisons_arbitrary({iconic_dict,target_dict})
+    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
 
     best_guess_dict = dict()
     for img_name, iconic_map in matches_dict.items():
