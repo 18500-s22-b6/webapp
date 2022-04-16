@@ -16,3 +16,4 @@ db.sqlite3
 webapps/cert.pem
 tmp/
 resp.html
+media/

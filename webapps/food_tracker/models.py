@@ -19,7 +19,7 @@ class Device(models.Model):
     status = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(blank=True, null=True, max_length = 50)
-    most_recent_image = models.ImageField(blank=True, null=True, upload_to=os.path.join(settings.MEDIA_ROOT, 'images/user_bg_images/'))
+    most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
 
     def __str__(self):
@@ -74,7 +74,7 @@ class IconicImage(models.Model):
         'User',
         on_delete=models.CASCADE,
     )
-    image = models.ImageField(upload_to= os.path.join(settings.MEDIA_ROOT, f'images/user_registered_iconic_images/{user.name}'))
+    image = models.ImageField(upload_to= f'images/user_registered_iconic_images/')
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
 
 

@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
 from django.contrib.auth.views import LogoutView
+from django.conf import settings
+from django.conf.urls.static import static
 
 from food_tracker import views
 
@@ -38,4 +40,4 @@ urlpatterns = [
     path('add_item/<int:id>', views.add_item, name='add_item'),
     path('del_item/<int:id>', views.delete_item, name='del_item'),
     path('update_inventory', views.update_inventory, name='update_inventory'),
-]
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
