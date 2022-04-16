@@ -358,10 +358,6 @@ def ajax_add_item(request, id):
                        thumbnail="")
   new_item.save()
 
-  new_item = AjaxItem(text=request.POST['item'], location=loc, 
-                      type=new_cat, thumbnail="")
-  new_item.save()
-
   return get_list_json_dumps_serializer
 
 
@@ -448,9 +444,10 @@ def shopping_list(request):
 
   return
 
-def get_list_json_dumps_serializer(request):
+def get_list_json_dumps_serializer(request, id):
   response_data = []
-  for model_item in ItemEntry.objects.all():
+  items__in = ItemEntry.objects.filter(location__owner=request.user)
+  for model_item in items__in:
     my_item = {
       'id': model_item.id, 
       'location': model_item.location, 

@@ -1,11 +1,11 @@
 // ajax_inv.js
-// Pulled from 437 ajax_todolist/todo.js
+// Pulled from 437 jquery_todolist/todo.js
 // See 437 hw2 for impl details
 
 // Sends a new request to update the to-do list
-function getList() {
+function getList(id) {
     $.ajax({
-        url: "/get-list",
+        url: "/get-list/"+id,
         dataType : "json",
         success: updateList,
         error: updateError
@@ -14,13 +14,6 @@ function getList() {
 
 
 function updateError(xhr) {
-    // Normal operation
-    if (xhr.status == 200) {
-        let response = JSON.parse(xhr.responseText)
-        updateList(response)
-        return
-    }
-    // Error cases
     if (xhr.status == 0) {
         displayError("Cannot connect to server")
         return
@@ -29,55 +22,69 @@ function updateError(xhr) {
         displayError("Received status=" + xhr.status)
         return
     }
-    let response = JSON.parse(xhr.responseText)
-    if (response.hasOwnProperty('error')) {
-        displayError(response.error)
-        return
-    }
+
+    console.log("17: " + xhr);
+    console.log(typeof(xhr))
+    // console.log("25: " + xhr.responseText)
+    // console.log("26: " + xhr.responseJSON)
+    // let response = JSON.parse(xhr.responseText)
+    // if (response.hasOwnProperty('error')) {
+    //     displayError(response.error)
+    //     return
+    // }
     displayError(response)
 }
 
 function displayError(message) {
+    console.log("35 message: " + message);
     $("#error").html(message);
 }
+
 function updateList(items) {
 
     console.log("items: " + items)
 
     // Removes the old to-do list items
-    let list = document.getElementById("inv-list")
-    console.log(list)
-    while (list.hasChildNodes()) {
-        list.removeChild(list.firstChild)
-    }
+    // let list = document.getElementById("inv-list")
+    // console.log(list)
+    // while (list.hasChildNodes()) {
+    //     list.removeChild(list.firstChild)
+    // }
 
-    // Adds each new todo-list item to the list
-    for (let i = 0; i < items.length; i++) {
-        let item = items[i]
-        let type = item.type
+    // Removes items from todolist if they not in items
+    $("li").each(function() {
+        let my_id = parseInt(this.id.substring("id_item_".length))
+        let id_in_items = false
+        $(items).each(function() {
+            if (this.id == my_id) id_in_items = true
+        })
+        if (!id_in_items) this.remove()
+    })
 
-        // Builds a new HTML list item for the todo-list
-        let deleteButton
-        if (item.user == myUserName) {
-            deleteButton = "<button onclick='deleteItem(" + item.id + ")'>X</button> "
-        } else {
-            deleteButton = "<button style='visibility: hidden'>X</button> "
-        }
+    // Adds each new todolist item to the list (only if it's not already here)
+    $(items).each(function() {
+        let my_id = "id_item_" + this.id
+        if (document.getElementById(my_id) == null) {
 
-        let element = document.createElement("li")
-        element.innerHTML = deleteButton +
-                            sanitize(type.name) +
-                            ' <span class="details">' +
-                            "(id=" + type.id 
-                            + ", location=" + item.location.name
-                            + ", type=" + item.type.name
-                            + ", thumbnail=" + item.thumbnail
-                            + ")"
-                            + '</span>'
+            // Builds a new HTML list item for the todo-list
+            let deleteButton = "<button onclick='deleteItem(" + this.id + ")'>X</button> "
 
-        // Adds the todo-list item to the HTML list
-        list.appendChild(element)
-    }
+            console.log(this)
+            $("#inv-list").append(
+                '<li id="id_item_' + this.id + '">' +
+                sanitize(this.type.name) + " " + 
+                deleteButton +
+                ' <span class="details">' +
+                "(id=" + this.type.id 
+                + ", location=" + this.location.name
+                + ", type=" + this.type.name
+                + ", thumbnail=" + this.thumbnail
+                + ")"
+                + '</span>'
+                + '</li>'
+                )
+        }    
+    })
 }
 
 function sanitize(s) {
@@ -88,36 +95,33 @@ function sanitize(s) {
             .replace(/"/g, '&quot;')
 }
 
-function addItem() {
-    let itemTextElement = document.getElementById("item")
+function addItem(id) {
+    let itemTextElement = document.getElementById("item-box")
     let itemTextValue   = itemTextElement.value
 
     // Clear input box and old error message (if any)
     itemTextElement.value = ''
     displayError('')
 
-    let xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) return
-        console.log('addItem asdfasdf')
-        updatePage(xhr)
-    }
-
-    xhr.open("POST", addItemURL, true);
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("item="+itemTextValue+"&csrfmiddlewaretoken="+getCSRFToken());
+    $.ajax({
+        url: addItemURL,
+        type: "POST",
+        data: "item="+itemTextValue+"&id="+id+"&csrfmiddlewaretoken="+getCSRFToken(),
+        dataType : "json",
+        success: updateList,
+        error: updateError
+    });
 }
 
 function deleteItem(id) {
-    let xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) return
-        updatePage(xhr)
-    }
-
-    xhr.open("POST", deleteItemURL(id), true)
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
-    xhr.send("csrfmiddlewaretoken="+getCSRFToken())
+    $.ajax({
+        url: deleteItemURL(id),
+        type: "POST",
+        data: "csrfmiddlewaretoken="+getCSRFToken(),
+        dataType : "json",
+        success: updateList,
+        error: updateError
+    });
 }
 
 function getCSRFToken() {

@@ -25,18 +25,18 @@ TODO:
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="{% static 'ajax_inv.js' %}" type="text/javascript"></script>
     <script type="text/javascript">
-        var myUserName = "{{ request.user }}"
-        var addItemURL = "{% url 'ajax-add-item' %}"
+        var myUserName = "{{ request.user.email }}"
+        var addItemURL = "{% url 'add-item' device.id ajax=true%}"
         var deleteItemURL = function (id) { 
             "{% url 'ajax-del-item' 0 %}".replace("0", id)
         }
 
         // Call getList() as soon as page is finished loading to display the list
-        window.onload=getList()
+        console.log("35: device.id " + '{{ device.id }}')
+        window.onload=getList('{{ device.id }}')
 
         // ... also call getList every 5 seconds hereafter to update the list
-        window.setInterval(getList, 5000);
-
+        window.setInterval(getList, 5000, '{{ device.id }}');
     </script>
 {% endblock %}
 
@@ -48,35 +48,13 @@ TODO:
     <!-- elif request.session.message -->
     <!-- <h2> request.session.message </h2> -->
     {% endif %}
-    <div id="inv-list">
-        <ul>
-            <li>
-                <!-- Shamelessly stolen from 17-437 hw2 -->
-                <!-- <form class="add-form" action="{% url 'add_item' device.id %}" method="post"> -->
-                    <label>Manually add/remove Items:</label>
-                    <input type="text" name="item" autofocus>
-                    <!-- <input type="submit"> -->
-                    <button onclick="addItem()">Add item</button>
-                    <span id="error" class="error"></span>
-                    {% csrf_token %}
-                <!-- </form> -->
-            </li>
-            {% for item in items %}
-            <li>{{ item.type.name }},
-                <span class="details">{{ item }}</span>
-                <form action="{% url 'del_item' item.id %}" method="post">
-                    {% csrf_token %}
-                    <button class="delete" type="submit">Delete</button>
-                </form>
-            </li>
-            {% endfor %}
-        </ul>
+    <div>
+        <label>Manually add/remove Items:</label>
+        <input type="text" id="item-box" autofocus>
+        <!-- <input type="submit"> -->
+        <button onclick="addItem('{{ device.id }}')">Add item</button>
+        <span id="error" class="error"></span>
+        {% csrf_token %}
     </div>
-
-    <!-- <h1>Cabinet name</h1>
-    <ul>
-        <li>Spice 1</li>
-        <li>Spice 2</li>
-        <li>Spice 3</li>
-    </ul> -->
+    <div id="inv-list"></div>
 {% endblock %}
