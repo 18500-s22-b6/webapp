@@ -49,7 +49,6 @@ function updateList(items) {
 
     console.log("items: " + items)
 
-
     // Removes the old to-do list items
     let list = document.getElementById("inv-list")
     console.log(list)
