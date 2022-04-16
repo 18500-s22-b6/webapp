@@ -2,6 +2,10 @@
 
 {% extends "base.html" %}
 
+{% block head %}
+  <title>B6 - Food Tracker</title>
+{% endblock %}
+
 {% block user-info %}
   {% load static %}
   <!-- <link href="{% static 'ourlife.css' %}" rel="stylesheet" type="text/css"> -->
@@ -10,7 +14,7 @@
 {% block content %}
   <div class="splash">
     <div class="splash_logo">
-      {% load static %} <img src="{% static "media/logo.png" %}" />
+      {% load static %} <img src="{% static 'media/logo.png' %}" />
     </div>
   </div>
   <div class="text">

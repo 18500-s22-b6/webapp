@@ -1,5 +1,12 @@
 <!-- Registering a user's personal details -->
 
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+  <title>{{ device.name }} - Food Tracker</title>
+</head>
+
 <form action="{% url 'register_user' %}" method="post">
     {% csrf_token %}
     {{ form }}

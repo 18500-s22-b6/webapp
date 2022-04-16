@@ -1,6 +1,25 @@
 <!-- inv.html -->
+<!-- Displays list of items currently in cabinet -->
+<!-- For debugging: user can also add items manually -->
+<!-- 
+
+TODO: 
+- support writing items in recipes that aren't in the fridge (yet)
+- mark presence of item somewhere with a checkmark
+
+ -->
 
 {% extends "dashboard.html" %}
+
+{% block head %}
+  <title>{{ device.name }} - Food Tracker</title>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="{% static 'ajax_inv.js' %}" type="text/javascript"></script>
+{% endblock %}
 
 {% block content %}
 
@@ -16,7 +35,9 @@
             <form class="add-form" action="{% url 'add_item' device.id %}" method="post">
                 <label>Manually add/remove Items:</label>
                 <input type="text" name="item" autofocus>
-                <input type="submit">
+                <!-- <input type="submit"> -->
+                <button onclick="addItem()">Add item</button>
+                <span id="error" class="error"></span>
                 {% csrf_token %}
             </form>
         </li>

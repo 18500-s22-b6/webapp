@@ -1,5 +1,9 @@
 {% extends "dashboard.html" %}
 
+{% block head %}
+  <title>My Profile - Food Tracker</title>
+{% endblock %}
+
 {% block content %}
     <h1>Hello, {{ user.first_name }} {{ user.email }}</h1>
     <img src="{{ user.picture }}" width="100px">

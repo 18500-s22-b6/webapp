@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
+from django.core.mail import send_mail
 
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import requests
@@ -116,6 +118,7 @@ def recipes(request):
     del request.session['message']
 
 
+  # Django template query filtering solution: dictionary
   d = {}
   for recipe in Recipe.objects.all():
     # d[0] represents ingr that exist
@@ -136,6 +139,13 @@ def recipes(request):
     if l:
       # TODO: print is a proxy for emailing the user
       print(l[1])
+      # TODO: time limit on number of clicks per second
+      # TODO: is html being so visible client-side okay?
+      rlist = [request.user.email] # , request.user.phone_number]
+      send_mail(subject='FT Shopping List', message=str(l[1]), 
+                from_email=settings.EMAIL_HOST_USER, 
+                recipient_list=rlist,
+                fail_silently=False)
     else:
       print(name + " doesn't exist")
     return render(request, 'recipes.html', context)
@@ -185,6 +195,11 @@ def cabinet(request, id):
   # Request for a specific cabinet
   context = { 'devices': Device.objects.filter(owner=request.user) }
 
+  # If AJAX
+  if request.method == "POST" and request.is_ajax():
+    return JsonResponse({"success":True}, status=200)
+
+  # If the given ID doesn't exist
   if not Device.objects.filter(id=id).exists():
     request.session['message'] = 'Invalid device ID'
     return redirect('dashboard')
