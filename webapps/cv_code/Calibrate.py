@@ -2,7 +2,6 @@
 #ripped from a blog example: https://medium.com/@kennethjiang/calibrate-fisheye-lens-using-opencv-333b05afa0b0
 
 import imp
-from tkinter.messagebox import NO
 import cv2
 import numpy as np
 import os
