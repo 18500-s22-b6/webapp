@@ -3,11 +3,23 @@
 {% block content %}
     <h1>Hello, {{ user.first_name }} {{ user.email }}</h1>
     <img src="{{ user.picture }}" width="100px">
+    {% if message %}
+    <h2> {{ message }} </h2>
+    <!-- elif request.session.message -->
+    <!-- <h2> request.session.message </h2> -->
+    {% endif %}
 
     <a href="{% url 'logout' %}">
         <button>
             Log Out
         </button>
     </a>
+    <ul>
+        {% for unknown_item in unkown_items %}
+            <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
+            </li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}
 

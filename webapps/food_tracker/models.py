@@ -2,11 +2,14 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 from django.contrib.auth.models import AbstractUser
 
+import os
+from django.conf import settings
 
 
 class User(AbstractUser):
     phone_number = PhoneNumberField(null = False, blank = False)
     image_url = models.CharField(max_length=200)
+    id = models.AutoField(primary_key=True)
 
 
 
@@ -16,7 +19,7 @@ class Device(models.Model):
     status = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     name = models.CharField(blank=True, null=True, max_length = 50)
-    most_recent_image = models.ImageField(blank=True, null=True)
+    most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
 
     def __str__(self):
@@ -32,7 +35,7 @@ class Device(models.Model):
 # General item classes, in case of documentation discrepancy
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     user_gen = models.BooleanField()
     creator = models.ForeignKey(User, on_delete=models.PROTECT)
     desc_folder = models.CharField(max_length = 200) # extended max len
@@ -64,3 +67,18 @@ class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.PROTECT)
     name = models.CharField(max_length=50)
     ingredients = models.ManyToManyField(Category, blank=True)
+
+# User registered Iconic images
+# May have an associated ItemEntry, which will have it's category updated
+# When the image is identified by the
+class IconicImage(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+    )
+    image = models.ImageField(upload_to= f'images/user_registered_iconic_images/')
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.PROTECT, blank=True, null=True)
+
+

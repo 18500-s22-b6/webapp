@@ -22,5 +22,9 @@ def post_data(img_path, serialId, secret):
         print("failed!")
 
 if __name__ == "__main__":
-    post_data("BIN/c1.jpeg", "123456", "secretkey")
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-I', '--image', help='path to image', default="BIN/c1.jpeg")
+    args = parser.parse_args()
+    post_data(args.image, "123456", "secretkey")
 

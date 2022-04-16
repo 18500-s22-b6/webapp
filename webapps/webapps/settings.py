@@ -32,6 +32,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Application definition
 
@@ -149,7 +151,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'food_tracker.User' 
+AUTH_USER_MODEL = 'food_tracker.User'
 
 # Phone number configs
 PHONENUMBER_DB_FORMAT = 'NATIONAL'

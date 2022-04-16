@@ -26,6 +26,7 @@ import cv_code_main as cv_code
 
 from .models import *
 from .forms import *
+import numpy as np
 
 # Device status
 NOT_REGISTERED = 0
@@ -53,7 +54,14 @@ def profile(request):
   if not request.user.phone_number:
     return redirect('register_user')
 
-  context = {'devices': Device.objects.filter(owner=request.user)}
+  context = {
+    'devices': Device.objects.filter(owner=request.user),
+    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"), #TODO: filter by category
+    }
+
+  if 'message' in request.session:
+    context['message'] = request.session['message']
+    del request.session['message']
 
   if User.objects.filter(email=request.user.email):
     return render(request, 'profile.html', context)
@@ -394,7 +402,7 @@ def update_inventory(request):
     old_bg_path = image_field.path
   except:
     old_bg_path = None
-  device.most_recent_image.save("tmp/bg.png", ContentFile(cur_img_bytes_io.getvalue()), save=True)
+  device.most_recent_image.save(f"{device.owner.id}/bg.png", ContentFile(cur_img_bytes_io.getvalue()), save=True)
   device.save()
 
   #if we have no previous bg image, this is the first bg image
@@ -403,30 +411,95 @@ def update_inventory(request):
 
   new_image_path = image_field.path
 
+  iconic_images = list(IconicImage.objects.all().filter(user=device.owner))
+  iconic_dict = dict()
+  for iconic_image in iconic_images:
+    iconic_dict[iconic_image.category.name] = iconic_image.image.path
+
   #TODO: supply the iconic images which this user has registered as third argument
-  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, None)
+  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)
 
-  if best_guess is not None:
-    #TODO: update this to use existing category if appropriate
-    new_cat = Category(name=best_guess,
-                       user_gen=True,
-                       creator=device.owner,
-                       desc_folder='n/a')
-    new_cat.save()
+  if isinstance(best_guess, str):
 
-    # cat = Category.objects.get(name="Custom")
+    try:
+      cat = Category.objects.get(name=best_guess)
+    except:
+      cat = Category(name=best_guess,
+                        user_gen=True,
+                        creator=device.owner,
+                        desc_folder='n/a')
+      cat.save()
+
 
     new_item = ItemEntry(location=device,
-                          type=new_cat, # cat
+                          type=cat, # cat
                           thumbnail="")
     new_item.save()
     return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+  elif best_guess is None:
+    return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
   else:
-    # TODO: handle case where user needs to give input
-    return JsonResponse({
-        'error': f'TODO'
-      }, status=FORBIDDEN)
+    assert isinstance(best_guess, np.ndarray)
+    import cv2
+    _ret, buf = cv2.imencode('.jpg', best_guess)
+    img_file = ContentFile(buf.tobytes())
 
+    # In this case, we create an Iconic image for this user, with the default category "UNKNOWN ITEM"
+
+    #create unknown Item category if it doesn't exist
+    try:
+      unknown_cat = Category.objects.get(name="UNKNOWN ITEM")
+    except:
+      unknown_cat = Category(name="UNKNOWN ITEM",
+                       user_gen=True,
+                       creator=device.owner,
+                       desc_folder='n/a')
+      unknown_cat.save()
+
+    new_item = ItemEntry(location=device,
+                          type=unknown_cat, # cat
+                          thumbnail="")
+    new_item.save()
+
+    new_iconic_img = IconicImage(user=device.owner,
+                                  category=unknown_cat,
+                                  image = img_file,
+                                  associated_item_entry = new_item,
+                                  )
+    #This addition image save is needed. I don't know if there is a better way to do this.
+    new_iconic_img.image.save(f"unknown.png", img_file, save=True)
+    new_iconic_img.save()
+
+    return JsonResponse({'success': 'Unable to identify item'}, status=SUCCESS)
+
+
+@login_required
+def id_unknown_item(request, id):
+  entry = get_object_or_404(IconicImage, id=id, user=request.user)
+
+  if request.method == 'GET':
+    context = {"entry": entry, 'form': ImageIdForm(), "id": id}
+    return render(request, 'id_unknown_item.html', context)
+
+  ##### If POST, "submit" button was pressed
+  form = ImageIdForm(request.POST)
+  if not form.is_valid():
+    #TODO: raise a proper error
+    context = {"entry": entry, 'form': ImageIdForm(), "id": id}
+    return render(request, 'id_unknown_item.html', context)
+
+
+  form.cleaned_data["category"]
+
+  entry.category = form.cleaned_data["category"]
+  entry.associated_item_entry.type = form.cleaned_data["category"]
+
+  entry.save()
+  entry.associated_item_entry.save()
+
+
+  request.session['message'] = "Identification successful!"
+  return redirect('profile')
 
 
 

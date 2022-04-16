@@ -1,0 +1,15 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+
+<img src= "{{ entry.image.url }}" />
+    <h1>Identify Item</h1>
+    <form method="post" action="{% url 'id_unknown_item' id %}">
+        <table>
+            {{form}}
+        </table>
+        {% csrf_token %}
+        <button type="submit">Save</button>
+    </form>
+
+{% endblock %}
