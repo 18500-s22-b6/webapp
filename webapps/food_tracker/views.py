@@ -488,11 +488,19 @@ def id_unknown_item(request, id):
     context = {"entry": entry, 'form': ImageIdForm(), "id": id}
     return render(request, 'id_unknown_item.html', context)
 
+  if form.cleaned_data["category"]:
+    cat = form.cleaned_data["category"]
+  else:
+    assert form.cleaned_data["new_category_name"]
+    cat =  Category(name=form.cleaned_data["new_category_name"],
+                       user_gen=True,
+                       creator=request.user,
+                       desc_folder='n/a')
+    cat.save()
 
-  form.cleaned_data["category"]
 
-  entry.category = form.cleaned_data["category"]
-  entry.associated_item_entry.type = form.cleaned_data["category"]
+  entry.category = cat
+  entry.associated_item_entry.type = cat
 
   entry.save()
   entry.associated_item_entry.save()

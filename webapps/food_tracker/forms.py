@@ -8,6 +8,7 @@ from food_tracker.models import *
 #####
 # https://stackoverflow.com/questions/3695754/django-customizing-display-of-modelmultiplechoicefield
 from django.forms.models import ModelMultipleChoiceField, ModelChoiceField
+from django.forms import ValidationError
 
 class MyModelMultipleChoiceField(ModelMultipleChoiceField):
 
@@ -59,5 +60,14 @@ class ImageIdForm(forms.Form):
     category = ModelChoiceField( \
                                     queryset=Category.objects.all(), \
                                     widget=forms.Select, \
-                                    required=True, \
-                                    label="Please identify the above item")
+                                    required=False, \
+                                    label="Please identify the above item as an existing category")
+
+    new_category_name = forms.CharField(max_length=50, required=False, label="Alternatley, create a custom catagory for the above item")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if not cleaned_data.get('new_category_name') and not cleaned_data.get('category'):  # This will check for None or Empty
+            raise ValidationError({'new_category_name': 'Even one of new_category_name or category should have a value.'})
+        if cleaned_data.get('new_category_name') and cleaned_data.get('category'):
+            raise ValidationError({'new_category_name': 'new_category_name and category should not both have a value at the same time.'})
