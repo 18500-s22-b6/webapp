@@ -9,5 +9,12 @@
             Log Out
         </button>
     </a>
+    <ul>
+        {% for unknown_item in unkown_items %}
+            <li> <img src= "{{ unknown_item.image.path }}" />
+            </li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}
 

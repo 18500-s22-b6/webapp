@@ -54,7 +54,10 @@ def profile(request):
   if not request.user.phone_number:
     return redirect('register_user')
 
-  context = {'devices': Device.objects.filter(owner=request.user)}
+  context = {
+    'devices': Device.objects.filter(owner=request.user),
+    "unkown_items": IconicImage.objects.filter(user=request.user), #TODO: filter by category
+    }
 
   if User.objects.filter(email=request.user.email):
     return render(request, 'profile.html', context)
@@ -395,7 +398,7 @@ def update_inventory(request):
     old_bg_path = image_field.path
   except:
     old_bg_path = None
-  device.most_recent_image.save("tmp/bg.png", ContentFile(cur_img_bytes_io.getvalue()), save=True)
+  device.most_recent_image.save(f"{device.owner.id}/bg.png", ContentFile(cur_img_bytes_io.getvalue()), save=True)
   device.save()
 
   #if we have no previous bg image, this is the first bg image
@@ -430,8 +433,14 @@ def update_inventory(request):
                           thumbnail="")
     new_item.save()
     return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+  elif best_guess is None:
+    return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
   else:
     assert isinstance(best_guess, np.ndarray)
+    import cv2
+    _ret, buf = cv2.imencode('.jpg', best_guess)
+    img_file = ContentFile(buf.tobytes())
+
     # In this case, we create an Iconic image for this user, with the default category "UNKNOWN ITEM"
 
     #create unknown Item category if it doesn't exist
@@ -446,9 +455,10 @@ def update_inventory(request):
 
     new_iconic_img = IconicImage(user=device.owner,
                                   category=unknown_cat,
-                                  image = best_guess,
+                                  image = img_file,
                                   )
-
+    #This addition image save is needed. I don't know if there is a better way to do this.
+    new_iconic_img.image.save(f"unknown.png", img_file, save=True)
     new_iconic_img.save()
 
     return JsonResponse({'success': 'Unable to identify item'}, status=SUCCESS)

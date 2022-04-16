@@ -32,6 +32,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MEDIA_URL = "/media/"
+MEDIA_PATH = os.path.join(BASE_DIR, "media")
+from django.conf import settings
+from django.conf.urls.static import static
+urlpatterns = [
+
+]+ static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+
 
 # Application definition
 
@@ -149,7 +157,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'food_tracker.User' 
+AUTH_USER_MODEL = 'food_tracker.User'
 
 # Phone number configs
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
