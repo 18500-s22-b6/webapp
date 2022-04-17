@@ -398,7 +398,7 @@ class AlgInfo:
         return self.good_matches_dict[self.image_class]
 
 
-def perform_pairwise_comparisons_arbitrary(iconic_dict, target_dict):
+def perform_pairwise_comparisons_arbitrary(iconic_dict, target_dict, items_already_present_in_shelf=None):
     #perform pairwise comparison between every image in the iconic dict, and every image in the target dict
     #target dict must be formattd image_name -> kp/descriptors
     #output is a dict of image image_name -> {iconic_image class: (len(total_iconic_descriptors, num_matching_descriptors)}
@@ -411,6 +411,9 @@ def perform_pairwise_comparisons_arbitrary(iconic_dict, target_dict):
         good_matches_dict = {}
         #check each of the images against the contatenation of all the descriptors
         for iconic_image_class, iconic_class_kp_descriptors in iconic_dict.items():
+            if items_already_present_in_shelf is not None and target_image_name == "pre_diff" and iconic_image_class not in items_already_present_in_shelf:
+                continue
+
             _, all_iconic_descriptors = iconic_class_kp_descriptors
             matches = matcher.knnMatch(target_class_descriptors, all_iconic_descriptors, k=2) # knnMatch is needed
             good = 0
@@ -573,6 +576,7 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
     for img_name, best_guess in sorted(best_guess_dict.items()):
         print(f"{img_name}: {best_guess}")
 
+
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
     """
     This is the only function that should be called externally to this module.
@@ -601,35 +605,42 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     (pre_dif, post_diff) = diff.get_largest_dif(bg_image, new_img)
     target_dict = dict()
 
+    #TODO: find reasonable size for this
     #If we don't have a large enough diff, there probably wasn't a change
     if pre_dif.shape[0] * pre_dif.shape[1] < 100:
         return None
 
-    for img, img_name in [(pre_dif, "pre_dif"), (post_diff, "post_diff")]:
+    for img, img_name in [(pre_dif, "pre_diff"), (post_diff, "post_diff")]:
         key_points = alg.detect(img,None)
         kp, desc = alg.compute(img, key_points)
         target_dict[img_name] = (kp, desc)
 
 
-    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
+    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict,items_already_present_in_shelf)
 
-    best_guess_dict = dict()
+    best_guess_is_post = True
+    best_guess_class_name = ""
+    best_guess_ratio = -1
+
     for img_name, iconic_map in matches_dict.items():
-        best_guess = ""
-        best_guess_ratio = -1
-        for iconic_img, (num_total_desc, num_matches) in iconic_map.items():
+        for iconic_img_name, (num_total_desc, num_matches) in iconic_map.items():
             if num_matches/num_total_desc > best_guess_ratio:
-                best_guess = iconic_img
+                best_guess_class_name = iconic_img_name
                 best_guess_ratio = num_matches/num_total_desc
+                best_guess_is_post = img_name == "post_diff"
 
-        best_guess_dict[img_name] = best_guess
 
-    #TODO: have some heuristic check when somthing is removed rather than added
-    if False:
-        return best_guess_dict["post_diff"]
+
+    #TODO: have a better heuristic here
+    if best_guess_ratio > .5:
+        return (best_guess_class_name, best_guess_is_post)
     else:
-        #if we couldn't identify it, return the diff
+        #if we couldn't identify it, return the post diff
         return post_diff
+
+    return best_guess_huerstics(matches_dict)
+
+
 
 
 

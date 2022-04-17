@@ -411,31 +411,40 @@ def update_inventory(request):
 
   new_image_path = image_field.path
 
+  #get dict of custom registered iconic dict items
   iconic_images = list(IconicImage.objects.all().filter(user=device.owner))
   iconic_dict = dict()
   for iconic_image in iconic_images:
     iconic_dict[iconic_image.category.name] = iconic_image.image.path
 
-  #TODO: supply the iconic images which this user has registered as third argument
-  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)
 
-  if isinstance(best_guess, str):
+  #get set of all categories currently in the inventory
+  existing_categories = set(ItemEntry.objects.all().filter(location=device).values_list('type__name', flat=True))
 
-    try:
-      cat = Category.objects.get(name=best_guess)
-    except:
-      cat = Category(name=best_guess,
-                        user_gen=True,
-                        creator=device.owner,
-                        desc_folder='n/a')
-      cat.save()
+  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict,existing_categories)
 
+  if isinstance(best_guess, tuple):
+    (best_guess_category_name, is_post) = best_guess
 
-    new_item = ItemEntry(location=device,
-                          type=cat, # cat
-                          thumbnail="")
-    new_item.save()
-    return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+    if is_post:
+      #new item has been added to the inventory
+      try:
+        cat = Category.objects.get(name=best_guess_category_name)
+      except:
+        cat = Category(name=best_guess_category_name,
+                          user_gen=True,
+                          creator=device.owner,
+                          desc_folder='n/a')
+        cat.save()
+
+      new_item = ItemEntry(location=device,
+                            type=cat, # cat
+                            thumbnail="")
+      new_item.save()
+      return JsonResponse({'success': 'Inventory updated to include new item'}, status=SUCCESS)
+    else:
+      #item has been removed from the inventory
+      device
   elif best_guess is None:
     return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
   else:
