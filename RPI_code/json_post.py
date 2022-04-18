@@ -3,15 +3,15 @@ import webbrowser
 import base64
 
 
-def post_data(img_path, serialId, secret):
-    url = 'http://localhost:8000/update_inventory'
+def post_data(img_path, serialId, secret, url):
+    url = url + "/update_inventory"
     with open(img_path, "rb") as f:
         im_bytes = f.read()
     im_serialized_b64 = base64.b64encode(im_bytes).decode("utf8")
     headers = {'Content-Type': 'application/json'}
-    #TODO: how to do some sort of back exponential backoff here?
+
     resp = requests.post(url, headers= headers, json={"image": im_serialized_b64, "serial_number": serialId, "secret": secret})
-    with open("resp.html", "w") as f:
+    with open("resp_data.html", "w") as f:
         f.write(resp.text)
 
     if "success" in resp.json():
@@ -20,6 +20,14 @@ def post_data(img_path, serialId, secret):
         print("error: {}".format(resp.json()['error']))
     else:
         print("failed!")
+
+def post_keepalive(img_path, serialId, secret, url):
+    url = url + "/keep_alive"
+    headers = {'Content-Type': 'application/json'}
+
+    resp = requests.post(url, headers= headers, json={ "serial_number": serialId, "secret": secret})
+    with open("resp_keepalive.html", "w") as f:
+        f.write(resp.text)
 
 if __name__ == "__main__":
     import argparse

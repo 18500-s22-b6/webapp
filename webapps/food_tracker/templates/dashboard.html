@@ -1,5 +1,5 @@
 <!-- dashboard.html -->
-<!-- 
+<!--
 
 TODO
 - bold page you're currently on in sidebar
@@ -24,11 +24,18 @@ TODO
         <a class="nav-link has-submenu h1 text-dark" href="{% url 'dashboard' %}">My cabinets</a>
         <ul>
             {% for device in devices %}
-                <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' device.id %}">{{ device.name }}</a></li>
+                <li class="nav-link h6 text-dark">
+                    <span class="dot_online">
+                        {% if device.status == 1 %}
+                            <i class="dot_online"></i>
+                        {% else %}
+                            <i class="dot_offline"></i>
+                        {% endif %}
+                    </span> <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
+                </li>
             {% endfor %}
         </ul>
         <a class="nav-link h1 text-dark" href="{% url 'recipes' %}">Recipes</a>
-        <a class="nav-link h1 text-dark" href="#TODO">Tracker status</a>
         <a class="nav-link h1 text-dark" href="{% url 'add_device' %}">Register Device</a>
     </nav>
 {% endblock %}

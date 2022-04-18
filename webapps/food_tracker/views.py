@@ -31,6 +31,7 @@ import numpy as np
 # Device status
 NOT_REGISTERED = 0
 ONLINE = 1
+OFFLINE = 2
 
 # HTTP Status Codes
 SUCCESS = 200
@@ -106,6 +107,9 @@ def logout_user(request):
 def dashboard(request):
   context = {}
   context['devices'] = Device.objects.filter(owner=request.user)
+
+  for device in context['devices']:
+    device.update_online_status()
 
   if 'message' in request.session:
     context['message'] = request.session['message']
