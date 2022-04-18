@@ -93,16 +93,14 @@ def logout_user(request):
     print(response.json())
 
   logout(request)
+  
+  messages.info(request, 'You have been logged out.')
   return redirect('home')
 
 @login_required
 def dashboard(request):
   context = {}
   context['devices'] = Device.objects.filter(owner=request.user)
-
-  if 'message' in request.session:
-    context['message'] = request.session['message']
-    del request.session['message']
 
   return render(request, 'dashboard.html', context)
 
@@ -116,11 +114,6 @@ def recipes(request):
   context = { 'devices': Device.objects.filter(owner=request.user),
               # 'recipes': Recipe.objects.filter(author=request.user),
               'items':ItemEntry.objects.all() }
-
-  if 'message' in request.session:
-    context['message'] = request.session['message']
-    del request.session['message']
-
 
   d = {}
   for recipe in Recipe.objects.all():
@@ -182,7 +175,7 @@ def add_recipe(request):
   new_recipe.save()
   new_recipe.ingredients.set(form.cleaned_data["ingredients"])
 
-  request.session['message'] = "Registration successful!"
+  messages.success(request, 'Registration successful!')
   return redirect('recipes')
   # return render(request, 'recipes.html', context)
 
@@ -192,7 +185,7 @@ def cabinet(request, id):
   context = { 'devices': Device.objects.filter(owner=request.user) }
 
   if not Device.objects.filter(id=id).exists():
-    request.session['message'] = 'Invalid device ID'
+    messages.error(request, 'Invalid device ID')
     return redirect('dashboard')
 
   device = Device.objects.get(id=id)
@@ -234,21 +227,21 @@ def register_device(request):
 
   if not response['success']:
     context['form'] = form
-    request.session['message'] = 'reCAPTCHA failed'
+    messages.error(request, 'reCAPTCHA failed')
     return render(request, 'add_device.html', context)
 
 
   try:
     device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
   except Exception as e:
-    request.session['message'] = 'Invalid serial number'
+    messages.error(request, 'Invalid serial number')
     return redirect('dashboard')
 
   if device.status != NOT_REGISTERED:
     if device.owner == request.user:
-      request.session['message'] = 'You have already registered this device'
+      messages.warning(request, 'You have already registered this device')
     else:
-      request.session['message'] = 'Device has already been registered'
+      messages.error(request, 'Invalid serial number')
     return redirect('dashboard')
 
   device.status = ONLINE
@@ -257,19 +250,7 @@ def register_device(request):
     setattr(device, key, value)
   device.save()
 
-  # MESSAGE: Inform the user of successful registration
-  # v1: Redirect to add_device
-  # Problem: refresh adds duplicate devices
-  # context['message'] = "Registration successful!"
-  # return render(request, 'add_device.html', context)
-
-  # v2: Django messages
-  # TODO: update to use
-  # messages.success(request, "parameter")
-
-  # v3: functional 'session' workaround
-  # stackoverflow.com/questions/51155947/django-redirect-to-another-view-with-context
-  request.session['message'] = "Registration successful!"
+  messages.success(request, 'Device registration successful!')
   return redirect('dashboard')
 
 @login_required
@@ -279,22 +260,19 @@ def delete_device(request, id):
   context = { 'devices': Device.objects.filter(owner=request.user) }
 
   if request.method != 'POST':
-    message = 'Invalid request.  POST method must be used.'
-    context['message'] = message
     return render(request, 'dashboard.html', context)
 
   device = get_object_or_404(Device, id=id)
   if device.owner != request.user:
     return redirect('dashboard')
 
-  message = 'Cabinet {0} has been deleted.'.format(device.name)
+  messages.info(request, 'Cabinet {0} has been deleted.'.format(device.name))
   device.owner = None
   device.status = NOT_REGISTERED
   device.save()
 
   # OJO: recreate device list after deleting the device (duh)
-  context = { 'devices': Device.objects.filter(owner=request.user),
-              'message': message }
+  context = { 'devices': Device.objects.filter(owner=request.user) }
 
   return redirect('dashboard')
 
@@ -307,8 +285,8 @@ def add_item(request, id):
 
     # Adds the new item to the database if the request parameter is present
     if 'item' not in request.POST or not request.POST['item']:
-        context['message'] = 'You must enter an item to add.'
-        return render(request, 'inv.html', context)
+      messages.warning(request, 'You must enter an item to add.')
+      return render(request, 'inv.html', context)
 
     # data = get_userinfo(request)
     # print(data)
@@ -336,19 +314,16 @@ def delete_item(request, id):
   context = { 'devices': Device.objects.filter(owner=request.user) }
 
   if request.method != 'POST':
-    message = 'Invalid request.  POST method must be used.'
-    context['message'] = message
     return render(request, 'inv.html', context)
 
   entry = get_object_or_404(ItemEntry, id=id)
   cab_id = entry.location.id
   # TODO: determine how necessary the message actually is
-  message = 'Item {0} has been deleted.'.format(entry.type.name)
+  messages.info(request, 'Item {0} has been deleted.'.format(entry.type.name))
   entry.delete()
 
   context = { 'devices': Device.objects.filter(owner=request.user),
-              'items': ItemEntry.objects.all(),
-              'message': message }
+              'items': ItemEntry.objects.all() }
   print(context)
 
   # return render(request, 'inv.html', context)

@@ -2,17 +2,15 @@
 
 {% extends "base.html" %}
 
-{% block user-info %}
-  {% load static %}
-  <!-- <link href="{% static 'ourlife.css' %}" rel="stylesheet" type="text/css"> -->
-{% endblock %}
+{% load static %}
 
 {% block content %}
-  <div class="splash">
-    <div class="splash_logo">
-      {% load static %} <img src="{% static "media/logo.png" %}" />
-    </div>
+  <div>
   </div>
+  <div class="splash">
+    <img class="rounded mx-auto d-block" src="{% static "media/logo.png" %}" />
+  </div>
+
   <div class="text">
     <p class="title">Food Tracker</p>
     <p class="sub-title">A Home Cook's Best Friend</p>
@@ -23,6 +21,7 @@
       </button>
     </a>
   </div>
+
   <div class="blurb">
     <p>Food Tracker is a revolutionary new service that allows you to keep track of your inventory while out shopping! This service requires a one time simple installation, after which, you'll never need to wory about your kitchen inventory every again!</p>
   </div>
