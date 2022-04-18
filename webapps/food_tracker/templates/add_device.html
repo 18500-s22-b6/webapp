@@ -11,6 +11,8 @@
             {{form}}
         </table>
         {% csrf_token %} 
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
         <button type="submit">Complete registration</button>
     </form>
     
