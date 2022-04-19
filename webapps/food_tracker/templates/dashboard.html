@@ -8,7 +8,7 @@ TODO
  -->
 {% extends "base.html" %}
 
-{% block user-info %}
+{% block content %}
 <nav class="navbar navbar-light bg-light">
     <h1>Hello, {{ user.first_name }}</h1>
     <form class="form-inline">
@@ -17,9 +17,7 @@ TODO
     </form>
   </nav>
 
-{% endblock %}
 
-{% block sidebar %}
     <nav class="sidebar card" id="sidebar" style = "width: 20rem;">
         <a class="nav-link has-submenu h1 text-dark" href="{% url 'dashboard' %}">My cabinets</a>
         <ul>
@@ -31,9 +29,7 @@ TODO
         <a class="nav-link h1 text-dark" href="#TODO">Tracker status</a>
         <a class="nav-link h1 text-dark" href="{% url 'add_device' %}">Register Device</a>
     </nav>
-{% endblock %}
 
-{% block content %}
     {% if message %}
     <h2> {{ message }} </h2>
     <!-- elif request.session.message -->
