@@ -40,8 +40,6 @@ METHOD_NOT_ALLOWED = 405
 RECAPTCHA_VERIFICATION_URL = 'https://www.google.com/recaptcha/api/siteverify'
 
 def home(request):
-  if request.user.is_authenticated:
-    return redirect('profile')
   return render(request, 'home.html', {})
 
 def login(request):
