@@ -67,7 +67,6 @@ def profile(request):
 
   context = {
     'devices': get_and_update_status(request.user),
-    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
     }
 
   if 'message' in request.session:
