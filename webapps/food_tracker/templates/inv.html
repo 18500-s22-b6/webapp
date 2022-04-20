@@ -1,9 +1,9 @@
 <!-- inv.html -->
 <!-- Displays list of items currently in cabinet -->
 <!-- For debugging: user can also add items manually -->
-<!-- 
+<!--
 
-TODO: 
+TODO:
 - support writing items in recipes that aren't in the fridge (yet)
 - mark presence of item somewhere with a checkmark
 
@@ -27,7 +27,7 @@ TODO:
     <script type="text/javascript">
         var myUserName = "{{ request.user.email }}"
         var addItemURL = "{% url 'add_item' id=device.id ajax=1%}"
-        var deleteItemURL = function (id) { 
+        var deleteItemURL = function (id) {
             return "{% url 'del_item' 0 %}".replace("0", id)
         }
 
@@ -47,6 +47,12 @@ TODO:
     <!-- elif request.session.message -->
     <!-- <h2> request.session.message </h2> -->
     {% endif %}
+    <ul>
+        {% for unknown_item in unkown_items %}
+            <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
+            </li>
+        {% endfor %}
+    </ul>
     <div>
         <label>Manually add/remove Items:</label>
         <input type="text" id="item-box" autofocus>

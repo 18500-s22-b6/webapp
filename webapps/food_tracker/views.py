@@ -71,7 +71,6 @@ def profile(request):
 
   context = {
     'devices': get_and_update_status(request.user),
-    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
     }
 
   if 'message' in request.session:
@@ -169,8 +168,8 @@ def recipes(request):
       # TODO: time limit on number of clicks per second
       # TODO: is html being so visible client-side okay?
       rlist = [request.user.email] # , request.user.phone_number]
-      send_mail(subject='FT Shopping List', message=str(l[1]), 
-                from_email=settings.EMAIL_HOST_USER, 
+      send_mail(subject='FT Shopping List', message=str(l[1]),
+                from_email=settings.EMAIL_HOST_USER,
                 recipient_list=rlist,
                 fail_silently=False)
     else:
@@ -235,7 +234,8 @@ def cabinet(request, id):
   context = {
     'devices': get_and_update_status(request.user),
     'device': device,
-    'items': ItemEntry.objects.filter(location=device)
+    'items': ItemEntry.objects.filter(location=device),
+    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
   }
   return render(request, 'inv.html', context)
 
@@ -345,13 +345,13 @@ def add_item(request, id, ajax):
                        thumbnail="")
   new_item.save()
 
-  
+
   return redirect('cabinet', id)
 
 
 @login_required
 def ajax_add_item(request, id):
-  
+
   # Set context with current list of items so we can easily return if we discover errors.
   context = { 'items': ItemEntry.objects.all() }
 
@@ -382,8 +382,8 @@ def get_list_json_dumps_serializer(request, id):
   items__in = ItemEntry.objects.filter(location__owner=request.user)
   for model_item in items__in:
     my_item = {
-      'id': model_item.id, 
-      'location': model_item.location, 
+      'id': model_item.id,
+      'location': model_item.location,
       'type': model_item.type,
     }
     response_data.append(my_item)
@@ -410,7 +410,7 @@ def delete_item(request, id):
   # return render(request, 'inv.html', context)
   return redirect('cabinet', cab_id)
 
-def ajax_del_item(request, id): 
+def ajax_del_item(request, id):
   entry = get_object_or_404(ItemEntry, id=id)
   cab_id = entry.location.id
   return redirect('cabinet', cab_id)
