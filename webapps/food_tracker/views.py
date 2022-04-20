@@ -200,8 +200,9 @@ def cabinet(request, id):
   context = { 'devices': Device.objects.filter(owner=request.user) }
 
   # If AJAX
-  if request.method == "POST" and request.is_ajax():
-    return JsonResponse({"success":True}, status=200)
+  if request.method == "POST":  #and request.is_ajax():
+    print("DJANGOOOO")
+    return JsonResponse(data={"success":True}, status=200)
 
   # If the given ID doesn't exist
   if not Device.objects.filter(id=id).exists():
@@ -214,7 +215,8 @@ def cabinet(request, id):
     'device': device,
     'items': ItemEntry.objects.filter(location=device)
   }
-
+  print(request)
+  print(context)
   return render(request, 'inv.html', context)
 
 @login_required
@@ -303,7 +305,7 @@ def get_context_by_user_data(request, data):
 
 
 @login_required
-def add_item(request, id):
+def add_item(request, id, ajax):
 #KNOWN BUGS: empty field error redirect not working
 
   # Set context with current list of items so we can easily return if we discover errors.
@@ -329,6 +331,7 @@ def add_item(request, id):
                        thumbnail="")
   new_item.save()
 
+  
   return redirect('cabinet', id)
 
 

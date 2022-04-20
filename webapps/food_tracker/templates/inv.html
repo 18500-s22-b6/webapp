@@ -26,7 +26,7 @@ TODO:
     <script src="{% static 'ajax_inv.js' %}" type="text/javascript"></script>
     <script type="text/javascript">
         var myUserName = "{{ request.user.email }}"
-        var addItemURL = "{% url 'add-item' device.id ajax=true%}"
+        var addItemURL = "{% url 'add_item' id=device.id ajax=1%}"
         var deleteItemURL = function (id) { 
             "{% url 'ajax-del-item' 0 %}".replace("0", id)
         }
