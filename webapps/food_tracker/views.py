@@ -4,8 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
+from django.core.mail import send_mail
+
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+
 from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
@@ -62,6 +65,7 @@ def get_and_update_status(user):
 
 @login_required
 def profile(request):
+  # If this is their first time logging in
   if not request.user.phone_number:
     return redirect('register_user')
 
@@ -107,12 +111,15 @@ def logout_user(request):
     response = requests.delete(
       'https://graph.facebook.com/v13.0/me/permissions',
       params={'access_token': data['access_token']})
-    print(response.json())
+
 
   logout(request)
 
   messages.info(request, 'You have been logged out.')
   return redirect('home')
+
+
+
 
 @login_required
 def dashboard(request):
@@ -132,6 +139,12 @@ def recipes(request):
               # 'recipes': Recipe.objects.filter(author=request.user),
               'items':ItemEntry.objects.all() }
 
+  if 'message' in request.session:
+    context['message'] = request.session['message']
+    del request.session['message']
+
+
+  # Django template query filtering solution: dictionary
   d = {}
   for recipe in Recipe.objects.all():
     # d[0] represents ingr that exist
@@ -150,8 +163,15 @@ def recipes(request):
     name = request.POST.get('recipe')
     l = d.get(name, None)
     if l:
-      # TODO: print is a proxy for emailing the user
-      print(l[1])
+      # OJO: print is a proxy for emailing the user
+      # print(l[1])
+      # TODO: time limit on number of clicks per second
+      # TODO: is html being so visible client-side okay?
+      rlist = [request.user.email] # , request.user.phone_number]
+      send_mail(subject='FT Shopping List', message=str(l[1]),
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=rlist,
+                fail_silently=False)
     else:
       print(name + " doesn't exist")
     return render(request, 'recipes.html', context)
@@ -201,6 +221,11 @@ def cabinet(request, id):
   # Request for a specific cabinet
   context = { 'devices': get_and_update_status(request.user) }
 
+  # If AJAX
+  if request.method == "POST":  #and request.is_ajax():
+    return JsonResponse(data={"success":True}, status=200)
+
+  # If the given ID doesn't exist
   if not Device.objects.filter(id=id).exists():
     messages.error(request, 'Invalid device ID')
     return redirect('dashboard')
@@ -209,9 +234,9 @@ def cabinet(request, id):
   context = {
     'devices': get_and_update_status(request.user),
     'device': device,
-    'items': ItemEntry.objects.filter(location=device)
+    'items': ItemEntry.objects.filter(location=device),
+    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
   }
-
   return render(request, 'inv.html', context)
 
 @login_required
@@ -294,36 +319,76 @@ def delete_device(request, id):
   return redirect('dashboard')
 
 @login_required
-def add_item(request, id):
+def add_item(request, id, ajax):
 #KNOWN BUGS: empty field error redirect not working
 
-    # Set context with current list of items so we can easily return if we discover errors.
-    context = { 'items': ItemEntry.objects.all() }
+  # Set context with current list of items so we can easily return if we discover errors.
+  context = { 'items': ItemEntry.objects.all() }
 
     # Adds the new item to the database if the request parameter is present
     if 'item' not in request.POST or not request.POST['item']:
       messages.warning(request, 'You must enter an item to add.')
       return render(request, 'inv.html', context)
 
-    # data = get_userinfo(request)
-    # print(data)
-    # user = User.objects.get(email=data['email'])
-    user = request.user
-    loc = Device.objects.get(id=id)
-    new_cat = Category(name=request.POST['item'],
-                       user_gen=True,
-                       creator=user,
-                       desc_folder='n/a')
-    new_cat.save()
+  user = request.user
+  loc = Device.objects.get(id=id)
+  new_cat = Category(name=request.POST['item'],
+                     user_gen=True,
+                     creator=user,
+                     desc_folder='n/a')
+  new_cat.save()
 
-    # cat = Category.objects.get(name="Custom")
+  # cat = Category.objects.get(name="Custom")
 
-    new_item = ItemEntry(location=loc,
-                         type=new_cat, # cat
-                         thumbnail="")
-    new_item.save()
+  new_item = ItemEntry(location=loc,
+                       type=new_cat, # cat
+                       thumbnail="")
+  new_item.save()
 
-    return redirect('cabinet', id)
+
+  return redirect('cabinet', id)
+
+
+@login_required
+def ajax_add_item(request, id):
+
+  # Set context with current list of items so we can easily return if we discover errors.
+  context = { 'items': ItemEntry.objects.all() }
+
+  # Adds the new item to the database if the request parameter is present
+  if not 'item' in request.POST or not request.POST['item']:
+    context['message'] = 'You must enter an item to add.'
+    return render(request, 'inv.html', context)
+
+  user = request.user
+  loc = Device.objects.get(id=id)
+  new_cat = Category(name=request.POST['item'],
+                     user_gen=True,
+                     creator=user,
+                     desc_folder='n/a')
+  new_cat.save()
+
+  # cat = Category.objects.get(name="Custom")
+
+  new_item = ItemEntry(location=loc,
+                       type=new_cat, # cat
+                       thumbnail="")
+  new_item.save()
+
+  return get_list_json_dumps_serializer
+
+def get_list_json_dumps_serializer(request, id):
+  response_data = []
+  items__in = ItemEntry.objects.filter(location__owner=request.user)
+  for model_item in items__in:
+    my_item = {
+      'id': model_item.id,
+      'location': model_item.location,
+      'type': model_item.type,
+    }
+    response_data.append(my_item)
+  response_json = json.dumps(response_data, default=vars)
+
 
 @login_required
 def delete_item(request, id):
@@ -341,9 +406,13 @@ def delete_item(request, id):
 
   context = { 'devices': get_and_update_status(request.user),
               'items': ItemEntry.objects.all() }
-  print(context)
 
   # return render(request, 'inv.html', context)
+  return redirect('cabinet', cab_id)
+
+def ajax_del_item(request, id):
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
   return redirect('cabinet', cab_id)
 
 @csrf_exempt
@@ -425,6 +494,9 @@ def update_inventory(request):
                         desc_folder='n/a')
       cat.save()
 
+  response = HttpResponse(response_json, content_type='application/json')
+  response['Access-Control-Allow-Origin'] = '*'
+  return response
 
     new_item = ItemEntry(location=device,
                           type=cat, # cat

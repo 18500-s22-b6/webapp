@@ -8,6 +8,13 @@ TODO
  -->
 {% extends "base.html" %}
 
+{% block head %}
+  <title>Dashboard - Food Tracker</title>
+{% endblock %}
+
+{% block user-info %}
+{% endblock %}
+
 {% block content %}
 <nav class="navbar navbar-light bg-light">
     <h1>Hello, {{ user.first_name }}</h1>
@@ -20,8 +27,16 @@ TODO
 
     <nav class="sidebar card" id="sidebar" style = "width: 20rem;">
         <a class="nav-link has-submenu h1 text-dark" href="{% url 'dashboard' %}">My cabinets</a>
-        <ul>
+        {% comment "Two options for handling no cabinets/empty list"%}
+        {% endcomment %}
+        {% if devices %}
+            <ul>
             {% for device in devices %}
+
+                <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li>
+            {% empty %}
+                <li>Sorry, no cabinets in this list.</li>
+
                 <li class="nav-link h6 text-dark">
                     <span class="dot_online">
                         {% if device.status == 1 %}
@@ -32,7 +47,8 @@ TODO
                     </span> <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
                 </li>
             {% endfor %}
-        </ul>
+            </ul>
+        {% endif %}
         <a class="nav-link h1 text-dark" href="{% url 'recipes' %}">Recipes</a>
         <a class="nav-link h1 text-dark" href="{% url 'add_device' %}">Register Device</a>
     </nav>
@@ -46,8 +62,8 @@ TODO
     <ul>
         {% for device in devices %}
             <li>
-                <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
-                <form action="{% url 'del_cabinet' device.id %}" method="post">
+                <a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a>
+                <form action="{% url 'del_cabinet' id=device.id %}" method="post">
                     {% csrf_token %}
                     <button class="delete" type="submit">Delete</button>
                 </form>
