@@ -29,6 +29,7 @@ import numpy as np
 # Device status
 NOT_REGISTERED = 0
 ONLINE = 1
+OFFLINE = 2
 
 # HTTP Status Codes
 SUCCESS = 200
@@ -48,14 +49,25 @@ def login(request):
 
   return render(request, 'login.html')
 
+def get_and_update_status(user):
+  """helper function that gets all the devices for that user, and updates their online/offline status"""
+
+  devices = Device.objects.filter(owner=user)
+
+  for device in devices:
+    device.update_online_status()
+
+  return devices
+
+
 @login_required
 def profile(request):
   if not request.user.phone_number:
     return redirect('register_user')
 
   context = {
-    'devices': Device.objects.filter(owner=request.user),
-    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"), #TODO: filter by category
+    'devices': get_and_update_status(request.user),
+    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
     }
 
   if 'message' in request.session:
@@ -99,14 +111,14 @@ def logout_user(request):
     print(response.json())
 
   logout(request)
-  
+
   messages.info(request, 'You have been logged out.')
   return redirect('home')
 
 @login_required
 def dashboard(request):
   context = {}
-  context['devices'] = Device.objects.filter(owner=request.user)
+  context['devices'] = get_and_update_status(request.user)
 
   return render(request, 'dashboard.html', context)
 
@@ -117,7 +129,7 @@ def dashboard(request):
 
 @login_required
 def recipes(request):
-  context = { 'devices': Device.objects.filter(owner=request.user),
+  context = { 'devices': get_and_update_status(request.user),
               # 'recipes': Recipe.objects.filter(author=request.user),
               'items':ItemEntry.objects.all() }
 
@@ -160,17 +172,17 @@ def add_recipe(request):
   ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
     context = { 'form': RecipeForm(),
-                'devices': Device.objects.filter(owner=request.user) }
+                'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
   ##### If POST, "submit" button was pressed
   form = RecipeForm(request.POST)
   if not form.is_valid():
     context = { 'form': form,
-                'devices': Device.objects.filter(owner=request.user) }
+                'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
-  context = {'devices': Device.objects.filter(owner=request.user) }
+  context = {'devices': get_and_update_status(request.status) }
 
   user = request.user
   # TODO: change when done debugging to email=data['email']
@@ -188,7 +200,7 @@ def add_recipe(request):
 @login_required
 def cabinet(request, id):
   # Request for a specific cabinet
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   if not Device.objects.filter(id=id).exists():
     messages.error(request, 'Invalid device ID')
@@ -196,7 +208,7 @@ def cabinet(request, id):
 
   device = Device.objects.get(id=id)
   context = {
-    'devices': Device.objects.filter(owner=request.user),
+    'devices': get_and_update_status(request.user),
     'device': device,
     'items': ItemEntry.objects.filter(location=device)
   }
@@ -208,7 +220,7 @@ def register_device(request):
 # Assumption that all "approved" devices will already be added in the database
 # New registrations simply assign owner to existing devices
 
-  context = {}
+  context = {'device': get_and_update_status(request.user)}
   context['site_key'] = settings.GOOGLE_RECAPTCHA_KEY
 
   # First load (GET request), return empty form
@@ -263,7 +275,7 @@ def register_device(request):
 def delete_device(request, id):
 # See addrbook2 for example
 
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   if request.method != 'POST':
     return render(request, 'dashboard.html', context)
@@ -278,7 +290,7 @@ def delete_device(request, id):
   device.save()
 
   # OJO: recreate device list after deleting the device (duh)
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   return redirect('dashboard')
 
@@ -317,7 +329,7 @@ def add_item(request, id):
 @login_required
 def delete_item(request, id):
 
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   if request.method != 'POST':
     return render(request, 'inv.html', context)
@@ -328,7 +340,7 @@ def delete_item(request, id):
   messages.info(request, 'Item {0} has been deleted.'.format(entry.type.name))
   entry.delete()
 
-  context = { 'devices': Device.objects.filter(owner=request.user),
+  context = { 'devices': get_and_update_status(request.user),
               'items': ItemEntry.objects.all() }
   print(context)
 
