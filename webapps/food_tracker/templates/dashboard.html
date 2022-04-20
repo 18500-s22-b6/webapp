@@ -27,28 +27,24 @@ TODO
 
     <nav class="sidebar card" id="sidebar" style = "width: 20rem;">
         <a class="nav-link has-submenu h1 text-dark" href="{% url 'dashboard' %}">My cabinets</a>
-        {% comment "Two options for handling no cabinets/empty list"%}
-        {% endcomment %}
-        {% if devices %}
-            <ul>
-            {% for device in devices %}
 
-                <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li>
-            {% empty %}
-                <li>Sorry, no cabinets in this list.</li>
-
-                <li class="nav-link h6 text-dark">
-                    <span class="dot_online">
-                        {% if device.status == 1 %}
-                            <i class="dot_online"></i>
-                        {% else %}
-                            <i class="dot_offline"></i>
-                        {% endif %}
-                    </span> <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
-                </li>
-            {% endfor %}
-            </ul>
-        {% endif %}
+        <ul>
+        {% for device in devices %}
+            <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li>
+        
+            <li class="nav-link h6 text-dark">
+                <span class="dot_online">
+                    {% if device.status == 1 %}
+                        <i class="dot_online"></i>
+                    {% else %}
+                        <i class="dot_offline"></i>
+                    {% endif %}
+                </span> <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
+            </li>
+        {% empty %}
+            <li>Sorry, no cabinets in this list.</li>
+        {% endfor %}
+        </ul>
         <a class="nav-link h1 text-dark" href="{% url 'recipes' %}">Recipes</a>
         <a class="nav-link h1 text-dark" href="{% url 'add_device' %}">Register Device</a>
     </nav>

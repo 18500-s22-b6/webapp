@@ -10,25 +10,32 @@ HOW TO RUN
 ***** Creating a virtual environment
 python3 -m venv venv_18-500
 
+
 ***** Activate a virtual environment
 - Mac: source venv_18-500/bin/activate
 - Windows: venv_18500\Scripts\activate.bat
 
+
 ***** Install Django:
 pip install django
 
+
 ***** Install required Django submodules:
+pip install -r requirements.txt
+
+(to manually install...)
 pip install django-phonenumber-field[phonenumbers]
 pip install social-auth-app-django
 pip install django-sslserver
 pip install jsonschema
-pip instatl django-crispy-forms
+pip install django-crispy-forms
 pip install crispy-bootstrap5
 
 
 ***** Create database:
 python3 manage.py makemigrations
 python3 manage.py migrate
+
 
 ***** Run server:
 python3 manage.py runserver 8000

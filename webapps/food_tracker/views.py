@@ -325,10 +325,10 @@ def add_item(request, id, ajax):
   # Set context with current list of items so we can easily return if we discover errors.
   context = { 'items': ItemEntry.objects.all() }
 
-    # Adds the new item to the database if the request parameter is present
-    if 'item' not in request.POST or not request.POST['item']:
-      messages.warning(request, 'You must enter an item to add.')
-      return render(request, 'inv.html', context)
+  # Adds the new item to the database if the request parameter is present
+  if 'item' not in request.POST or not request.POST['item']:
+    messages.warning(request, 'You must enter an item to add.')
+    return render(request, 'inv.html', context)
 
   user = request.user
   loc = Device.objects.get(id=id)
@@ -494,13 +494,13 @@ def update_inventory(request):
                         desc_folder='n/a')
       cat.save()
 
-  response = HttpResponse(response_json, content_type='application/json')
-  response['Access-Control-Allow-Origin'] = '*'
-  return response
+  # response = HttpResponse(response_json, content_type='application/json')
+  # response['Access-Control-Allow-Origin'] = '*'
+  # return response
 
     new_item = ItemEntry(location=device,
-                          type=cat, # cat
-                          thumbnail="")
+                         type=cat, # cat
+                         thumbnail="")
     new_item.save()
     return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
   elif best_guess is None:
