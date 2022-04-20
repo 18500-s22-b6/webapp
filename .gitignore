@@ -20,3 +20,5 @@ resp.html
 resp_keepalive.html
 resp_data.html
 media/
+output/
+BIN/
