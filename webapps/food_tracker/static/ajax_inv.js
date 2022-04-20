@@ -61,6 +61,7 @@ function updateList(items) {
         if (!id_in_items) this.remove()
     })
 
+    console.log($("li").each())
     // Adds each new todolist item to the list (only if it's not already here)
     $(items).each(function() {
         let my_id = "id_item_" + this.id
@@ -69,7 +70,7 @@ function updateList(items) {
             // Builds a new HTML list item for the todo-list
             let deleteButton = "<button onclick='deleteItem(" + this.id + ")'>X</button> "
 
-            console.log(this)
+            console.log("72" + this)
             $("#inv-list").append(
                 '<li id="id_item_' + this.id + '">' +
                 sanitize(this.type.name) + " " + 
@@ -114,14 +115,20 @@ function addItem(id) {
 }
 
 function deleteItem(id) {
+    console.log("118 " + id)
+    console.log("119 " + addItemURL)
+    let url = deleteItemURL(id)
+    console.log("121 " + url)
+
     $.ajax({
-        url: deleteItemURL(id),
+        url: url,
         type: "POST",
         data: "csrfmiddlewaretoken="+getCSRFToken(),
         dataType : "json",
         success: updateList,
-        error: updateError
+        error: null
     });
+    console.log("131 " + this)
 }
 
 function getCSRFToken() {

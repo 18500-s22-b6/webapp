@@ -374,6 +374,7 @@ def delete_item(request, id):
     context['message'] = message
     return render(request, 'inv.html', context)
 
+  print("377: asdfasdfasdf")
   entry = get_object_or_404(ItemEntry, id=id)
   cab_id = entry.location.id
   # TODO: determine how necessary the message actually is

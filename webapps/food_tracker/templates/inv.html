@@ -28,14 +28,14 @@ TODO:
         var myUserName = "{{ request.user.email }}"
         var addItemURL = "{% url 'add_item' id=device.id ajax=1%}"
         var deleteItemURL = function (id) { 
-            "{% url 'ajax-del-item' 0 %}".replace("0", id)
+            return "{% url 'del_item' 0 %}".replace("0", id)
         }
 
         // Call getList() as soon as page is finished loading to display the list
         console.log("35: device.id " + '{{ device.id }}')
         window.onload=getList('{{ device.id }}')
 
-        // ... also call getList every 5 seconds hereafter to update the list
+        // ... also call getList every 30 seconds hereafter to update the list
         window.setInterval(getList, 5000, '{{ device.id }}');
     </script>
 {% endblock %}
