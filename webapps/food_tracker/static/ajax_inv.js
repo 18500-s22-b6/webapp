@@ -23,10 +23,6 @@ function updateError(xhr) {
         return
     }
 
-    console.log("17: " + xhr);
-    console.log(typeof(xhr))
-    // console.log("25: " + xhr.responseText)
-    // console.log("26: " + xhr.responseJSON)
     // let response = JSON.parse(xhr.responseText)
     // if (response.hasOwnProperty('error')) {
     //     displayError(response.error)
@@ -36,17 +32,13 @@ function updateError(xhr) {
 }
 
 function displayError(message) {
-    console.log("35 message: " + message);
     $("#error").html(message);
 }
 
 function updateList(items) {
 
-    console.log("items: " + items)
-
     // Removes the old to-do list items
     // let list = document.getElementById("inv-list")
-    // console.log(list)
     // while (list.hasChildNodes()) {
     //     list.removeChild(list.firstChild)
     // }
@@ -61,7 +53,6 @@ function updateList(items) {
         if (!id_in_items) this.remove()
     })
 
-    console.log($("li").each())
     // Adds each new todolist item to the list (only if it's not already here)
     $(items).each(function() {
         let my_id = "id_item_" + this.id
@@ -70,7 +61,6 @@ function updateList(items) {
             // Builds a new HTML list item for the todo-list
             let deleteButton = "<button onclick='deleteItem(" + this.id + ")'>X</button> "
 
-            console.log("72" + this)
             $("#inv-list").append(
                 '<li id="id_item_' + this.id + '">' +
                 sanitize(this.type.name) + " " + 
@@ -115,11 +105,7 @@ function addItem(id) {
 }
 
 function deleteItem(id) {
-    console.log("118 " + id)
-    console.log("119 " + addItemURL)
     let url = deleteItemURL(id)
-    console.log("121 " + url)
-
     $.ajax({
         url: url,
         type: "POST",
@@ -128,7 +114,6 @@ function deleteItem(id) {
         success: updateList,
         error: null
     });
-    console.log("131 " + this)
 }
 
 function getCSRFToken() {

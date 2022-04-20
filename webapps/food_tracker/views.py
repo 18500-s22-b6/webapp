@@ -87,7 +87,7 @@ def logout_user(request):
     response = requests.delete(
       'https://graph.facebook.com/v13.0/me/permissions',
       params={'access_token': data['access_token']})
-    print(response.json())
+
 
   logout(request)
   return redirect('home')
@@ -141,8 +141,8 @@ def recipes(request):
     name = request.POST.get('recipe')
     l = d.get(name, None)
     if l:
-      # TODO: print is a proxy for emailing the user
-      print(l[1])
+      # OJO: print is a proxy for emailing the user
+      # print(l[1])
       # TODO: time limit on number of clicks per second
       # TODO: is html being so visible client-side okay?
       rlist = [request.user.email] # , request.user.phone_number]
@@ -201,7 +201,6 @@ def cabinet(request, id):
 
   # If AJAX
   if request.method == "POST":  #and request.is_ajax():
-    print("DJANGOOOO")
     return JsonResponse(data={"success":True}, status=200)
 
   # If the given ID doesn't exist
@@ -215,8 +214,6 @@ def cabinet(request, id):
     'device': device,
     'items': ItemEntry.objects.filter(location=device)
   }
-  print(request)
-  print(context)
   return render(request, 'inv.html', context)
 
 @login_required
@@ -364,6 +361,8 @@ def ajax_add_item(request, id):
   return get_list_json_dumps_serializer
 
 
+
+
 @login_required
 def delete_item(request, id):
 
@@ -374,7 +373,6 @@ def delete_item(request, id):
     context['message'] = message
     return render(request, 'inv.html', context)
 
-  print("377: asdfasdfasdf")
   entry = get_object_or_404(ItemEntry, id=id)
   cab_id = entry.location.id
   # TODO: determine how necessary the message actually is
@@ -384,7 +382,6 @@ def delete_item(request, id):
   context = { 'devices': Device.objects.filter(owner=request.user),
               'items': ItemEntry.objects.all(),
               'message': message }
-  print(context)
 
   # return render(request, 'inv.html', context)
   return redirect('cabinet', cab_id)
