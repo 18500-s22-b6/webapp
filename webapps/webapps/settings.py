@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'social_django',
     'sslserver',
     'phonenumber_field',
+    'crispy_forms',
+    'crispy_bootstrap5'
 ]
 
 MIDDLEWARE = [
@@ -83,6 +85,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webapps.wsgi.application'
 
+# Crispy forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
 # Django Messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
@@ -112,6 +118,8 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
