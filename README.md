@@ -22,6 +22,9 @@ pip install django-phonenumber-field[phonenumbers]
 pip install social-auth-app-django
 pip install django-sslserver
 pip install jsonschema
+pip instatl django-crispy-forms
+pip install crispy-bootstrap5
+
 
 ***** Create database:
 python3 manage.py makemigrations
