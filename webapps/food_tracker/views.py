@@ -565,7 +565,7 @@ def id_unknown_item(request, id):
     cat = form.cleaned_data["category"]
   else:
     assert form.cleaned_data["new_category_name"]
-    cat =  Category(name=form.cleaned_data["new_category_name"],
+    cat = Category(name=form.cleaned_data["new_category_name"],
                        user_gen=True,
                        creator=request.user,
                        desc_folder='n/a')
