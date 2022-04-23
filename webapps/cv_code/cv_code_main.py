@@ -553,6 +553,7 @@ def test_images_labeled(target_subfolder_name, iconic_subfolder_path="Iconic", b
 
 def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path="Iconic", bg_path = "bg.jpeg"):
     #tests a set of arbitrary images
+    bg_img = cv.imread(bg_path)
     iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
     target_dict = read_images_desc_folder(target_subfolder_name)
     matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
@@ -636,7 +637,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("TopDown", bg_path="bg2.jpeg")
+    out = test_arbitrary_images("TopDown", bg_path="real_bg.jpeg")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
