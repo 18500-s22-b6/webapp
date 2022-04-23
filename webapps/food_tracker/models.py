@@ -28,11 +28,7 @@ class Device(models.Model):
     name = models.CharField(blank=True, null=True, max_length = 50)
     most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
-    last_ping = models.DateTimeField(auto_now_add=True)
-
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)        
+    last_ping = models.DateTimeField(auto_now_add=True)   
 
     def update_online_status(self):
         if self.status != NOT_REGISTERED:
