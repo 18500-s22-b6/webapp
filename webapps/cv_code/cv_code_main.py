@@ -806,7 +806,7 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
     if is_definitley_smaller_than_applesauce(src_image_HSV, diff_bounds, iconic_map):
         print(f"{img_name} is smaller than applesauce")
         for larger_item in ["Cereal", "Milk", "Applesauce"]:
-            if iconic_map[larger_item]:
+            if larger_item in iconic_map:
                 del iconic_map[larger_item]
         is_apple = False
     elif is_likely_milk(src_image_HSV, diff_bounds, iconic_map) and iconic_map["Milk"]:
