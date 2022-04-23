@@ -48,6 +48,14 @@ TODO:
     <!-- <h2> request.session.message </h2> -->
     {% endif %}
 
+
+    <ul>
+        {% for unknown_item in unknown_items %}
+            <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
+            </li>
+        {% endfor %}
+    </ul>
+
     <div>
         <label>Manually add/remove Items:</label>
         <input type="text" id="item-box" autofocus>

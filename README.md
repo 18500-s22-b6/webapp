@@ -23,7 +23,7 @@ pip install django
 ***** Install required Django submodules:
 pip install -r requirements.txt
 
-(to manually install...)
+(to manually install...) (NOTE: no longer maintained)
 pip install django-phonenumber-field[phonenumbers]
 pip install social-auth-app-django
 pip install django-sslserver

@@ -236,7 +236,7 @@ def cabinet(request, id):
     'devices': get_and_update_status(request.user),
     'device': device,
     'items': ItemEntry.objects.filter(location=device),
-    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
+    "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
   }
   return render(request, 'inv.html', context)
 
