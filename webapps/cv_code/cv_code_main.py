@@ -3,6 +3,7 @@ from email.mime import image
 import imp
 import os
 from re import S
+from unittest.mock import DEFAULT
 import numpy as np
 import pandas as pd
 import cv2 as cv
@@ -16,7 +17,12 @@ import diff
 import Calibrate
 import base64
 
+#This is needed due to package differences between locally and on the server that I can't be bothered to deal with rn
 N_DESC = 1000
+try:
+    DEFAULT_ALG = cv.xfeatures2d.SIFT_create(N_DESC)
+except:
+    DEFAULT_ALG = cv.SIFT_create(N_DESC)
 
 #These will need to be redone individually, should be fine for basic tesing rn
 BB_dict = {
@@ -492,7 +498,7 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
     """
     if alg == None:
         #default to SIFT since that did the best
-        alg = cv.xfeatures2d.SIFT_create(N_DESC)
+        alg = DEFAULT_ALG
 
     image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Images")
     image_class_folders = os.listdir(image_dir)
@@ -522,7 +528,7 @@ def read_images_desc_folder(folder_name, bg_img=None, alg=None, needs_undistort 
     """
     if alg == None:
         #default to SIFT since that did the best
-        alg = cv.xfeatures2d.SIFT_create(N_DESC)
+        alg = DEFAULT_ALG
 
     bounds_dict = dict()
     out_dict = dict()
@@ -826,7 +832,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     certainty (IE, need to ask user for clarification).
     """
 
-    alg = cv.xfeatures2d.SIFT_create(N_DESC)
+    alg = DEFAULT_ALG
 
     new_img = Calibrate.undistort_img(cv.imread(new_image_path, 1))
     bg_image = Calibrate.undistort_img(cv.imread(bg_image_path, 1))

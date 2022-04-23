@@ -1,6 +1,4 @@
-from sqlite3 import Timestamp
 import requests
-import webbrowser
 import base64
 
 TIMESTAMP_INT = 0
