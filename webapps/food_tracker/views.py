@@ -367,7 +367,8 @@ def add_item(request, id, ajax):
 
 def get_list_json_dumps_serializer(request, id):
   response_data = []
-  items__in = ItemEntry.objects.filter(location__owner=request.user)
+  # TODO: 
+  items__in = ItemEntry.objects.filter(location__owner=request.user).filter(location__id=id)
   for model_item in items__in:
     my_item = {
       'id': model_item.id,
