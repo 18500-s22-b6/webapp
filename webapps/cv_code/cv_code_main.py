@@ -631,10 +631,33 @@ def visualize_Dominant_colors(input_img):
 
     return img_colors
 
+def is_definitley_smaller_than_applesauce(img_hsv, diff_bounds, iconic_map):
+    (x,y,w,h) = diff_bounds
+    #Smallest i've seen is 147630
+    #for saftey, we'll say 140000
+
+    return w*h < 140000
+
+def img_num_white_pixels(img_hsv):
+    #https://stackoverflow.com/questions/22588146/tracking-white-color-using-python-opencv
+    sensitivity = 15
+    lower_white = np.array([0,0,255-sensitivity])
+    upper_white = np.array([255,sensitivity,255])
+    mask = cv.inRange(img_hsv, lower_white, upper_white)
+    return cv.countNonZero(mask)
+
+def is_likely_milk(img_hsv, diff_bounds, iconic_map):
+
+    (x,y,w,h) = diff_bounds
+
+    return img_num_white_pixels(img_hsv) > w*h*0.1 and w*h > 140000
 
 def is_likely_applesauce(img_hsv, diff_bounds, iconic_map):
-    #applies hueristics to check if the image is likely to be an applesauce
+    # applies hueristics to check if the image is likely to be an applesauce
+    # This is intended to be a fairly strict check, we should see very few false positives
 
+    if not "Applesauce" in iconic_map:
+        return False
     # lower bound and upper bound for applesauce green/yellow color
     lower_bound = np.array([17, 50, 50])
     upper_bound = np.array([120, 255, 255])
@@ -643,17 +666,29 @@ def is_likely_applesauce(img_hsv, diff_bounds, iconic_map):
 
     mask = cv.inRange(img_hsv, lower_bound, upper_bound)
 
-    ratio = cv.countNonZero(mask) / (h*w)
+    # In order to account for image croping failures, I'm using the expected area that the applesauce should take up
+    ratio = cv.countNonZero(mask) / (385*470)
     print("applesauce ratio: ", ratio)
 
-    return ratio > .25
+    next_best_guess_ratio = -1
+    for iconic_img_name, (num_total_desc, num_matches) in iconic_map.items():
+        if iconic_img_name != "Applesauce" and num_matches/num_total_desc > next_best_guess_ratio:
+            next_best_guess_ratio = num_matches/num_total_desc
+
+    return ratio > .25 and next_best_guess_ratio * 1.2 < iconic_map["Applesauce"][1] / iconic_map["Applesauce"][0]
 
 
 def is_likely_tomato(img_hsv, diff_bounds, iconic_map):
-    #applies hueristics to check if the image is likely to be an tomato sauce
+    # applies hueristics to check if the image is likely to be an tomato sauce
+    # This is intended to be a fairly strict check, we should see very few false positives
+    # This check is mostly intended to deal with crushed tomatoes being confused for applesauce
+
+    if not "CrushedTomatos" in iconic_map:
+        return False
 
     (x,y,w,h) = diff_bounds
 
+    #Red has two different regions in HSV
     lower_bound_1 = np.array((0,50,20))
     upper_bound_1 = np.array((5,255,255))
     mask1 = cv.inRange(img_hsv, lower_bound_1, upper_bound_1)
@@ -664,7 +699,15 @@ def is_likely_tomato(img_hsv, diff_bounds, iconic_map):
     ratio = (cv.countNonZero(mask1) + cv.countNonZero(mask2)) / (h*w)
     print("Tomat ratio: ", ratio)
 
-    return ratio > .2
+    next_best_guess_ratio = -1
+    for iconic_img_name, (num_total_desc, num_matches) in iconic_map.items():
+        if iconic_img_name != "CrushedTomatos" and num_matches/num_total_desc > next_best_guess_ratio:
+            next_best_guess_ratio = num_matches/num_total_desc
+
+    # .2 seems to be a good default threshold from manual testing
+    thresh = .2
+
+    return ratio > .2 and next_best_guess_ratio < (iconic_map["CrushedTomatos"][1] / iconic_map["CrushedTomatos"][0]) * 1.5
 
     sum = 0
     for percent, color in img_colors:
@@ -717,19 +760,23 @@ def rgb_to_hsv(r, g, b):
 def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=None):
     #applies hueristics to the matches dict in place
 
+    #main heuristics are as follows:
+    #many things get falsly ID'd as applesauce, specically yogurt, tomatoes and baking powder
+    #milk, in general, rarly get's ID'd correctly
+
     (x,y,w,h) = diff_bounds
 
     #first, let's do some color checking
 
     src_image = cv.imread(img_path)[y:y+h, x:x+w]
-    if False:
+    if True:
         src_image_hsv = cv.cvtColor(src_image, cv.COLOR_BGR2HSV)
-        lower_bound = np.array((0,50,20))
-        upper_bound = np.array((5,250,250))
-        lower_bound = np.array((175,50,20))
-        upper_bound = np.array((180,255,255))
 
-        mask = cv.inRange(src_image_hsv, lower_bound, upper_bound)
+        lower_white = np.array([0,0,0])
+        upper_white = np.array([255,50,225])
+        mask = cv.inRange(src_image_hsv, lower_white, upper_white)
+
+        mask = cv.inRange(src_image_hsv, lower_white, upper_white)
         cv.imshow(f"mask_{img_name}", mask)
 
         print(f"Ratio: {cv.countNonZero(mask) / (h*w)}")
@@ -738,6 +785,20 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
         cv.destroyAllWindows()
 
     src_image_HSV = cv.cvtColor(src_image, cv.COLOR_BGR2HSV)
+
+    # right off the bat, let's just do the easy size check
+    # These catch some confusions between applesauce and smaller stuff
+    if is_definitley_smaller_than_applesauce(src_image_HSV, diff_bounds, iconic_map):
+        for larger_item in ["CrushedTomatos", "Cereal", "Milk", "Applesauce"]:
+            if iconic_map[larger_item]:
+                del iconic_map[larger_item]
+        is_apple = False
+    elif is_likely_milk(src_image_HSV, diff_bounds, iconic_map) and iconic_map["Milk"]:
+        #next, let's do a check for milk, so we can return early if we find it
+        iconic_map["Milk"] = (iconic_map["Milk"][0], iconic_map["Milk"][0])
+        return
+
+
     is_apple = is_likely_applesauce(src_image_HSV, diff_bounds, iconic_map)
     is_tomat = is_likely_tomato(src_image, diff_bounds, iconic_map)
 
@@ -747,20 +808,10 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
         if img_name != None:
             print(f"{img_name} is likely a tomato sauce... or an applesauce")
         iconic_map["CrushedTomatos"] = (iconic_map["CrushedTomatos"][0], iconic_map["CrushedTomatos"][0])
-    if is_likely_tomato(src_image_HSV, diff_bounds):
+    elif is_tomat:
         if img_name != None:
             print(f"{img_name} is likely a tomato sauce")
         iconic_map["CrushedTomatos"] = (iconic_map["CrushedTomatos"][0], iconic_map["CrushedTomatos"][0])
-    elif not is_likely_applesauce(src_image_HSV, diff_bounds):
-        #If it's not likely an applesauce, make sure it doesn't get confused for it
-        if img_name != None:
-            print(f"{img_name} is NOT likely an applesauce")
-        iconic_map["Applesauce"] = (iconic_map["Applesauce"][0], 0)
-    else:
-        #is likely an applesauce, but we can leave it as applesauce is very rarely confused with somthing else
-        if img_name != None:
-            print(f"{img_name} is likely an applesauce")
-        # iconic_map["Applesauce"] = (iconic_map["Applesauce"][0], iconic_map["Applesauce"][0])
 
     return
 
@@ -824,7 +875,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
     #TODO: have a better heuristic here
-    if best_guess_ratio > .5:
+    if best_guess_ratio > .05:
         return (best_guess_class_name, best_guess_is_post)
     else:
         #if we couldn't identify it, return the post diff
@@ -857,7 +908,6 @@ if __name__ == "__main__":
     # t = time.time()
     # print(f"TOTAL: {time.time() - t}")
     # alg_info_dict_to_excel(alg_info, alg_name)
-
     # print(to_info(test_alg(alg, matcher)))
 
     # test_sanity(alg, matcher, "Milk")
