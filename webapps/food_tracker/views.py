@@ -125,6 +125,7 @@ def logout_user(request):
 def dashboard(request):
   context = {}
   context['devices'] = get_and_update_status(request.user)
+  print(context['devices'])
 
   return render(request, 'dashboard.html', context)
 
@@ -387,6 +388,7 @@ def get_list_json_dumps_serializer(request, id):
       'type': model_item.type,
     }
     response_data.append(my_item)
+  print(response_data)
   response_json = json.dumps(response_data, default=vars)
 
 

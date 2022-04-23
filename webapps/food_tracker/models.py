@@ -37,6 +37,10 @@ class Device(models.Model):
                       + ", " + "name=" + str(self.name) \
                       + ", " + "key=" + str(self.key) \
                       + ")"
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)        
 
     def update_online_status(self):
         if self.status != NOT_REGISTERED:
