@@ -77,9 +77,12 @@ python3 manage.py createsuperuser
 EC2 INFORMATION
 
 ***** aws.amazon.com
-ssh -i "food_tracker.pem" 
+ssh -i "food_tracker.pem"
 ubuntu@ec2-XX-XX-XX-XX.compute-1.amazonaws.com
 
 
 ***** "attempt to write a readonly database"
 sudo chown www-data:www-data db.sqlite3
+
+***** read django logs
+cat /var/log/apache2/error.log
