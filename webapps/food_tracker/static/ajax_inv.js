@@ -13,6 +13,7 @@ function getList(id) {
 }
 
 
+// TODO: COMPLETELY BROKEN FN
 function updateError(xhr) {
     if (xhr.status == 0) {
         displayError("Cannot connect to server")
@@ -65,12 +66,12 @@ function updateList(items) {
 
             $("#inv-list").append(
                 '<li id="id_item_' + this.id + '">' +
-                sanitize(this.type.name) + " " + 
+                sanitize(this.type) + " " + // .name
                 deleteButton +
                 ' <span class="details">' +
                 "(id=" + this.type.id 
-                + ", location=" + this.location.name
-                + ", type=" + this.type.name
+                + ", location=" + this.location //.name
+                + ", type=" + this.type //.name
                 + ", thumbnail=" + this.thumbnail
                 + ")"
                 + '</span>'
