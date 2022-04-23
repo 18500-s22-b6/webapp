@@ -30,14 +30,6 @@ class Device(models.Model):
     key = models.CharField(max_length = 100)
     last_ping = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return "Device(id=" + str(self.serial_number) \
-                      + ", " + "status=" + str(self.status) \
-                      + ", " + "owner=" + str(self.owner) \
-                      + ", " + "name=" + str(self.name) \
-                      + ", " + "key=" + str(self.key) \
-                      + ")"
-    
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, 
             sort_keys=True, indent=4)        
@@ -50,6 +42,13 @@ class Device(models.Model):
                 self.status = ONLINE
             self.save()
 
+    def __str__(self):
+        return "Device(id=" + str(self.serial_number) \
+                      + ", " + "status=" + str(self.status) \
+                      + ", " + "owner=" + str(self.owner) \
+                      + ", " + "name=" + str(self.name) \
+                      + ", " + "key=" + str(self.key) \
+                      + ")"
 
 
 # General item classes, in case of documentation discrepancy

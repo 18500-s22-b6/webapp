@@ -388,7 +388,14 @@ def get_list_json_dumps_serializer(request, id):
       'type': model_item.type,
     }
     response_data.append(my_item)
+  print("391 response data: ")
   print(response_data)
+  print(response_data[1])
+  print(response_data[1]['location'])
+  print("vars: ")
+  print(vars(response_data[1]['location']))
+  print("varsasdf: ")
+  print(vars(response_data[1]))
   response_json = json.dumps(response_data, default=vars)
 
 

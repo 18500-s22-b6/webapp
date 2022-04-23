@@ -47,12 +47,7 @@ TODO:
     <!-- elif request.session.message -->
     <!-- <h2> request.session.message </h2> -->
     {% endif %}
-    <ul>
-        {% for unknown_item in unkown_items %}
-            <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
-            </li>
-        {% endfor %}
-    </ul>
+
     <div>
         <label>Manually add/remove Items:</label>
         <input type="text" id="item-box" autofocus>
@@ -61,5 +56,6 @@ TODO:
         <span id="error" class="error"></span>
         {% csrf_token %}
     </div>
+    <!-- To be populated by .js -->
     <div id="inv-list"></div>
 {% endblock %}

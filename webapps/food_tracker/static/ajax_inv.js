@@ -43,6 +43,8 @@ function updateList(items) {
     //     list.removeChild(list.firstChild)
     // }
 
+    console.log(items)
+
     // Removes items from todolist if they not in items
     $("li").each(function() {
         let my_id = parseInt(this.id.substring("id_item_".length))
