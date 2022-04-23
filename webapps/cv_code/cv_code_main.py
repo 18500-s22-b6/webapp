@@ -518,7 +518,7 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
 
     return out_dict
 
-def read_images_desc_folder(folder_name, alg=None, bg_img=None, needs_undistort = True):
+def read_images_desc_folder(folder_name, bg_img=None, alg=None, needs_undistort = True):
     """reads images from a given subfolder, and creates a map of image name -> a tuple of
     (keypoints, descriptors).
     """
@@ -557,7 +557,7 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
     #tests a set of arbitrary images
     bg_img = cv.imread(bg_path)
     iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
-    target_dict = read_images_desc_folder(target_subfolder_name)
+    target_dict = read_images_desc_folder(target_subfolder_name, bg_img=bg_img)
     matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
     #get best guess for each img
 
@@ -586,7 +586,7 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
 
     print("Best Guesses:")
     for img_name, best_guess in sorted(best_guess_dict.items()):
-        print(f"{img_name}: {best_guess} \n\t{[(k, n_match/n_tot) for k, (n_tot, n_match) in sorted(matches_dict[img_name].items(), key=lambda x: x[1][1]/x[1][0], reverse=True)]}")
+        print(f"{img_name}: {best_guess} \n\t{[(k, n_match/n_tot) for k, (n_tot, n_match) in sorted(matches_dict[img_name].items(), key=lambda x: x[1][1]/x[1][0], reverse=True)]}\n")
 
 
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
@@ -659,7 +659,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("TopDown_old", bg_path="real_bg.jpeg")
+    out = test_arbitrary_images("TopDown", bg_path="bg.jpeg")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
