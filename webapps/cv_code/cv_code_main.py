@@ -537,9 +537,9 @@ def read_images_desc_folder(folder_name, alg=None, bg_img=None, needs_undistort 
         if needs_undistort:
             raw_img = Calibrate.undistort_img(raw_img)
         if not (bg_img is None):
-            (_, raw_img_diff_after) = diff.get_largest_dif(bg_img, raw_img)
-        key_points = alg.detect(raw_img_diff_after,None)
-        kp, desc = alg.compute(raw_img_diff_after, key_points)
+            (_, raw_img) = diff.get_largest_dif(bg_img, raw_img)
+        key_points = alg.detect(raw_img,None)
+        kp, desc = alg.compute(raw_img, key_points)
         out_dict[img_name] = (kp, desc)
 
     return out_dict
