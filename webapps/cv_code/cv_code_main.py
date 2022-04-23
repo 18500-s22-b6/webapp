@@ -650,7 +650,8 @@ def is_likely_milk(img_hsv, diff_bounds, iconic_map):
 
     (x,y,w,h) = diff_bounds
 
-    return img_num_white_pixels(img_hsv) > w*h*0.1 and w*h > 140000
+    # return img_num_white_pixels(img_hsv) > w*h*0.1 and w*h > 140000
+    return False
 
 def is_likely_applesauce(img_hsv, diff_bounds, iconic_map):
     # applies hueristics to check if the image is likely to be an applesauce
@@ -769,7 +770,7 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
     #first, let's do some color checking
 
     src_image = cv.imread(img_path)[y:y+h, x:x+w]
-    if True:
+    if False:
         src_image_hsv = cv.cvtColor(src_image, cv.COLOR_BGR2HSV)
 
         lower_white = np.array([0,0,0])
@@ -789,7 +790,8 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
     # right off the bat, let's just do the easy size check
     # These catch some confusions between applesauce and smaller stuff
     if is_definitley_smaller_than_applesauce(src_image_HSV, diff_bounds, iconic_map):
-        for larger_item in ["CrushedTomatos", "Cereal", "Milk", "Applesauce"]:
+        print(f"{img_name} is smaller than applesauce")
+        for larger_item in ["Cereal", "Milk", "Applesauce"]:
             if iconic_map[larger_item]:
                 del iconic_map[larger_item]
         is_apple = False
@@ -890,7 +892,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("Bin2", bg_path="bg.jpeg")
+    out = test_arbitrary_images("TopDown", bg_path="bg.jpeg")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
