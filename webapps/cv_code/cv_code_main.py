@@ -24,6 +24,8 @@ try:
 except:
     DEFAULT_ALG = cv.SIFT_create(N_DESC)
 
+
+
 #These will need to be redone individually, should be fine for basic tesing rn
 BB_dict = {
     "Apple": ((261, 542), (470,770)),
@@ -522,6 +524,9 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
 
     return out_dict
 
+DEFAULT_ICONIC_DICT = read_images_desc_subfolder("Iconic")
+
+
 def read_images_desc_folder(folder_name, bg_img=None, alg=None, needs_undistort = True, return_img_diff=False):
     """reads images from a given subfolder, and creates a map of image name -> a tuple of
     (keypoints, descriptors).
@@ -570,7 +575,11 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
     #tests a set of arbitrary images
 
     bg_img = cv.imread(bg_path)
-    iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
+    if iconic_subfolder_path == "Iconic":
+        iconic_dict = DEFAULT_ICONIC_DICT
+    else:
+        iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
+
     target_dict, target_bounds_dict = read_images_desc_folder(target_subfolder_name, bg_img=bg_img, return_img_diff=True)
     matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
     #get best guess for each img
@@ -838,7 +847,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     bg_image = Calibrate.undistort_img(cv.imread(bg_image_path, 1))
 
 
-    iconic_dict = read_images_desc_subfolder("Iconic")
+    iconic_dict = DEFAULT_ICONIC_DICT.copy()
 
     #add additionally supplied iconic classes
     for new_iconic_name, new_iconic_img_path in additional_iconic_classes.items():
