@@ -586,7 +586,7 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
 
     print("Best Guesses:")
     for img_name, best_guess in sorted(best_guess_dict.items()):
-        print(f"{img_name}: {best_guess} {[(k, n_match/n_tot) for k, (n_tot, n_match) in sorted(matches_dict[img_name].items(), key=lambda x: x[1][1]/x[1][0], reverse=True)]}")
+        print(f"{img_name}: {best_guess} \n\t{[(k, n_match/n_tot) for k, (n_tot, n_match) in sorted(matches_dict[img_name].items(), key=lambda x: x[1][1]/x[1][0], reverse=True)]}")
 
 
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
@@ -659,7 +659,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("TopDown", bg_path="real_bg.jpeg")
+    out = test_arbitrary_images("TopDown_old", bg_path="real_bg.jpeg")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
