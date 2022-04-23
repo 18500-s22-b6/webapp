@@ -79,14 +79,17 @@ def find_largest_diff_bounds(before, after):
     return cv2.boundingRect(largest_contour)
 
 
-def get_largest_dif(before, after):
+def get_largest_dif(before, after, return_bounds = False):
     """returns a tuple.
     The first element is the subsection of the before image that contains the largest diff,
     the second is the subsection of the after images"""
     (x,y,w,h) = find_largest_diff_bounds(before, after)
     croped_before_img = before[y:y+h, x:x+w]
     cropped_after_img = after[y:y+h, x:x+w]
-    return (croped_before_img, cropped_after_img)
+    if return_bounds:
+        return (croped_before_img, cropped_after_img, (x,y,w,h))
+    else:
+        return (croped_before_img, cropped_after_img)
 
 def get_largest_dif_folder(before_file_path, after_folder_path, keep_before=False, out_dir = "Output/dif_output"):
 

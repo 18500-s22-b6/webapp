@@ -41,6 +41,9 @@ DEFAULT_D=np.array([[0.054508147613983864], [-0.018423201337080013], [-0.0158574
 # DEFAULT_K=np.array([[746.6611669643795, 0.0, 1258.0834963310779], [0.0, 746.7693228265135, 748.2604564297882], [0.0, 0.0, 1.0]])
 # DEFAULT_D=np.array([[0.04818181468970269], [-0.012787709242349402], [-0.016624091910845094], [0.006814930852439065]])
 
+#This is the final version, I havn't really been able to fix the full distortion of the image, but it'll have to do for now
+# DEFAULT_K=np.array([[746.205011008588, 0.0, 1259.599390114775], [0.0, 746.3719965670107, 751.7773066350132], [0.0, 0.0, 1.0]])
+# DEFAULT_D=np.array([[0.0557504888972436], [-0.025822106030366027], [-0.007766810011750379], [0.004721292292724637]])
 
 DEFAULT_DIM = (2560,1440)
 
@@ -100,7 +103,7 @@ def calibrate(calib_imgs_folder_path = "Calib_imgs"):
     return (K, D)
 
 def undistort_img(img, K = DEFAULT_K, D = DEFAULT_D, DIM=DEFAULT_DIM):
-    new_K = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(K, D, DIM, np.eye(3), balance=0)
+    new_K = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(K, D, DIM, np.eye(3), balance=.3)
     map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, np.eye(3), new_K, DIM, cv2.CV_16SC2)
     undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT)
     return undistorted_img
@@ -131,8 +134,8 @@ def write_to_output(imgs, names, out_dir="Output/undistort_output"):
 
 
 if __name__ == "__main__":
-    (K, D) = calibrate()
-    # (K, D) = (DEFAULT_K, DEFAULT_D)
+    # (K, D) = calibrate()
+    (K, D) = (DEFAULT_K, DEFAULT_D)
     imgs = [cv2.imread("bg.jpeg")]
     names = ["bg.jpeg"]
     for fname in os.listdir("TopDown"):
