@@ -383,11 +383,15 @@ def get_list_json_dumps_serializer(request, id):
   for model_item in items__in:
     my_item = {
       'id': model_item.id,
-      'location': model_item.location,
-      'type': model_item.type,
+      'location': model_item.location.name,
+      'type': model_item.type.name,
     }
     response_data.append(my_item)
-  response_json = json.dumps(response_data, default=vars)
+  # dumps: no slashes, []
+  # loads: list, gets mad  
+  # response_json = json.dumps(response_data, default=vars)
+  # print(response_json)
+  return JsonResponse(data=response_data, safe=False)
 
 
 @login_required
