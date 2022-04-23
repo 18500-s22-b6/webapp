@@ -1,4 +1,4 @@
-# webapp
+# webapp for b6 food tracker
 
 
 ----------
@@ -71,3 +71,15 @@ python3 manage.py startapp food_tracker
 ***** Create Django superuser
 python3 manage.py createsuperuser
 (Use admin console by using (Base url)/admin) and entering username and password
+
+
+----------
+EC2 INFORMATION
+
+***** aws.amazon.com
+ssh -i "food_tracker.pem" 
+ubuntu@ec2-XX-XX-XX-XX.compute-1.amazonaws.com
+
+
+***** "attempt to write a readonly database"
+sudo chown www-data:www-data db.sqlite3
