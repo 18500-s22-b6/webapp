@@ -349,7 +349,7 @@ def add_item(request, id, ajax):
                        creator=user,
                        desc_folder='n/a')
     new_cat.save()
-  except: 
+  except:
     new_cat = Category.objects.get(name=request.POST['item'])
 
   print("new_cat: ")
@@ -377,7 +377,7 @@ def get_list_json_dumps_serializer(request, id):
     response_data.append(my_item)
 
   # dumps: no slashes, []
-  # loads: list, gets mad  
+  # loads: list, gets mad
   # response_json = json.dumps(response_data, default=vars)
   # print(response_json)
   return JsonResponse(data=response_data, safe=False)
@@ -501,6 +501,7 @@ def update_inventory(request):
     else:
       #item has been removed from the inventory
       ItemEntry.objects.all().filter(location=device, type__name=best_guess_category_name).first().delete()
+      return JsonResponse({'success': 'Removed item from inventory'}, status=SUCCESS)
   elif best_guess is None:
     return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
   else:
