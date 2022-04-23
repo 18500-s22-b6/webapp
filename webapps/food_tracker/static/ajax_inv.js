@@ -59,6 +59,8 @@ function updateList(items) {
     // Adds each new todolist item to the list (only if it's not already here)
     $(items).each(function() {
         let my_id = "id_item_" + this.id
+
+        // If "id_item_" isn't already on the list
         if (document.getElementById(my_id) == null) {
 
             // Builds a new HTML list item for the todo-list
@@ -69,7 +71,7 @@ function updateList(items) {
                 sanitize(this.type) + " " + // .name
                 deleteButton +
                 ' <span class="details">' +
-                "(id=" + this.type.id 
+                "(id=" + this.id // type.id
                 + ", location=" + this.location //.name
                 + ", type=" + this.type //.name
                 + ", thumbnail=" + this.thumbnail
@@ -96,7 +98,9 @@ function addItem(id) {
     // Clear input box and old error message (if any)
     itemTextElement.value = ''
     displayError('')
+    if(itemTextValue == '') displayError('You must enter an item to add.')
 
+    console.log("iTV: " + itemTextValue)
     $.ajax({
         url: addItemURL,
         type: "POST",

@@ -41,7 +41,7 @@ urlpatterns = [
     path('del_item/<int:id>', views.delete_item, name='del_item'),
     path('update_inventory', views.update_inventory, name='update_inventory'),
     
-    path('ajax-add-item/<int:id>', views.ajax_add_item, name='ajax-add-item'),
+    # path('ajax-add-item/<int:id>', views.ajax_add_item, name='ajax-add-item'),
     path('ajax-del_item/<int:id>', views.ajax_del_item, name='ajax-del-item'),
     path('get-list/<int:id>', views.get_list_json_dumps_serializer), 
   
