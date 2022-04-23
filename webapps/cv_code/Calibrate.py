@@ -12,8 +12,35 @@ CHECKERBOARD = (9,9)
 DEFAULT_K = np.array([[743.8653770695429, 0.0, 1251.1764985790337], [0.0, 746.261717085507, 738.7610006363456], [0.0, 0.0, 1.0]])
 DEFAULT_D = np.array([[0.05549035102033457], [0.004777838787067957], [-0.07080456884384306], [0.04316058244944371]])
 
+# This works (?)
 # DEFAULT_K =np.array([[742.6913952508773, 0.0, 1249.548022362481], [0.0, 744.6297639469036, 740.7807175578188], [0.0, 0.0, 1.0]])
 # DEFAULT_D =np.array([[0.06632647629335793], [-0.05491477933127508], [0.027617545943178893], [-0.007521151402999929]])
+
+#this is new 1
+# DEFAULT_K=np.array([[743.9841536598568, 0.0, 1255.1819694061348], [0.0, 745.7531930733501, 746.6257774805962], [0.0, 0.0, 1.0]])
+# DEFAULT_D=np.array([[0.0541884417527263], [-0.016897523441291227], [-0.016183500977269633], [0.007281230890118444]])
+
+#This is new 2
+# DEFAULT_K=np.array([[745.4902362620558, 0.0, 1250.9057081475266], [0.0, 748.2672546064653, 751.6694651847206], [0.0, 0.0, 1.0]])
+# DEFAULT_D=np.array([[0.05638557181140707], [-0.013063034851805202], [-0.025757067190665884], [0.011481165227825604]])
+
+
+#This is manually changed
+# DEFAULT_K =np.array([[742.6913952508773, 0.0, 1249.548022362481], [0.0, 744.6297639469036, 740.7807175578188], [0.0, 0.0, 1.0]])
+# DEFAULT_D =np.array([[0.06632647629335793], [-0.05491477933127508], [0.027617545943178893], [0.007521151402999929]])
+
+#This is new 3
+# DEFAULT_K=np.array([[743.9841536598568, 0.0, 1255.1819694061348], [0.0, 745.7531930733501, 746.6257774805962], [0.0, 0.0, 1.0]])
+# DEFAULT_D=np.array([[0.0541884417527263], [-0.016897523441291227], [-0.016183500977269633], [0.007281230890118444]])
+
+#This is new 4
+DEFAULT_K=np.array([[746.2606029864031, 0.0, 1253.3039943785554], [0.0, 747.8303962022748, 746.8804295390603], [0.0, 0.0, 1.0]])
+DEFAULT_D=np.array([[0.054508147613983864], [-0.018423201337080013], [-0.0158574863044052], [0.007230470980964623]])
+
+#This is new 5
+# DEFAULT_K=np.array([[746.6611669643795, 0.0, 1258.0834963310779], [0.0, 746.7693228265135, 748.2604564297882], [0.0, 0.0, 1.0]])
+# DEFAULT_D=np.array([[0.04818181468970269], [-0.012787709242349402], [-0.016624091910845094], [0.006814930852439065]])
+
 
 DEFAULT_DIM = (2560,1440)
 
@@ -73,7 +100,7 @@ def calibrate(calib_imgs_folder_path = "Calib_imgs"):
     return (K, D)
 
 def undistort_img(img, K = DEFAULT_K, D = DEFAULT_D, DIM=DEFAULT_DIM):
-    new_K = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(K, D, DIM, np.eye(3), balance=1)
+    new_K = cv2.fisheye.estimateNewCameraMatrixForUndistortRectify(K, D, DIM, np.eye(3), balance=0)
     map1, map2 = cv2.fisheye.initUndistortRectifyMap(K, D, np.eye(3), new_K, DIM, cv2.CV_16SC2)
     undistorted_img = cv2.remap(img, map1, map2, interpolation=cv2.INTER_CUBIC, borderMode=cv2.BORDER_CONSTANT)
     return undistorted_img
@@ -105,7 +132,7 @@ def write_to_output(imgs, names, out_dir="Output/undistort_output"):
 
 if __name__ == "__main__":
     (K, D) = calibrate()
-    #(K, D) = (DEFAULT_K, DEFAULT_D)
+    # (K, D) = (DEFAULT_K, DEFAULT_D)
     imgs = [cv2.imread("bg.jpeg")]
     names = ["bg.jpeg"]
     for fname in os.listdir("TopDown"):

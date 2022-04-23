@@ -2,22 +2,43 @@
 
 {% extends "base.html" %}
 
+{% block head %}
+  <title>Login - Food Tracker</title>
+{% endblock %}
+
 {% block user-info %}
   {% load static %}
   <!-- <link href="{% static 'ourlife.css' %}" rel="stylesheet" type="text/css"> -->
 {% endblock %}
 
 {% block content %}
-<div class="text">
-  <a href="{% url 'social:begin' 'google-oauth2' %}" role="button">
-    <button class="login-button">
-        Login with Google
-    </button>
-  </a>
-  <a href="{% url 'social:begin' 'facebook' %}" role="button">
-    <button class="login-button">
-        Login with Facebook
-    </button>
-  </a>
+<div class="container py-5 h-100">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+      <div class="card shadow-2-strong" style="border-radius: 2rem;">
+        <div class="card-body p-5 text-center">
+
+          <div class="h3 mb-5">Choose your sign in method</div>
+          <div class="d-grid gap-2">
+            <a class="btn btn-outline-secondary p-2" href="{% url 'social:begin' 'google-oauth2' %}" role="button" style="font-family: 'roboto'">
+              <img src="{% static 'media/google.png' %}" width="25"> &nbsp <span class="align-middle">Sign in with Google</span>
+            </a>
+            <a class="btn btn-light p-2" href="{% url 'social:begin' 'facebook' %}" role="button" style="background-color: #1877f2">
+              <img src="{% static 'media/facebook.png' %}" width="25"> &nbsp <span class="text-white align-middle font-weight-bold">Sign in with Facebook</span>
+            </a>
+
+            <hr>
+
+            <a class="btn btn-outline-secondary" href="{% url 'home' %}" role="button">
+              <span class="align-middle font-weight-bold">Cancel</span>
+            </a>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
 {% endblock %}

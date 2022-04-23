@@ -1,5 +1,5 @@
 <!-- dashboard.html -->
-<!-- 
+<!--
 
 TODO
 - bold page you're currently on in sidebar
@@ -8,7 +8,14 @@ TODO
  -->
 {% extends "base.html" %}
 
+{% block head %}
+  <title>Dashboard - Food Tracker</title>
+{% endblock %}
+
 {% block user-info %}
+{% endblock %}
+
+{% block content %}
 <nav class="navbar navbar-light bg-light">
     <h1>Hello, {{ user.first_name }}</h1>
     <form class="form-inline">
@@ -17,23 +24,31 @@ TODO
     </form>
   </nav>
 
-{% endblock %}
 
-{% block sidebar %}
     <nav class="sidebar card" id="sidebar" style = "width: 20rem;">
         <a class="nav-link has-submenu h1 text-dark" href="{% url 'dashboard' %}">My cabinets</a>
+
         <ul>
-            {% for device in devices %}
-                <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' device.id %}">{{ device.name }}</a></li>
-            {% endfor %}
+        {% for device in devices %}
+            <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li>
+        
+            <li class="nav-link h6 text-dark">
+                <span class="dot_online">
+                    {% if device.status == 1 %}
+                        <i class="dot_online"></i>
+                    {% else %}
+                        <i class="dot_offline"></i>
+                    {% endif %}
+                </span> <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
+            </li>
+        {% empty %}
+            <li>Sorry, no cabinets in this list.</li>
+        {% endfor %}
         </ul>
         <a class="nav-link h1 text-dark" href="{% url 'recipes' %}">Recipes</a>
-        <a class="nav-link h1 text-dark" href="#TODO">Tracker status</a>
         <a class="nav-link h1 text-dark" href="{% url 'add_device' %}">Register Device</a>
     </nav>
-{% endblock %}
 
-{% block content %}
     {% if message %}
     <h2> {{ message }} </h2>
     <!-- elif request.session.message -->
@@ -43,8 +58,8 @@ TODO
     <ul>
         {% for device in devices %}
             <li>
-                <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
-                <form action="{% url 'del_cabinet' device.id %}" method="post">
+                <a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a>
+                <form action="{% url 'del_cabinet' id=device.id %}" method="post">
                     {% csrf_token %}
                     <button class="delete" type="submit">Delete</button>
                 </form>

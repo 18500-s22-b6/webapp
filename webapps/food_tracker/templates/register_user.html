@@ -1,7 +1,94 @@
 <!-- Registering a user's personal details -->
+{% extends "base.html" %}
 
-<form action="{% url 'register_user' %}" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
-</form>
+{% load crispy_forms_tags %}
+
+{% block script %}
+<script type="text/javascript">
+    // Adapted from https://stackoverflow.com/questions/30058927/format-a-phone-number-as-a-user-types-using-pure-javascript
+    let phone_num_field = document.getElementById('id_phone_number')
+    let bksp = false
+    let del = false
+
+    function format_number() {
+        input = phone_num_field.value.replace(/\D/g,'')
+
+        let size = input.length
+        if (size > 0) {input = "(" + input}
+        if (size > 3) {input = input.slice(0,4) + ") " + input.slice(4,11)}
+        if (size > 6) {input = input.slice(0,9) + "-" + input.slice(9)}
+
+        return input
+    }
+
+    phone_num_field.addEventListener(
+        "input",
+        (e) => {
+            pos = phone_num_field.selectionStart
+
+            input = format_number()
+
+            let offset = input.length - phone_num_field.value.length
+            if (del) {
+                offset = pos == 0 || pos == 4 || pos == 5 || pos == 9
+                del = false
+            }
+
+            if (bksp) {
+                if (pos == 0 || pos == 4 || pos == 5 || pos == 9)  offset -= 1
+                bksp = false
+            }
+            phone_num_field.value = input
+            phone_num_field.setSelectionRange(pos+offset, pos+offset)
+        }
+    )
+
+    phone_num_field.addEventListener(
+        "keydown",
+        (e) => {
+            if (e.keyCode === 8) { // for backspace key
+                bksp = true
+            } else if (e.keyCode == 46) {
+                del = true
+            }
+        }
+    )
+</script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container py-5 h-100">
+        <div class="h2 text-center pb-3">Enter Your Information</div>
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 2rem;">
+              <div class="card-body p-5 mx-3">
+
+                <form action="{% url 'register_user' %}" method="post">
+                    {% csrf_token %}
+                    
+                    <div id="div_id_phone_number" class="mb-3">
+                        <label class="form-label requiredField">
+                            Email
+                        </label>
+                        <input type="text" class="form-control" value="{{ user.email }}" readonly>
+                    </div>
+    
+                    {% for field in form %}
+                        {{ field|as_crispy_field }}
+                    {% endfor %}
+                    
+                    <div class="d-grid gap-2 py-3">
+                        <input class="btn btn-primary" type="submit" value="Save">
+                        <a class="btn btn-outline-secondary" type="button" href="{% url 'profile' %}">Cancel</a>
+                    </div>
+                </form>
+      
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}
