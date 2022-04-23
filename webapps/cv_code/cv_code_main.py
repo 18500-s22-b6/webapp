@@ -891,7 +891,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
     #TODO: have a better heuristic here
-    if best_guess_ratio > .0001:
+    if True:
         return (best_guess_class_name, best_guess_is_post)
     else:
         #if we couldn't identify it, return the post diff
