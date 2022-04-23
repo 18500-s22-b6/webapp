@@ -15,7 +15,6 @@ import copy
 import diff
 import Calibrate
 import base64
-from sklearn.cluster import KMeans
 
 N_DESC = 1000
 
@@ -604,32 +603,32 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
         print(f"{img_name}: {best_guess} \n\t{[(k, n_match/n_tot) for k, (n_tot, n_match) in sorted(matches_dict[img_name].items(), key=lambda x: x[1][1]/x[1][0], reverse=True)]}\n")
 
 #ripped from https://www.delftstack.com/howto/python/opencv-average-color-of-image/
-def visualize_Dominant_colors(input_img):
-    KM_cluster = KMeans(n_clusters=5).fit(input_img)
-    cluster = KM_cluster
-    C_centroids = cluster.cluster_centers_
-    C_labels = np.arange(0, len(np.unique(cluster.labels_)) + 1)
-    (C_hist, _) = np.histogram(cluster.labels_, bins = C_labels)
-    C_hist = C_hist.astype("float")
-    C_hist /= C_hist.sum()
+# def visualize_Dominant_colors(input_img):
+#     KM_cluster = KMeans(n_clusters=5).fit(input_img)
+#     cluster = KM_cluster
+#     C_centroids = cluster.cluster_centers_
+#     C_labels = np.arange(0, len(np.unique(cluster.labels_)) + 1)
+#     (C_hist, _) = np.histogram(cluster.labels_, bins = C_labels)
+#     C_hist = C_hist.astype("float")
+#     C_hist /= C_hist.sum()
 
 
-    img_colors = sorted([(percent, color) for (percent, color) in zip(C_hist, C_centroids)])
+#     img_colors = sorted([(percent, color) for (percent, color) in zip(C_hist, C_centroids)])
 
-    #Debug
-    if True:
-        start = 0
-        rect_color = np.zeros((50, 300, 3), dtype=np.uint8)
-        for (percent, color) in img_colors:
-            print(color, "{:0.2f}%".format(percent * 100))
-            end = start + (percent * 300)
-            cv.rectangle(rect_color, (int(start), 0), (int(end), 50), \
-                        color.astype("uint8").tolist(), -1)
-            start = end
+#     #Debug
+#     if True:
+#         start = 0
+#         rect_color = np.zeros((50, 300, 3), dtype=np.uint8)
+#         for (percent, color) in img_colors:
+#             print(color, "{:0.2f}%".format(percent * 100))
+#             end = start + (percent * 300)
+#             cv.rectangle(rect_color, (int(start), 0), (int(end), 50), \
+#                         color.astype("uint8").tolist(), -1)
+#             start = end
 
-        cv.imshow('visualize_Color', rect_color)
+#         cv.imshow('visualize_Color', rect_color)
 
-    return img_colors
+#     return img_colors
 
 def is_definitley_smaller_than_applesauce(img_hsv, diff_bounds, iconic_map):
     (x,y,w,h) = diff_bounds
