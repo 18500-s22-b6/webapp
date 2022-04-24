@@ -13,6 +13,7 @@ function getList(id) {
 }
 
 
+// TODO: COMPLETELY BROKEN FN
 function updateError(xhr) {
     if (xhr.status == 0) {
         displayError("Cannot connect to server")
@@ -43,6 +44,8 @@ function updateList(items) {
     //     list.removeChild(list.firstChild)
     // }
 
+    console.log(items)
+
     // Removes items from todolist if they not in items
     $("li").each(function() {
         let my_id = parseInt(this.id.substring("id_item_".length))
@@ -56,6 +59,8 @@ function updateList(items) {
     // Adds each new todolist item to the list (only if it's not already here)
     $(items).each(function() {
         let my_id = "id_item_" + this.id
+
+        // If "id_item_" isn't already on the list
         if (document.getElementById(my_id) == null) {
 
             // Builds a new HTML list item for the todo-list
@@ -63,12 +68,12 @@ function updateList(items) {
 
             $("#inv-list").append(
                 '<li id="id_item_' + this.id + '">' +
-                sanitize(this.type.name) + " " + 
+                sanitize(this.type) + " " + // .name
                 deleteButton +
                 ' <span class="details">' +
-                "(id=" + this.type.id 
-                + ", location=" + this.location.name
-                + ", type=" + this.type.name
+                "(id=" + this.id // type.id
+                + ", location=" + this.location //.name
+                + ", type=" + this.type //.name
                 + ", thumbnail=" + this.thumbnail
                 + ")"
                 + '</span>'
@@ -93,7 +98,9 @@ function addItem(id) {
     // Clear input box and old error message (if any)
     itemTextElement.value = ''
     displayError('')
+    if(itemTextValue == '') displayError('You must enter an item to add.')
 
+    console.log("iTV: " + itemTextValue)
     $.ajax({
         url: addItemURL,
         type: "POST",

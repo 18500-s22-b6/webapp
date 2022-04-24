@@ -28,15 +28,7 @@ class Device(models.Model):
     name = models.CharField(blank=True, null=True, max_length = 50)
     most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
-    last_ping = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return "Device(id=" + str(self.serial_number) \
-                      + ", " + "status=" + str(self.status) \
-                      + ", " + "owner=" + str(self.owner) \
-                      + ", " + "name=" + str(self.name) \
-                      + ", " + "key=" + str(self.key) \
-                      + ")"
+    last_ping = models.DateTimeField(auto_now_add=True)   
 
     def update_online_status(self):
         if self.status != NOT_REGISTERED:
@@ -46,6 +38,13 @@ class Device(models.Model):
                 self.status = ONLINE
             self.save()
 
+    def __str__(self):
+        return "Device(id=" + str(self.serial_number) \
+                      + ", " + "status=" + str(self.status) \
+                      + ", " + "owner=" + str(self.owner) \
+                      + ", " + "name=" + str(self.name) \
+                      + ", " + "key=" + str(self.key) \
+                      + ")"
 
 
 # General item classes, in case of documentation discrepancy

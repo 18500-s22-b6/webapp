@@ -47,19 +47,40 @@ TODO:
     <!-- elif request.session.message -->
     <!-- <h2> request.session.message </h2> -->
     {% endif %}
+
+
     <ul>
-        {% for unknown_item in unkown_items %}
+        {% for unknown_item in unknown_items %}
             <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
             </li>
         {% endfor %}
     </ul>
+
     <div>
         <label>Manually add/remove Items:</label>
         <input type="text" id="item-box" autofocus>
         <!-- <input type="submit"> -->
-        <button onclick="addItem('{{ device.id }}')">Add item</button>
+        <script type="text/javascript">
+            // www.w3schools.com/howto/howto_js_trigger_button_enter.asp
+            // Get the input field
+            var input = document.getElementById("item-box");
+
+            // Execute a function when the user releases a key on the keyboard
+            input.addEventListener("keyup", function(event) {
+              // Number 13 is the "Enter" key on the keyboard
+              if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the button element with a click
+                document.getElementById("add-button").click();
+              }
+            });
+        </script>
+        <button id="add-button" onclick="addItem('{{ device.id }}')">
+            Add item</button>
         <span id="error" class="error"></span>
         {% csrf_token %}
     </div>
+    <!-- To be populated by .js -->
     <div id="inv-list"></div>
 {% endblock %}

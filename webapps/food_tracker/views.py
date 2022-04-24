@@ -125,6 +125,7 @@ def logout_user(request):
 def dashboard(request):
   context = {}
   context['devices'] = get_and_update_status(request.user)
+  print(context['devices'])
 
   return render(request, 'dashboard.html', context)
 
@@ -235,7 +236,7 @@ def cabinet(request, id):
     'devices': get_and_update_status(request.user),
     'device': device,
     'items': ItemEntry.objects.filter(location=device),
-    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
+    "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
   }
   return render(request, 'inv.html', context)
 
@@ -320,7 +321,15 @@ def delete_device(request, id):
 
 @login_required
 def add_item(request, id, ajax):
+# Param: id = cabinet number
 #KNOWN BUGS: empty field error redirect not working
+
+  # print("326: ")
+  # print(request)
+  # print("id: ")
+  # print(id)
+  # print("ajax: ")
+  # print(ajax)
 
   # Set context with current list of items so we can easily return if we discover errors.
   context = { 'items': ItemEntry.objects.all() }
@@ -332,63 +341,47 @@ def add_item(request, id, ajax):
 
   user = request.user
   loc = Device.objects.get(id=id)
-  new_cat = Category(name=request.POST['item'],
-                     user_gen=True,
-                     creator=user,
-                     desc_folder='n/a')
-  new_cat.save()
 
-  # cat = Category.objects.get(name="Custom")
+  # If the category doesn't exist, try
+  try:
+    new_cat = Category(name=request.POST['item'],
+                       user_gen=True,
+                       creator=user,
+                       desc_folder='n/a')
+    new_cat.save()
+  except:
+    new_cat = Category.objects.get(name=request.POST['item'])
 
+  print("new_cat: ")
+  print(new_cat)
   new_item = ItemEntry(location=loc,
                        type=new_cat, # cat
                        thumbnail="")
   new_item.save()
 
-
+  # TODO: check that this works as expected
+  if(ajax):
+    return get_list_json_dumps_serializer(request, id)
   return redirect('cabinet', id)
 
 
-@login_required
-def ajax_add_item(request, id):
-
-  # Set context with current list of items so we can easily return if we discover errors.
-  context = { 'items': ItemEntry.objects.all() }
-
-  # Adds the new item to the database if the request parameter is present
-  if not 'item' in request.POST or not request.POST['item']:
-    context['message'] = 'You must enter an item to add.'
-    return render(request, 'inv.html', context)
-
-  user = request.user
-  loc = Device.objects.get(id=id)
-  new_cat = Category(name=request.POST['item'],
-                     user_gen=True,
-                     creator=user,
-                     desc_folder='n/a')
-  new_cat.save()
-
-  # cat = Category.objects.get(name="Custom")
-
-  new_item = ItemEntry(location=loc,
-                       type=new_cat, # cat
-                       thumbnail="")
-  new_item.save()
-
-  return get_list_json_dumps_serializer
-
 def get_list_json_dumps_serializer(request, id):
   response_data = []
-  items__in = ItemEntry.objects.filter(location__owner=request.user)
+  # TODO: 
+  items__in = ItemEntry.objects.filter(location__owner=request.user).filter(location__id=id)
   for model_item in items__in:
     my_item = {
       'id': model_item.id,
-      'location': model_item.location,
-      'type': model_item.type,
+      'location': model_item.location.name,
+      'type': model_item.type.name,
     }
     response_data.append(my_item)
-  response_json = json.dumps(response_data, default=vars)
 
+  # dumps: no slashes, []
+  # loads: list, gets mad
+  # response_json = json.dumps(response_data, default=vars)
+  # print(response_json)
+  return JsonResponse(data=response_data, safe=False)
 
 @login_required
 def delete_item(request, id):

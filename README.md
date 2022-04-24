@@ -1,4 +1,4 @@
-# webapp
+# webapp for b6 food tracker
 
 
 ----------
@@ -23,7 +23,7 @@ pip install django
 ***** Install required Django submodules:
 pip install -r requirements.txt
 
-(to manually install...)
+(to manually install...) (NOTE: no longer maintained)
 pip install django-phonenumber-field[phonenumbers]
 pip install social-auth-app-django
 pip install django-sslserver
@@ -71,3 +71,18 @@ python3 manage.py startapp food_tracker
 ***** Create Django superuser
 python3 manage.py createsuperuser
 (Use admin console by using (Base url)/admin) and entering username and password
+
+
+----------
+EC2 INFORMATION
+
+***** aws.amazon.com
+ssh -i "food_tracker.pem"
+ubuntu@ec2-XX-XX-XX-XX.compute-1.amazonaws.com
+
+
+***** "attempt to write a readonly database"
+sudo chown www-data:www-data db.sqlite3
+
+***** read django logs
+cat /var/log/apache2/error.log

@@ -30,7 +30,7 @@ TODO
 
         <ul>
         {% for device in devices %}
-            <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li>
+            {% comment %} <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li> {% endcomment %} 
         
             <li class="nav-link h6 text-dark">
                 <span class="dot_online">
