@@ -3,6 +3,7 @@ from email.mime import image
 import imp
 import os
 from re import S
+from unittest.mock import DEFAULT
 import numpy as np
 import pandas as pd
 import cv2 as cv
@@ -16,7 +17,14 @@ import diff
 import Calibrate
 import base64
 
+#This is needed due to package differences between locally and on the server that I can't be bothered to deal with rn
 N_DESC = 1000
+try:
+    DEFAULT_ALG = cv.xfeatures2d.SIFT_create(N_DESC)
+except:
+    DEFAULT_ALG = cv.SIFT_create(N_DESC)
+
+
 
 #These will need to be redone individually, should be fine for basic tesing rn
 BB_dict = {
@@ -492,7 +500,7 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
     """
     if alg == None:
         #default to SIFT since that did the best
-        alg = cv.xfeatures2d.SIFT_create(N_DESC)
+        alg = DEFAULT_ALG
 
     image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Images")
     image_class_folders = os.listdir(image_dir)
@@ -516,13 +524,16 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
 
     return out_dict
 
+DEFAULT_ICONIC_DICT = read_images_desc_subfolder("Iconic")
+
+
 def read_images_desc_folder(folder_name, bg_img=None, alg=None, needs_undistort = True, return_img_diff=False):
     """reads images from a given subfolder, and creates a map of image name -> a tuple of
     (keypoints, descriptors).
     """
     if alg == None:
         #default to SIFT since that did the best
-        alg = cv.xfeatures2d.SIFT_create(N_DESC)
+        alg = DEFAULT_ALG
 
     bounds_dict = dict()
     out_dict = dict()
@@ -564,7 +575,11 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
     #tests a set of arbitrary images
 
     bg_img = cv.imread(bg_path)
-    iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
+    if iconic_subfolder_path == "Iconic":
+        iconic_dict = DEFAULT_ICONIC_DICT
+    else:
+        iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
+
     target_dict, target_bounds_dict = read_images_desc_folder(target_subfolder_name, bg_img=bg_img, return_img_diff=True)
     matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
     #get best guess for each img
@@ -791,7 +806,7 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
     if is_definitley_smaller_than_applesauce(src_image_HSV, diff_bounds, iconic_map):
         print(f"{img_name} is smaller than applesauce")
         for larger_item in ["Cereal", "Milk", "Applesauce"]:
-            if iconic_map[larger_item]:
+            if larger_item in iconic_map:
                 del iconic_map[larger_item]
         is_apple = False
     elif is_likely_milk(src_image_HSV, diff_bounds, iconic_map) and iconic_map["Milk"]:
@@ -826,13 +841,13 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     certainty (IE, need to ask user for clarification).
     """
 
-    alg = cv.xfeatures2d.SIFT_create(N_DESC)
+    alg = DEFAULT_ALG
 
     new_img = Calibrate.undistort_img(cv.imread(new_image_path, 1))
     bg_image = Calibrate.undistort_img(cv.imread(bg_image_path, 1))
 
 
-    iconic_dict = read_images_desc_subfolder("Iconic")
+    iconic_dict = DEFAULT_ICONIC_DICT.copy()
 
     #add additionally supplied iconic classes
     for new_iconic_name, new_iconic_img_path in additional_iconic_classes.items():
@@ -876,7 +891,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
     #TODO: have a better heuristic here
-    if best_guess_ratio > .05:
+    if True:
         return (best_guess_class_name, best_guess_is_post)
     else:
         #if we couldn't identify it, return the post diff
