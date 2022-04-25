@@ -7,7 +7,7 @@
 {% block content %}
   <div class="container">
     <div class="splash">
-      <img class="rounded mx-auto d-block" src="{% static "media/logo.png" %}" />
+      <img class="rounded mx-auto d-block img-fluid" src="{% static "media/logo.png" %}" />
     </div>
   
     <div class="text-center">
@@ -19,17 +19,10 @@
       <p>Food Tracker is a revolutionary new service that allows you to keep track of your inventory while out shopping! This service requires a one time simple installation, after which, you'll never need to wory about your kitchen inventory every again!</p>
     </div>
     
-    <div class="d-grid col-3 mx-auto my-5">
+    <div class="d-grid col-md-3 col-8 mx-auto my-5">
       {% if not user.is_authenticated %}
         <a class="btn btn-primary my-1" href="{% url 'login' %}" role="button">
           Login
-        </a>
-      {% else %}
-        <a class="btn btn-primary my-1" href="{% url 'profile' %}" role="button">
-          My Profile
-        </a>
-        <a class="btn btn-primary my-1" href="{% url 'dashboard' %}" role="button">
-          My Dashboard
         </a>
       {% endif %}
     </div>

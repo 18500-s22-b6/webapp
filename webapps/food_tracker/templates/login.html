@@ -1,20 +1,16 @@
 <!-- Splash page for non-logged in users -->
 
 {% extends "base.html" %}
-
-{% block user-info %}
-  {% load static %}
-  <!-- <link href="{% static 'ourlife.css' %}" rel="stylesheet" type="text/css"> -->
-{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container py-5 h-100">
-  <div class="row d-flex justify-content-center align-items-center h-100">
+<div class="container py-5">
+  <div class="row d-flex justify-content-center align-items-center">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
       <div class="card shadow-2-strong" style="border-radius: 2rem;">
         <div class="card-body p-5 text-center">
 
-          <div class="h3 mb-5">Choose your sign in method</div>
+          <div class="h3 mb-5">Choose Your Sign In Method</div>
           <div class="d-grid gap-2">
             <a class="btn btn-outline-secondary p-2" href="{% url 'social:begin' 'google-oauth2' %}" role="button" style="font-family: 'roboto'">
               <img src="{% static "media/google.png" %}" width="25"> &nbsp <span class="align-middle">Sign in with Google</span>

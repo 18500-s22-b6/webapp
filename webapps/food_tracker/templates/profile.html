@@ -1,9 +1,11 @@
-{% extends "dashboard.html" %}
+{% extends "base.html" %}
+
+{% block profile %}active{% endblock %}
 
 {% block content %}
-    <div class="container py-5 h-100">
+    <div class="container py-5">
         <div class="h2 text-center pb-3">My Profile</div>
-        <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="row d-flex justify-content-center align-items-center">
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card shadow-2-strong" style="border-radius: 2rem;">
               <div class="card-body p-5 text-center mx-3">
@@ -30,10 +32,9 @@
                     <div class="text-end col">{{ devices|length }}</div>
                 </div>
         
-                <a class="btn btn-link text-start" href="{% url 'register_user' %}">Edit Profile</a>
 
                 <div class="d-grid gap-2 py-3">
-                    <a class="btn btn-primary" href="{% url 'dashboard' %}">Dashboard</a>
+                    <a class="btn btn-primary" href="{% url 'register_user' %}">Edit Profile</a>
                     <a class="btn btn-outline-secondary" href="{% url 'logout' %}">Log Out</a>
                 </div>
                 <ul>
