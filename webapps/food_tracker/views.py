@@ -488,11 +488,11 @@ def update_inventory(request):
                             type=cat, # cat
                             thumbnail="")
       new_item.save()
-      return JsonResponse({'success': 'Inventory updated to include new item'}, status=SUCCESS)
+      return JsonResponse({'success': f'Inventory updated to include new item: {best_guess_category_name}'}, status=SUCCESS)
     else:
       #item has been removed from the inventory
       ItemEntry.objects.all().filter(location=device, type__name=best_guess_category_name).first().delete()
-      return JsonResponse({'success': 'Removed item from inventory'}, status=SUCCESS)
+      return JsonResponse({'success': f'Removed item {best_guess_category_name}'}, status=SUCCESS)
   elif best_guess is None:
     return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
   else:
@@ -549,7 +549,7 @@ def id_unknown_item(request, id):
     cat = form.cleaned_data["category"]
   else:
     assert form.cleaned_data["new_category_name"]
-    cat =  Category(name=form.cleaned_data["new_category_name"],
+    cat = Category(name=form.cleaned_data["new_category_name"],
                        user_gen=True,
                        creator=request.user,
                        desc_folder='n/a')

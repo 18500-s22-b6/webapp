@@ -1,16 +1,24 @@
 import RPi.GPIO as GPIO
 import json_post
 import time
+import picamera
 
 # Change this for each device
 SERIAL_ID = "123456"
 SECRET = "secretkey"
-URL = 'http://localhost:8000'
+URL = 'https://b6foodtracker.com'
 
 
 def my_callback(channel):
     tmp_img_path = "BIN/cur_img.jpeg"
     #take photo
+
+
+    with picamera.PiCamera() as camera:
+        camera.start_preview()
+        time.sleep(3)
+        camera.capture(f"{tmp_img_path}.jpeg")
+        camera.stop_preview()
 
     #post data
     json_post.post_data(tmp_img_path, SERIAL_ID, SECRET, URL)

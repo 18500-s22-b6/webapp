@@ -8,65 +8,33 @@ TODO
  -->
 {% extends "base.html" %}
 
-{% block head %}
-  <title>Dashboard - Food Tracker</title>
-{% endblock %}
-
-{% block user-info %}
-{% endblock %}
+{% block dashboard %}active{% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-light bg-light">
-    <h1>Hello, {{ user.first_name }}</h1>
-    <form class="form-inline">
-      <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'profile' %}">Profile</a>
-      <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'logout' %}">Log Out</a>
-    </form>
-  </nav>
-
-
-    <nav class="sidebar card" id="sidebar" style = "width: 20rem;">
-        <a class="nav-link has-submenu h1 text-dark" href="{% url 'dashboard' %}">My cabinets</a>
-
-        <ul>
-        {% for device in devices %}
-            {% comment %} <li class="nav-link h6 text-dark"><a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a></li> {% endcomment %} 
-        
-            <li class="nav-link h6 text-dark">
-                <span class="dot_online">
-                    {% if device.status == 1 %}
-                        <i class="dot_online"></i>
-                    {% else %}
-                        <i class="dot_offline"></i>
+    <div class="container">
+        <div class="row my-5">
+        <div class="h2 mb-4">Dashboard</div>
+        {% if not devices %}
+            <div class="h4 my-3 text-muted">You don't have any devices, please register <a href="{% url 'add_device' %}">here</a></div>
+        {% else %}
+            <div class="h4 mb-4">My Devices</div>
+            {% for device in devices %}
+                <div class="card text-center m-2" style="width: 15rem;">
+                    <div class="card-body">
+                        <h5 class="card-title my-2">{{ device.name }}</h5>
+                        <h6 class="card-title my-2 text-success">{{ device.status }}</h6>
+                        <p class="card-text">This cabinet contains {{ device.inventory }} items</p>
+                        <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>
+                    </div>
+                    {% if device.unid %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span class="visually-hidden">unread messages</span>
                     {% endif %}
-                </span> <a href="{% url 'cabinet' device.id %}">{{ device.name }}</a>
-            </li>
-        {% empty %}
-            <li>Sorry, no cabinets in this list.</li>
-        {% endfor %}
-        </ul>
-        <a class="nav-link h1 text-dark" href="{% url 'recipes' %}">Recipes</a>
-        <a class="nav-link h1 text-dark" href="{% url 'add_device' %}">Register Device</a>
-    </nav>
+                </div>
+            {% endfor %}
+        {% endif %}
 
-    {% if message %}
-    <h2> {{ message }} </h2>
-    <!-- elif request.session.message -->
-    <!-- <h2> request.session.message </h2> -->
-    {% endif %}
+        </div>
+    </div>
 
-    <ul>
-        {% for device in devices %}
-            <li>
-                <a href="{% url 'cabinet' id=device.id %}">{{ device.name }}</a>
-                <form action="{% url 'del_cabinet' id=device.id %}" method="post">
-                    {% csrf_token %}
-                    <button class="delete" type="submit">Delete</button>
-                </form>
-            </li>
-
-        {% endfor %}
-    </ul>
 
 {% endblock %}
-
