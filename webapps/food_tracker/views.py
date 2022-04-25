@@ -4,8 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
+from django.core.mail import send_mail
+
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+
 from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
@@ -29,6 +32,7 @@ import numpy as np
 # Device status
 NOT_REGISTERED = 0
 ONLINE = 1
+OFFLINE = 2
 
 # HTTP Status Codes
 SUCCESS = 200
@@ -48,14 +52,25 @@ def login(request):
 
   return render(request, 'login.html')
 
+def get_and_update_status(user):
+  """helper function that gets all the devices for that user, and updates their online/offline status"""
+
+  devices = Device.objects.filter(owner=user)
+
+  for device in devices:
+    device.update_online_status()
+
+  return devices
+
+
 @login_required
 def profile(request):
+  # If this is their first time logging in
   if not request.user.phone_number:
     return redirect('register_user')
 
   context = {
-    'devices': Device.objects.filter(owner=request.user),
-    "unkown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"), #TODO: filter by category
+    'devices': get_and_update_status(request.user),
     }
 
   if 'message' in request.session:
@@ -96,17 +111,21 @@ def logout_user(request):
     response = requests.delete(
       'https://graph.facebook.com/v13.0/me/permissions',
       params={'access_token': data['access_token']})
-    print(response.json())
+
 
   logout(request)
-  
+
   messages.info(request, 'You have been logged out.')
   return redirect('home')
+
+
+
 
 @login_required
 def dashboard(request):
   context = {}
-  context['devices'] = Device.objects.filter(owner=request.user)
+  context['devices'] = get_and_update_status(request.user)
+  print(context['devices'])
 
   return render(request, 'dashboard.html', context)
 
@@ -117,10 +136,16 @@ def dashboard(request):
 
 @login_required
 def recipes(request):
-  context = { 'devices': Device.objects.filter(owner=request.user),
+  context = { 'devices': get_and_update_status(request.user),
               # 'recipes': Recipe.objects.filter(author=request.user),
               'items':ItemEntry.objects.all() }
 
+  if 'message' in request.session:
+    context['message'] = request.session['message']
+    del request.session['message']
+
+
+  # Django template query filtering solution: dictionary
   d = {}
   for recipe in Recipe.objects.all():
     # d[0] represents ingr that exist
@@ -139,8 +164,15 @@ def recipes(request):
     name = request.POST.get('recipe')
     l = d.get(name, None)
     if l:
-      # TODO: print is a proxy for emailing the user
-      print(l[1])
+      # OJO: print is a proxy for emailing the user
+      # print(l[1])
+      # TODO: time limit on number of clicks per second
+      # TODO: is html being so visible client-side okay?
+      rlist = [request.user.email] # , request.user.phone_number]
+      send_mail(subject='FT Shopping List', message=str(l[1]),
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=rlist,
+                fail_silently=False)
     else:
       print(name + " doesn't exist")
     return render(request, 'recipes.html', context)
@@ -160,17 +192,17 @@ def add_recipe(request):
   ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
     context = { 'form': RecipeForm(),
-                'devices': Device.objects.filter(owner=request.user) }
+                'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
   ##### If POST, "submit" button was pressed
   form = RecipeForm(request.POST)
   if not form.is_valid():
     context = { 'form': form,
-                'devices': Device.objects.filter(owner=request.user) }
+                'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
-  context = {'devices': Device.objects.filter(owner=request.user) }
+  context = {'devices': get_and_update_status(request.status) }
 
   user = request.user
   # TODO: change when done debugging to email=data['email']
@@ -188,19 +220,24 @@ def add_recipe(request):
 @login_required
 def cabinet(request, id):
   # Request for a specific cabinet
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
+  # If AJAX
+  if request.method == "POST":  #and request.is_ajax():
+    return JsonResponse(data={"success":True}, status=200)
+
+  # If the given ID doesn't exist
   if not Device.objects.filter(id=id).exists():
     messages.error(request, 'Invalid device ID')
     return redirect('dashboard')
 
   device = Device.objects.get(id=id)
   context = {
-    'devices': Device.objects.filter(owner=request.user),
+    'devices': get_and_update_status(request.user),
     'device': device,
-    'items': ItemEntry.objects.filter(location=device)
+    'items': ItemEntry.objects.filter(location=device),
+    "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
   }
-
   return render(request, 'inv.html', context)
 
 @login_required
@@ -208,7 +245,7 @@ def register_device(request):
 # Assumption that all "approved" devices will already be added in the database
 # New registrations simply assign owner to existing devices
 
-  context = {}
+  context = {'device': get_and_update_status(request.user)}
   context['site_key'] = settings.GOOGLE_RECAPTCHA_KEY
 
   # First load (GET request), return empty form
@@ -263,7 +300,7 @@ def register_device(request):
 def delete_device(request, id):
 # See addrbook2 for example
 
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   if request.method != 'POST':
     return render(request, 'dashboard.html', context)
@@ -278,46 +315,78 @@ def delete_device(request, id):
   device.save()
 
   # OJO: recreate device list after deleting the device (duh)
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   return redirect('dashboard')
 
 @login_required
-def add_item(request, id):
+def add_item(request, id, ajax):
+# Param: id = cabinet number
 #KNOWN BUGS: empty field error redirect not working
 
-    # Set context with current list of items so we can easily return if we discover errors.
-    context = { 'items': ItemEntry.objects.all() }
+  # print("326: ")
+  # print(request)
+  # print("id: ")
+  # print(id)
+  # print("ajax: ")
+  # print(ajax)
 
-    # Adds the new item to the database if the request parameter is present
-    if 'item' not in request.POST or not request.POST['item']:
-      messages.warning(request, 'You must enter an item to add.')
-      return render(request, 'inv.html', context)
+  # Set context with current list of items so we can easily return if we discover errors.
+  context = { 'items': ItemEntry.objects.all() }
 
-    # data = get_userinfo(request)
-    # print(data)
-    # user = User.objects.get(email=data['email'])
-    user = request.user
-    loc = Device.objects.get(id=id)
+  # Adds the new item to the database if the request parameter is present
+  if 'item' not in request.POST or not request.POST['item']:
+    messages.warning(request, 'You must enter an item to add.')
+    return render(request, 'inv.html', context)
+
+  user = request.user
+  loc = Device.objects.get(id=id)
+
+  # If the category doesn't exist, try
+  try:
     new_cat = Category(name=request.POST['item'],
                        user_gen=True,
                        creator=user,
                        desc_folder='n/a')
     new_cat.save()
+  except:
+    new_cat = Category.objects.get(name=request.POST['item'])
 
-    # cat = Category.objects.get(name="Custom")
+  print("new_cat: ")
+  print(new_cat)
+  new_item = ItemEntry(location=loc,
+                       type=new_cat, # cat
+                       thumbnail="")
+  new_item.save()
 
-    new_item = ItemEntry(location=loc,
-                         type=new_cat, # cat
-                         thumbnail="")
-    new_item.save()
+  # TODO: check that this works as expected
+  if(ajax):
+    return get_list_json_dumps_serializer(request, id)
+  return redirect('cabinet', id)
 
-    return redirect('cabinet', id)
+
+def get_list_json_dumps_serializer(request, id):
+  response_data = []
+  # TODO: 
+  items__in = ItemEntry.objects.filter(location__owner=request.user).filter(location__id=id)
+  for model_item in items__in:
+    my_item = {
+      'id': model_item.id,
+      'location': model_item.location.name,
+      'type': model_item.type.name,
+    }
+    response_data.append(my_item)
+
+  # dumps: no slashes, []
+  # loads: list, gets mad
+  # response_json = json.dumps(response_data, default=vars)
+  # print(response_json)
+  return JsonResponse(data=response_data, safe=False)
 
 @login_required
 def delete_item(request, id):
 
-  context = { 'devices': Device.objects.filter(owner=request.user) }
+  context = { 'devices': get_and_update_status(request.user) }
 
   if request.method != 'POST':
     return render(request, 'inv.html', context)
@@ -328,11 +397,15 @@ def delete_item(request, id):
   messages.info(request, 'Item {0} has been deleted.'.format(entry.type.name))
   entry.delete()
 
-  context = { 'devices': Device.objects.filter(owner=request.user),
+  context = { 'devices': get_and_update_status(request.user),
               'items': ItemEntry.objects.all() }
-  print(context)
 
   # return render(request, 'inv.html', context)
+  return redirect('cabinet', cab_id)
+
+def ajax_del_item(request, id):
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
   return redirect('cabinet', cab_id)
 
 @csrf_exempt
@@ -395,31 +468,41 @@ def update_inventory(request):
 
   new_image_path = image_field.path
 
+  #get dict of custom registered iconic dict items
   iconic_images = list(IconicImage.objects.all().filter(user=device.owner))
   iconic_dict = dict()
   for iconic_image in iconic_images:
     iconic_dict[iconic_image.category.name] = iconic_image.image.path
 
-  #TODO: supply the iconic images which this user has registered as third argument
-  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict)
 
-  if isinstance(best_guess, str):
+  #get set of all categories currently in the inventory
+  existing_categories = set(ItemEntry.objects.all().filter(location=device).values_list('type__name', flat=True))
 
-    try:
-      cat = Category.objects.get(name=best_guess)
-    except:
-      cat = Category(name=best_guess,
-                        user_gen=True,
-                        creator=device.owner,
-                        desc_folder='n/a')
-      cat.save()
+  best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict,existing_categories)
 
+  if isinstance(best_guess, tuple):
+    (best_guess_category_name, is_post) = best_guess
 
-    new_item = ItemEntry(location=device,
-                          type=cat, # cat
-                          thumbnail="")
-    new_item.save()
-    return JsonResponse({'success': 'Inventory updated'}, status=SUCCESS)
+    if is_post:
+      #new item has been added to the inventory
+      try:
+        cat = Category.objects.get(name=best_guess_category_name)
+      except:
+        cat = Category(name=best_guess_category_name,
+                          user_gen=True,
+                          creator=device.owner,
+                          desc_folder='n/a')
+        cat.save()
+
+      new_item = ItemEntry(location=device,
+                            type=cat, # cat
+                            thumbnail="")
+      new_item.save()
+      return JsonResponse({'success': f'Inventory updated to include new item: {best_guess_category_name}'}, status=SUCCESS)
+    else:
+      #item has been removed from the inventory
+      ItemEntry.objects.all().filter(location=device, type__name=best_guess_category_name).first().delete()
+      return JsonResponse({'success': f'Removed item {best_guess_category_name}'}, status=SUCCESS)
   elif best_guess is None:
     return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
   else:
@@ -476,7 +559,7 @@ def id_unknown_item(request, id):
     cat = form.cleaned_data["category"]
   else:
     assert form.cleaned_data["new_category_name"]
-    cat =  Category(name=form.cleaned_data["new_category_name"],
+    cat = Category(name=form.cleaned_data["new_category_name"],
                        user_gen=True,
                        creator=request.user,
                        desc_folder='n/a')

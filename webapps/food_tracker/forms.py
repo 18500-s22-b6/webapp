@@ -18,13 +18,6 @@ class MyModelMultipleChoiceField(ModelMultipleChoiceField):
 
 
 class DeviceRegistrationForm(forms.ModelForm):
-    # serial_number = forms.IntegerField() # TODO: CharField
-    # TODO: some unique constraint
-    # status = forms.IntegerField()
-    # owner = forms.Model(User, on_delete=models.PROTECT)
-    ##### We don't need to ask the user who the owner is
-    # name = forms.CharField(max_length = 50)
-    # key = forms.CharField(required=True, max_length = 50)
     class Meta:
         model = Device
         fields = ['serial_number', 'name']

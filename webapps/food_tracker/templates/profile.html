@@ -2,6 +2,10 @@
 
 {% block profile %}active{% endblock %}
 
+{% block head %}
+  <title>My Profile - Food Tracker</title>
+{% endblock %}
+
 {% block content %}
     <div class="container py-5">
         <div class="h2 text-center pb-3">My Profile</div>
@@ -9,14 +13,14 @@
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card shadow-2-strong" style="border-radius: 2rem;">
               <div class="card-body p-5 text-center mx-3">
-      
+
                 <div class="text-center">
                     <img src="{{ user.image_url }}" width="100px" style="border-radius: 50%">
                     <div class="h4 m-3">{{ user.first_name }} {{ user.last_name }}</div>
                 </div>
 
                 <hr class="my-4">
-                
+
                 <div class="row my-2">
                     <div class="text-start fw-bold col-4"><i class="fa fa-envelope" aria-hidden="true"></i> Email</div>
                     <div class="text-end col">{{ user.email }}</div>
@@ -31,23 +35,16 @@
                     <div class="text-start fw-bold col-4"><i class="fa fa-microchip" aria-hidden="true"></i> Devices</div>
                     <div class="text-end col">{{ devices|length }}</div>
                 </div>
-        
+
 
                 <div class="d-grid gap-2 py-3">
                     <a class="btn btn-primary" href="{% url 'register_user' %}">Edit Profile</a>
                     <a class="btn btn-outline-secondary" href="{% url 'logout' %}">Log Out</a>
                 </div>
-                <ul>
-                    {% for unknown_item in unkown_items %}
-                        <li> <a class="btn btn-sm btn-outline-secondary" type="button" href="{% url 'id_unknown_item' unknown_item.id %}"> Identify <img src= "{{ unknown_item.image.url }}" /> </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-      
+
               </div>
             </div>
           </div>
         </div>
       </div>
 {% endblock %}
-

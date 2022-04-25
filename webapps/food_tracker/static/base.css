@@ -45,3 +45,19 @@ a {
 .delete-form {
   display: inline;
 }
+
+.dot_online {
+  height: 20px;
+  width: 20px;
+  background-color: rgb(65, 196, 13);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot_offline {
+  height: 20px;
+  width: 20px;
+  background-color: rgb(255, 0, 0);
+  border-radius: 50%;
+  display: inline-block;
+}

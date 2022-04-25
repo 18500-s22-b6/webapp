@@ -2,6 +2,8 @@ from asyncio import open_unix_connection
 from email.mime import image
 import imp
 import os
+from re import S
+from unittest.mock import DEFAULT
 import numpy as np
 import pandas as pd
 import cv2 as cv
@@ -15,7 +17,14 @@ import diff
 import Calibrate
 import base64
 
+#This is needed due to package differences between locally and on the server that I can't be bothered to deal with rn
 N_DESC = 1000
+try:
+    DEFAULT_ALG = cv.xfeatures2d.SIFT_create(N_DESC)
+except:
+    DEFAULT_ALG = cv.SIFT_create(N_DESC)
+
+
 
 #These will need to be redone individually, should be fine for basic tesing rn
 BB_dict = {
@@ -331,7 +340,6 @@ def find_item(alg, matcher, target_desc, img):
     for m,n in matches:
         if m.distance < ratio*n.distance:
             good.append(m)
-            # import pdb; pdb.set_trace()
             good_kp.append(real_kp[m.queryIdx])
 
     cv.drawKeypoints(img, good_kp, img, color=(0,0,0), flags=cv.DRAW_MATCHES_FLAGS_DRAW_OVER_OUTIMG)
@@ -363,7 +371,7 @@ def read_keypoints_descriptors(alg, kp_detector):
             try:
                 key_points, descriptors = alg.compute(iconic_image, key_points)
             except:
-                import pdb; pdb.set_trace()
+                print("this should never occur")
             iconic_list.append((key_points,descriptors))
             print(f"PLX_BE_BAD: {t_foo - time.time()}")
         for real_image in real_images:
@@ -377,7 +385,7 @@ def read_keypoints_descriptors(alg, kp_detector):
             try:
                 key_points, descriptors = alg.compute(real_image, key_points)
             except:
-                import pdb; pdb.set_trace()
+                print("this should never occur")
             real_list.append((key_points, descriptors))
             print(f"PLX_BE_BAD_real: {t_foo - time.time()}")
         desc_dict[image_class] = (iconic_list, real_list)
@@ -398,7 +406,7 @@ class AlgInfo:
         return self.good_matches_dict[self.image_class]
 
 
-def perform_pairwise_comparisons_arbitrary(iconic_dict, target_dict):
+def perform_pairwise_comparisons_arbitrary(iconic_dict, target_dict, items_already_present_in_shelf=None):
     #perform pairwise comparison between every image in the iconic dict, and every image in the target dict
     #target dict must be formattd image_name -> kp/descriptors
     #output is a dict of image image_name -> {iconic_image class: (len(total_iconic_descriptors, num_matching_descriptors)}
@@ -411,6 +419,9 @@ def perform_pairwise_comparisons_arbitrary(iconic_dict, target_dict):
         good_matches_dict = {}
         #check each of the images against the contatenation of all the descriptors
         for iconic_image_class, iconic_class_kp_descriptors in iconic_dict.items():
+            if items_already_present_in_shelf is not None and target_image_name == "pre_diff" and iconic_image_class not in items_already_present_in_shelf:
+                continue
+
             _, all_iconic_descriptors = iconic_class_kp_descriptors
             matches = matcher.knnMatch(target_class_descriptors, all_iconic_descriptors, k=2) # knnMatch is needed
             good = 0
@@ -435,8 +446,6 @@ def perform_pairwise_comparisons_labeled(iconic_dict, target_dict):
         #check each of the images against the contatenation of all the descriptors
         for target_image_class, target_image_kp_descriptors in target_dict.items():
             target_class_descriptors = target_image_kp_descriptors[1]
-            # import pdb; pdb.set_trace()
-            # np.asarray(, np.float32())
             matches = matcher.knnMatch(target_class_descriptors, all_iconic_descriptors, k=2) # knnMatch is needed
             good = 0
             for (m1, m2) in matches: # for every descriptor, take closest two matches
@@ -491,7 +500,7 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
     """
     if alg == None:
         #default to SIFT since that did the best
-        alg = cv.xfeatures2d.SIFT_create(N_DESC)
+        alg = DEFAULT_ALG
 
     image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Images")
     image_class_folders = os.listdir(image_dir)
@@ -515,14 +524,18 @@ def read_images_desc_subfolder(folder_name, alg=None, bg_img=None):
 
     return out_dict
 
-def read_images_desc_folder(folder_name, alg=None, bg_img=None, needs_undistort = True):
+DEFAULT_ICONIC_DICT = read_images_desc_subfolder("Iconic")
+
+
+def read_images_desc_folder(folder_name, bg_img=None, alg=None, needs_undistort = True, return_img_diff=False):
     """reads images from a given subfolder, and creates a map of image name -> a tuple of
     (keypoints, descriptors).
     """
     if alg == None:
         #default to SIFT since that did the best
-        alg = cv.xfeatures2d.SIFT_create(N_DESC)
+        alg = DEFAULT_ALG
 
+    bounds_dict = dict()
     out_dict = dict()
     if bg_img is not None and needs_undistort:
         bg_img = Calibrate.undistort_img(bg_img)
@@ -534,13 +547,20 @@ def read_images_desc_folder(folder_name, alg=None, bg_img=None, needs_undistort 
         if needs_undistort:
             raw_img = Calibrate.undistort_img(raw_img)
         if not (bg_img is None):
-            (_, raw_img) = diff.get_largest_dif(bg_img, raw_img)
-            cv.imshow('after', raw_img)
+            (_, raw_img, bounds) = diff.get_largest_dif(bg_img, raw_img, return_bounds=True)
+            if return_img_diff:
+                bounds_dict[img_name] = bounds
         key_points = alg.detect(raw_img,None)
         kp, desc = alg.compute(raw_img, key_points)
         out_dict[img_name] = (kp, desc)
 
-    return out_dict
+    if return_img_diff:
+        return out_dict, bounds_dict
+    else:
+        return out_dict
+
+
+
 
 
 
@@ -553,10 +573,21 @@ def test_images_labeled(target_subfolder_name, iconic_subfolder_path="Iconic", b
 
 def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path="Iconic", bg_path = "bg.jpeg"):
     #tests a set of arbitrary images
-    iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
-    target_dict = read_images_desc_folder(target_subfolder_name)
+
+    bg_img = cv.imread(bg_path)
+    if iconic_subfolder_path == "Iconic":
+        iconic_dict = DEFAULT_ICONIC_DICT
+    else:
+        iconic_dict = read_images_desc_subfolder(iconic_subfolder_path)
+
+    target_dict, target_bounds_dict = read_images_desc_folder(target_subfolder_name, bg_img=bg_img, return_img_diff=True)
     matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
     #get best guess for each img
+
+    #mess with the wieghts a bit, depending on the size of the diff, and some color checking
+    for img_name, iconic_map in matches_dict.items():
+        img_bounds = target_bounds_dict[img_name]
+        apply_hueristics_to_iconic_map(matches_dict[img_name], img_bounds, os.path.join(target_subfolder_name, img_name), img_name=img_name)
 
     best_guess_dict = dict()
     for img_name, iconic_map in matches_dict.items():
@@ -569,9 +600,236 @@ def test_arbitrary_images(target_subfolder_name="TopDown", iconic_subfolder_path
 
         best_guess_dict[img_name] = best_guess
 
+
+    #remove iconics that have less then 50% of the number of matches of the best guess from matches dict
+    #this is done so we can pretty print a more readable output
+    for img_name, iconic_map in matches_dict.items():
+        cur_best_guess = best_guess_dict[img_name]
+        cur_best_guess_ratio = iconic_map[cur_best_guess][1] / iconic_map[cur_best_guess][0]
+        to_del_list = []
+        for iconic_class, (num_total_desc, num_matches) in iconic_map.items():
+            if iconic_class != cur_best_guess and num_matches/num_total_desc < 0.5 * cur_best_guess_ratio:
+                to_del_list.append(iconic_class)
+        for iconic_class in to_del_list:
+            del matches_dict[img_name][iconic_class]
+
     print("Best Guesses:")
     for img_name, best_guess in sorted(best_guess_dict.items()):
-        print(f"{img_name}: {best_guess}")
+        print(f"{img_name}: {best_guess} \n\t{[(k, n_match/n_tot) for k, (n_tot, n_match) in sorted(matches_dict[img_name].items(), key=lambda x: x[1][1]/x[1][0], reverse=True)]}\n")
+
+# #ripped from https://www.delftstack.com/howto/python/opencv-average-color-of-image/
+# def visualize_Dominant_colors(input_img):
+#     KM_cluster = KMeans(n_clusters=5).fit(input_img)
+#     cluster = KM_cluster
+#     C_centroids = cluster.cluster_centers_
+#     C_labels = np.arange(0, len(np.unique(cluster.labels_)) + 1)
+#     (C_hist, _) = np.histogram(cluster.labels_, bins = C_labels)
+#     C_hist = C_hist.astype("float")
+#     C_hist /= C_hist.sum()
+
+
+#     img_colors = sorted([(percent, color) for (percent, color) in zip(C_hist, C_centroids)])
+
+#     #Debug
+#     if True:
+#         start = 0
+#         rect_color = np.zeros((50, 300, 3), dtype=np.uint8)
+#         for (percent, color) in img_colors:
+#             print(color, "{:0.2f}%".format(percent * 100))
+#             end = start + (percent * 300)
+#             cv.rectangle(rect_color, (int(start), 0), (int(end), 50), \
+#                         color.astype("uint8").tolist(), -1)
+#             start = end
+
+#         cv.imshow('visualize_Color', rect_color)
+
+#     return img_colors
+
+def is_definitley_smaller_than_applesauce(img_hsv, diff_bounds, iconic_map):
+    (x,y,w,h) = diff_bounds
+    #Smallest i've seen is 147630
+    #for saftey, we'll say 140000
+
+    return w*h < 140000
+
+def img_num_white_pixels(img_hsv):
+    #https://stackoverflow.com/questions/22588146/tracking-white-color-using-python-opencv
+    sensitivity = 15
+    lower_white = np.array([0,0,255-sensitivity])
+    upper_white = np.array([255,sensitivity,255])
+    mask = cv.inRange(img_hsv, lower_white, upper_white)
+    return cv.countNonZero(mask)
+
+def is_likely_milk(img_hsv, diff_bounds, iconic_map):
+
+    (x,y,w,h) = diff_bounds
+
+    # return img_num_white_pixels(img_hsv) > w*h*0.1 and w*h > 140000
+    return False
+
+def is_likely_applesauce(img_hsv, diff_bounds, iconic_map):
+    # applies hueristics to check if the image is likely to be an applesauce
+    # This is intended to be a fairly strict check, we should see very few false positives
+
+    if not "Applesauce" in iconic_map:
+        return False
+    # lower bound and upper bound for applesauce green/yellow color
+    lower_bound = np.array([17, 50, 50])
+    upper_bound = np.array([120, 255, 255])
+
+    (x,y,w,h) = diff_bounds
+
+    mask = cv.inRange(img_hsv, lower_bound, upper_bound)
+
+    # In order to account for image croping failures, I'm using the expected area that the applesauce should take up
+    ratio = cv.countNonZero(mask) / (385*470)
+    print("applesauce ratio: ", ratio)
+
+    next_best_guess_ratio = -1
+    for iconic_img_name, (num_total_desc, num_matches) in iconic_map.items():
+        if iconic_img_name != "Applesauce" and num_matches/num_total_desc > next_best_guess_ratio:
+            next_best_guess_ratio = num_matches/num_total_desc
+
+    return ratio > .25 and next_best_guess_ratio * 1.2 < iconic_map["Applesauce"][1] / iconic_map["Applesauce"][0]
+
+
+def is_likely_tomato(img_hsv, diff_bounds, iconic_map):
+    # applies hueristics to check if the image is likely to be an tomato sauce
+    # This is intended to be a fairly strict check, we should see very few false positives
+    # This check is mostly intended to deal with crushed tomatoes being confused for applesauce
+
+    if not "CrushedTomatos" in iconic_map:
+        return False
+
+    (x,y,w,h) = diff_bounds
+
+    #Red has two different regions in HSV
+    lower_bound_1 = np.array((0,50,20))
+    upper_bound_1 = np.array((5,255,255))
+    mask1 = cv.inRange(img_hsv, lower_bound_1, upper_bound_1)
+    lower_bound_2 = np.array((175,50,20))
+    upper_bound_2 = np.array((180,255,255))
+    mask2 = cv.inRange(img_hsv, lower_bound_2, upper_bound_2)
+
+    ratio = (cv.countNonZero(mask1) + cv.countNonZero(mask2)) / (h*w)
+    print("Tomat ratio: ", ratio)
+
+    next_best_guess_ratio = -1
+    for iconic_img_name, (num_total_desc, num_matches) in iconic_map.items():
+        if iconic_img_name != "CrushedTomatos" and num_matches/num_total_desc > next_best_guess_ratio:
+            next_best_guess_ratio = num_matches/num_total_desc
+
+    # .2 seems to be a good default threshold from manual testing
+    thresh = .2
+
+    return ratio > .2 and next_best_guess_ratio < (iconic_map["CrushedTomatos"][1] / iconic_map["CrushedTomatos"][0]) * 1.5
+
+    sum = 0
+    for percent, color in img_colors:
+        if (color > lower_bound_1).all() and (color < upper_bound_1).all():
+            sum = sum + percent
+        elif (color > lower_bound_2).all() and (color < upper_bound_2).all():
+            sum = sum + percent
+
+    return sum > .5
+
+#taken from here: https://www.geeksforgeeks.org/program-change-rgb-color-model-hsv-color-model/
+#This can be done in opencv, but I was having some wierd bugs
+def rgb_to_hsv(r, g, b):
+
+    # R, G, B values are divided by 255
+    # to change the range from 0..255 to 0..1:
+    r, g, b = r / 255.0, g / 255.0, b / 255.0
+
+    # h, s, v = hue, saturation, value
+    cmax = max(r, g, b)    # maximum of r, g, b
+    cmin = min(r, g, b)    # minimum of r, g, b
+    diff = cmax-cmin       # diff of cmax and cmin.
+
+    # if cmax and cmax are equal then h = 0
+    if cmax == cmin:
+        h = 0
+
+    # if cmax equal r then compute h
+    elif cmax == r:
+        h = (60 * ((g - b) / diff) + 360) % 360
+
+    # if cmax equal g then compute h
+    elif cmax == g:
+        h = (60 * ((b - r) / diff) + 120) % 360
+
+    # if cmax equal b then compute h
+    elif cmax == b:
+        h = (60 * ((r - g) / diff) + 240) % 360
+
+    # if cmax equal zero
+    if cmax == 0:
+        s = 0
+    else:
+        s = (diff / cmax) * 100
+
+    # compute v
+    v = cmax * 100
+    return h, s, v
+
+def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=None):
+    #applies hueristics to the matches dict in place
+
+    #main heuristics are as follows:
+    #many things get falsly ID'd as applesauce, specically yogurt, tomatoes and baking powder
+    #milk, in general, rarly get's ID'd correctly
+
+    (x,y,w,h) = diff_bounds
+
+    #first, let's do some color checking
+
+    src_image = cv.imread(img_path)[y:y+h, x:x+w]
+    if False:
+        src_image_hsv = cv.cvtColor(src_image, cv.COLOR_BGR2HSV)
+
+        lower_white = np.array([0,0,0])
+        upper_white = np.array([255,50,225])
+        mask = cv.inRange(src_image_hsv, lower_white, upper_white)
+
+        mask = cv.inRange(src_image_hsv, lower_white, upper_white)
+        cv.imshow(f"mask_{img_name}", mask)
+
+        print(f"Ratio: {cv.countNonZero(mask) / (h*w)}")
+
+        cv.waitKey(0)
+        cv.destroyAllWindows()
+
+    src_image_HSV = cv.cvtColor(src_image, cv.COLOR_BGR2HSV)
+
+    # right off the bat, let's just do the easy size check
+    # These catch some confusions between applesauce and smaller stuff
+    if is_definitley_smaller_than_applesauce(src_image_HSV, diff_bounds, iconic_map):
+        print(f"{img_name} is smaller than applesauce")
+        for larger_item in ["Cereal", "Milk", "Applesauce"]:
+            if larger_item in iconic_map:
+                del iconic_map[larger_item]
+        is_apple = False
+    elif is_likely_milk(src_image_HSV, diff_bounds, iconic_map) and iconic_map["Milk"]:
+        #next, let's do a check for milk, so we can return early if we find it
+        iconic_map["Milk"] = (iconic_map["Milk"][0], iconic_map["Milk"][0])
+        return
+
+
+    is_apple = is_likely_applesauce(src_image_HSV, diff_bounds, iconic_map)
+    is_tomat = is_likely_tomato(src_image, diff_bounds, iconic_map)
+
+    if is_apple and is_tomat:
+        #This generally shouldn't occur, but when it does, it generally occurs due to a mismatch with the tomato.
+        #therefore, we'll tread this like crushed tomatoes
+        if img_name != None:
+            print(f"{img_name} is likely a tomato sauce... or an applesauce")
+        iconic_map["CrushedTomatos"] = (iconic_map["CrushedTomatos"][0], iconic_map["CrushedTomatos"][0])
+    elif is_tomat:
+        if img_name != None:
+            print(f"{img_name} is likely a tomato sauce")
+        iconic_map["CrushedTomatos"] = (iconic_map["CrushedTomatos"][0], iconic_map["CrushedTomatos"][0])
+
+    return
 
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
     """
@@ -583,13 +841,13 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     certainty (IE, need to ask user for clarification).
     """
 
-    alg = cv.xfeatures2d.SIFT_create(N_DESC)
+    alg = DEFAULT_ALG
 
     new_img = Calibrate.undistort_img(cv.imread(new_image_path, 1))
     bg_image = Calibrate.undistort_img(cv.imread(bg_image_path, 1))
 
 
-    iconic_dict = read_images_desc_subfolder("Iconic")
+    iconic_dict = DEFAULT_ICONIC_DICT.copy()
 
     #add additionally supplied iconic classes
     for new_iconic_name, new_iconic_img_path in additional_iconic_classes.items():
@@ -598,45 +856,57 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
         kp, desc = alg.compute(img, key_points)
         iconic_dict[new_iconic_name] = (kp, desc)
 
-    (pre_dif, post_diff) = diff.get_largest_dif(bg_image, new_img)
+    (pre_dif, post_diff, (x,y,w,h)) = diff.get_largest_dif(bg_image, new_img, return_bounds=True)
     target_dict = dict()
 
+    #TODO: find reasonable size for this
     #If we don't have a large enough diff, there probably wasn't a change
     if pre_dif.shape[0] * pre_dif.shape[1] < 100:
         return None
 
-    for img, img_name in [(pre_dif, "pre_dif"), (post_diff, "post_diff")]:
+    for img, img_name in [(pre_dif, "pre_diff"), (post_diff, "post_diff")]:
         key_points = alg.detect(img,None)
         kp, desc = alg.compute(img, key_points)
         target_dict[img_name] = (kp, desc)
 
 
-    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict)
+    matches_dict = perform_pairwise_comparisons_arbitrary(iconic_dict,target_dict,items_already_present_in_shelf)
 
-    best_guess_dict = dict()
+    #mess with the wieghts a bit, depending on the size of the diff, and some color checking
+    apply_hueristics_to_iconic_map(matches_dict["post_diff"], (x,y,w,h), new_image_path)
+    apply_hueristics_to_iconic_map(matches_dict["pre_diff"], (x,y,w,h), new_image_path)
+
+
+    best_guess_is_post = True
+    best_guess_class_name = ""
+    best_guess_ratio = -1
+
     for img_name, iconic_map in matches_dict.items():
-        best_guess = ""
-        best_guess_ratio = -1
-        for iconic_img, (num_total_desc, num_matches) in iconic_map.items():
+        for iconic_img_name, (num_total_desc, num_matches) in iconic_map.items():
             if num_matches/num_total_desc > best_guess_ratio:
-                best_guess = iconic_img
+                best_guess_class_name = iconic_img_name
                 best_guess_ratio = num_matches/num_total_desc
+                best_guess_is_post = img_name == "post_diff"
 
-        best_guess_dict[img_name] = best_guess
 
-    #TODO: have some heuristic check when somthing is removed rather than added
-    if False:
-        return best_guess_dict["post_diff"]
+
+    #TODO: have a better heuristic here
+    if True:
+        return (best_guess_class_name, best_guess_is_post)
     else:
-        #if we couldn't identify it, return the diff
+        #if we couldn't identify it, return the post diff
         return post_diff
+
+    return best_guess_huerstics(matches_dict)
+
+
 
 
 
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("TopDown", bg_path="bg2.jpeg")
+    out = test_arbitrary_images("TopDown", bg_path="bg.jpeg")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
@@ -654,7 +924,6 @@ if __name__ == "__main__":
     # t = time.time()
     # print(f"TOTAL: {time.time() - t}")
     # alg_info_dict_to_excel(alg_info, alg_name)
-
     # print(to_info(test_alg(alg, matcher)))
 
     # test_sanity(alg, matcher, "Milk")
