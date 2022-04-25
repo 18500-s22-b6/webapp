@@ -29,7 +29,8 @@ function updateError(xhr) {
     //     displayError(response.error)
     //     return
     // }
-    displayError(response)
+    try {displayError(response)}
+    finally {displayError("generic error")}
 }
 
 function displayError(message) {
@@ -91,6 +92,7 @@ function sanitize(s) {
             .replace(/"/g, '&quot;')
 }
 
+// TODO: unclear how relevant this will be in the final deployment, post-debug
 function addItem(id) {
     let itemTextElement = document.getElementById("item-box")
     let itemTextValue   = itemTextElement.value
@@ -98,7 +100,10 @@ function addItem(id) {
     // Clear input box and old error message (if any)
     itemTextElement.value = ''
     displayError('')
-    if(itemTextValue == '') displayError('You must enter an item to add.')
+    if(itemTextValue == '') {
+        displayError('Enter an item to add.')
+        return
+    }
 
     console.log("iTV: " + itemTextValue)
     $.ajax({
@@ -111,15 +116,17 @@ function addItem(id) {
     });
 }
 
+// Ditto
 function deleteItem(id) {
     let url = deleteItemURL(id)
+    console.log(url)
     $.ajax({
         url: url,
         type: "POST",
         data: "csrfmiddlewaretoken="+getCSRFToken(),
         dataType : "json",
         success: updateList,
-        error: null
+        error: updateError
     });
 }
 

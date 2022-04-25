@@ -49,32 +49,30 @@ def home(request):
 def login(request):
   if request.user.is_authenticated:
     return redirect('profile')
-
   return render(request, 'login.html')
 
 def get_and_update_status(user):
-  """helper function that gets all the devices for that user, and updates their online/offline status"""
-
+# helper function that gets all the devices for that user, and updates their online/offline status
   devices = Device.objects.filter(owner=user)
-
   for device in devices:
     device.update_online_status()
-
   return devices
 
 
 @login_required
 def profile(request):
+  print(request)
   # If this is their first time logging in
   if not request.user.phone_number:
     return redirect('register_user')
 
-  context = {
-    'devices': get_and_update_status(request.user),
-    }
+  context = { 'devices': get_and_update_status(request.user) }
 
+  # TODO: error messaging was changed
   if 'message' in request.session:
-    context['message'] = request.session['message']
+    print(request.session['message'])
+    messages.error(request, request.session['message'])
+    # context['message'] = request.session['message']
     del request.session['message']
 
   if User.objects.filter(email=request.user.email):
@@ -141,7 +139,8 @@ def recipes(request):
               'items':ItemEntry.objects.all() }
 
   if 'message' in request.session:
-    context['message'] = request.session['message']
+    # context['message'] = request.session['message']
+    messages.error(request, request.session['message'])
     del request.session['message']
 
 
@@ -187,7 +186,6 @@ def recipes(request):
 
 @login_required
 def add_recipe(request):
-
   ##### If GET, the user just clicked on the link
   ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
@@ -202,18 +200,16 @@ def add_recipe(request):
                 'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
-  context = {'devices': get_and_update_status(request.status) }
-
+  # context = {'devices': get_and_update_status(request.user) }
   user = request.user
   # TODO: change when done debugging to email=data['email']
-
   new_recipe = Recipe(author = user,
                       name = form.cleaned_data["name"])
                       # ingredients = form.cleaned_data["ingredients"]
   new_recipe.save()
   new_recipe.ingredients.set(form.cleaned_data["ingredients"])
-
-  messages.success(request, 'Registration successful!')
+  
+  messages.success(request, 'Recipe saved successfully!')
   return redirect('recipes')
   # return render(request, 'recipes.html', context)
 
@@ -322,23 +318,21 @@ def delete_device(request, id):
 @login_required
 def add_item(request, id, ajax):
 # Param: id = cabinet number
-#KNOWN BUGS: empty field error redirect not working
-
-  # print("326: ")
-  # print(request)
-  # print("id: ")
-  # print(id)
-  # print("ajax: ")
-  # print(ajax)
-
-  # Set context with current list of items so we can easily return if we discover errors.
-  context = { 'items': ItemEntry.objects.all() }
+# TODO: empty field error redirect not working
+# TODO: see ajax_inv.js for AJAX soln
 
   # Adds the new item to the database if the request parameter is present
-  if 'item' not in request.POST or not request.POST['item']:
-    messages.warning(request, 'You must enter an item to add.')
-    return render(request, 'inv.html', context)
 
+  # TODO: empty field error redirect not working
+  if 'item' not in request.POST or not request.POST['item']:
+    # Set context with current list of items so we can easily return if we discover errors.
+    # context = { 'items': ItemEntry.objects.all() }
+    # print('343: no item')
+    messages.warning(request, 'You must enter an item to add.')
+    # return render(request, 'inv.html', context)
+    return get_list_json_dumps_serializer(request, id) # redirect('cabinet', id)
+
+  # print("344: no error")
   user = request.user
   loc = Device.objects.get(id=id)
 
@@ -351,15 +345,11 @@ def add_item(request, id, ajax):
     new_cat.save()
   except:
     new_cat = Category.objects.get(name=request.POST['item'])
-
-  print("new_cat: ")
-  print(new_cat)
   new_item = ItemEntry(location=loc,
                        type=new_cat, # cat
                        thumbnail="")
   new_item.save()
 
-  # TODO: check that this works as expected
   if(ajax):
     return get_list_json_dumps_serializer(request, id)
   return redirect('cabinet', id)
@@ -576,10 +566,3 @@ def id_unknown_item(request, id):
   request.session['message'] = "Identification successful!"
   return redirect('profile')
 
-
-
-
-def shopping_list(request):
-  context = {}
-
-  return
