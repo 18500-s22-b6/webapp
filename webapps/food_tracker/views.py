@@ -227,11 +227,11 @@ def cabinet(request, id):
     return JsonResponse(data={"success":True}, status=200)
 
   # If the given ID doesn't exist
-  if not Device.objects.filter(id=id).exists():
+  if not Device.objects.filter(serial_number=id).exists():
     messages.error(request, 'Invalid device ID')
     return redirect('dashboard')
 
-  device = Device.objects.get(id=id)
+  device = Device.objects.get(serial_number=id)
   context = {
     'devices': get_and_update_status(request.user),
     'device': device,
@@ -250,8 +250,12 @@ def register_device(request):
 
   # First load (GET request), return empty form
   if request.method == 'GET':
-    num = len(Device.objects.filter(owner=request.user))
-    form = DeviceRegistrationForm(initial={'name': f'device-{num}'})
+    devices = Device.objects.filter(owner=request.user)
+    num = len(devices)
+    names = [d.name for d in devices]
+    while f'device {num}' in names:
+      num += 1
+    form = DeviceRegistrationForm(initial={'name': f'device {num}'})
     context['form'] = form
     return render(request, 'add_device.html', context)
 
@@ -278,14 +282,16 @@ def register_device(request):
     device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
   except Exception as e:
     messages.error(request, 'Invalid serial number')
-    return redirect('dashboard')
+    context['form'] = form
+    return render(request, 'add_device.html', context)
 
   if device.status != NOT_REGISTERED:
+    context['form'] = form
     if device.owner == request.user:
       messages.warning(request, 'You have already registered this device')
     else:
       messages.error(request, 'Invalid serial number')
-    return redirect('dashboard')
+    return render(request, 'add_device.html', context)
 
   device.status = ONLINE
   device.owner = request.user

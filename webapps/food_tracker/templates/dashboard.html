@@ -10,20 +10,22 @@ TODO
 
 {% block dashboard %}active{% endblock %}
 
+{% load template_filters %}
+
 {% block content %}
     <div class="container">
         <div class="row my-5">
         <div class="h2 mb-4">Dashboard</div>
+        <div class="h4 mb-4">My Devices</div>
         {% if not devices %}
-            <div class="h4 my-3 text-muted">You don't have any devices, please register <a href="{% url 'add_device' %}">here</a></div>
+            <div class="h5 my-2 text-muted">You don't have any devices, please register <a href="{% url 'add_device' %}">here</a></div>
         {% else %}
-            <div class="h4 mb-4">My Devices</div>
             {% for device in devices %}
                 <div class="card text-center m-2" style="width: 15rem;">
                     <div class="card-body">
                         <h5 class="card-title my-2">{{ device.name }}</h5>
-                        <h6 class="card-title my-2 text-success">{{ device.status }}</h6>
-                        <p class="card-text">This cabinet contains {{ device.inventory }} items</p>
+                        <h6 class="card-title my-2 {{ device.status|get_status_style }} text-uppercase">{{ device.status|get_status }}</h6>
+                        <p class="card-text">This cabinet contains {{ device.serial_number|get_num_of_items }} items</p>
                         <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>
                     </div>
                     {% if device.unid %}
@@ -32,7 +34,11 @@ TODO
                 </div>
             {% endfor %}
         {% endif %}
-
+        <div class="h4 my-4">My Recipes</div>
+        {% if not recipes %}
+            <div class="h5 my-2 text-muted">Create your own recipes <a href="{% url 'recipes' %}">here</a></div>
+        {% else %}
+        {% endif %}
         </div>
     </div>
 
