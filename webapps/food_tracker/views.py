@@ -40,23 +40,24 @@ def home(request):
 def login(request):
   if request.user.is_authenticated:
     return redirect('profile')
-
   return render(request, 'login.html')
 
 
 
 @login_required
 def profile(request):
+  print(request)
   # If this is their first time logging in
   if not request.user.phone_number:
     return redirect('register_user')
 
-  context = {
-    'devices': get_and_update_status(request.user),
-    }
+  context = { 'devices': get_and_update_status(request.user) }
 
+  # TODO: error messaging was changed
   if 'message' in request.session:
-    context['message'] = request.session['message']
+    print(request.session['message'])
+    messages.error(request, request.session['message'])
+    # context['message'] = request.session['message']
     del request.session['message']
 
   if User.objects.filter(email=request.user.email):
@@ -123,7 +124,8 @@ def recipes(request):
               'items':ItemEntry.objects.all() }
 
   if 'message' in request.session:
-    context['message'] = request.session['message']
+    # context['message'] = request.session['message']
+    messages.error(request, request.session['message'])
     del request.session['message']
 
 
@@ -166,7 +168,6 @@ def recipes(request):
 
 @login_required
 def add_recipe(request):
-
   ##### If GET, the user just clicked on the link
   ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
@@ -181,18 +182,16 @@ def add_recipe(request):
                 'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
-  context = {'devices': get_and_update_status(request.status) }
-
+  # context = {'devices': get_and_update_status(request.user) }
   user = request.user
   # TODO: change when done debugging to email=data['email']
-
   new_recipe = Recipe(author = user,
                       name = form.cleaned_data["name"])
                       # ingredients = form.cleaned_data["ingredients"]
   new_recipe.save()
   new_recipe.ingredients.set(form.cleaned_data["ingredients"])
 
-  messages.success(request, 'Registration successful!')
+  messages.success(request, 'Recipe saved successfully!')
   return redirect('recipes')
   # return render(request, 'recipes.html', context)
 
@@ -309,7 +308,7 @@ def delete_device(request, id):
   form = DeleteDeviceForm(request.POST)
   if form.is_valid():
     if form.cleaned_data['name'] == device.name:
-      items = ItemEntry.objects.filter(location=device)        
+      items = ItemEntry.objects.filter(location=device)
 
       device.owner = None
       device.status = NOT_REGISTERED
@@ -329,7 +328,7 @@ def delete_device(request, id):
 @login_required
 def get_list_json_dumps_serializer(request, id):
   response_data = []
-  # TODO: 
+  # TODO:
   items__in = ItemEntry.objects.filter(location__owner=request.user).filter(location__id=id)
   for model_item in items__in:
     my_item = {
@@ -358,7 +357,7 @@ def update_inventory(request):
   if not validate_json(data):
     return JsonResponse({
       'error': 'Invalid request body'
-    }, status=BAD_REQUEST) 
+    }, status=BAD_REQUEST)
 
   try:
     device = Device.objects.get(serial_number=data['serial_number'])
@@ -545,7 +544,7 @@ def validate_json(data):
     jsonschema.validate(instance=data, schema=schema)
   except jsonschema.exceptions.ValidationError as err:
     return False
-  
+
   return True
 
 
