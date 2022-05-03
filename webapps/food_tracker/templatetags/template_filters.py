@@ -15,7 +15,7 @@ def in_cat(ItemEntry, Category):
 @register.filter
 def has_unid(id):
     try:
-        return len(ItemEntry.objects.filter(location=Device.objects.get(serial_number=id), type__name="UNKNOWN ITEM"))
+        return ItemEntry.objects.filter(location=Device.objects.get(serial_number=id), type__name="UNKNOWN ITEM").exists()
     except Exception as e:
         return False
 
