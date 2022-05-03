@@ -4,6 +4,7 @@
 
 from django import template
 from ..models import Device, ItemEntry
+from ..constants import *
 
 register = template.Library()
 
@@ -12,22 +13,29 @@ def in_cat(ItemEntry, Category):
     return ItemEntry.filter(type=Category)
 
 @register.filter
+def has_unid(id):
+    try:
+        return len(ItemEntry.objects.filter(location=Device.objects.get(serial_number=id), type__name="UNKNOWN ITEM"))
+    except Exception as e:
+        return False
+
+@register.filter
 def get_status(status):
     status_str = {
-        0: "unregistered", 
-        1: "online", 
-        2: "offline"
+        NOT_REGISTERED: "unregistered", 
+        ONLINE: "online", 
+        OFFLINE: "offline"
     }
     return status_str.get(status, "n/a")
 
 @register.filter
 def get_status_style(status):
     status_style = {
-        0: "text-muted",
-        1: "text-success",
-        2: "text-danger"
+        NOT_REGISTERED: "muted",
+        ONLINE: "success",
+        OFFLINE: "danger"
     }
-    return status_style.get(status, "text-muted")
+    return status_style.get(status, "muted")
     
 @register.filter
 def get_num_of_items(id):

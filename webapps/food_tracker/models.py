@@ -7,11 +7,7 @@ import time
 import os
 from django.conf import settings
 
-# Device status, copy pasted from views
-# TODO: Ideally, this would be imported from one or the other, but the import is not working
-NOT_REGISTERED = 0
-ONLINE = 1
-OFFLINE = 2
+from .constants import *
 
 class User(AbstractUser):
     phone_number = PhoneNumberField(null = False, blank = False)
@@ -25,7 +21,7 @@ class Device(models.Model):
     serial_number = models.CharField(max_length=32)
     status = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-    name = models.CharField(blank=True, null=True, max_length = 50)
+    name = models.CharField(blank=False, max_length = 50)
     most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
     last_ping = models.DateTimeField(auto_now_add=True)   

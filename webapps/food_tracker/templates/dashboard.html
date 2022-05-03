@@ -24,11 +24,11 @@ TODO
                 <div class="card text-center m-2" style="width: 15rem;">
                     <div class="card-body">
                         <h5 class="card-title my-2">{{ device.name }}</h5>
-                        <h6 class="card-title my-2 {{ device.status|get_status_style }} text-uppercase">{{ device.status|get_status }}</h6>
-                        <p class="card-text">This cabinet contains {{ device.serial_number|get_num_of_items }} items</p>
-                        <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>
+                        <h6 class="card-title my-2 text-{{ device.status|get_status_style }} text-uppercase">{{ device.status|get_status }}</h6>
+                        <p class="card-text">Contains {{ device.serial_number|get_num_of_items }} item{% if device.serial_number|get_num_of_items > 1 %}s{% endif %}</p>
+                        <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>                
                     </div>
-                    {% if device.unid %}
+                    {% if device.serial_number|has_unid %}
                         <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span class="visually-hidden">unread messages</span>
                     {% endif %}
                 </div>
@@ -36,7 +36,7 @@ TODO
         {% endif %}
         <div class="h4 my-4">My Recipes</div>
         {% if not recipes %}
-            <div class="h5 my-2 text-muted">Create your own recipes <a href="{% url 'recipes' %}">here</a></div>
+            <div class="h5 my-2 text-muted">You don't have any recipes, create your own <a href="{% url 'recipes' %}">here</a></div>
         {% else %}
         {% endif %}
         </div>

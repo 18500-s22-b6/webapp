@@ -27,24 +27,15 @@ import cv_code_main as cv_code
 
 from .models import *
 from .forms import *
+from .constants import *
 import numpy as np
 
-# Device status
-NOT_REGISTERED = 0
-ONLINE = 1
-OFFLINE = 2
 
-# HTTP Status Codes
-SUCCESS = 200
-BAD_REQUEST = 400
-FORBIDDEN = 403
-METHOD_NOT_ALLOWED = 405
-
-# reCAPTCHA
-RECAPTCHA_VERIFICATION_URL = 'https://www.google.com/recaptcha/api/siteverify'
 
 def home(request):
   return render(request, 'home.html', {})
+
+
 
 def login(request):
   if request.user.is_authenticated:
@@ -52,15 +43,6 @@ def login(request):
 
   return render(request, 'login.html')
 
-def get_and_update_status(user):
-  """helper function that gets all the devices for that user, and updates their online/offline status"""
-
-  devices = Device.objects.filter(owner=user)
-
-  for device in devices:
-    device.update_online_status()
-
-  return devices
 
 
 @login_required
@@ -82,6 +64,8 @@ def profile(request):
 
   return render(request, 'profile.html')
 
+
+
 @login_required
 def register_user(request):
   context = {}
@@ -94,13 +78,15 @@ def register_user(request):
         setattr(user, key, value)
       user.save()
       return redirect('profile')
-    else:
-      context['form'] = form
-      return render(request, 'register_user.html', context)
+
+    context['form'] = form
+    return render(request, 'register_user.html', context)
 
   context['form'] = UserForm(instance=user)
 
   return render(request, 'register_user.html', context)
+
+
 
 @login_required
 def logout_user(request):
@@ -120,7 +106,6 @@ def logout_user(request):
 
 
 
-
 @login_required
 def dashboard(request):
   context = {}
@@ -128,9 +113,6 @@ def dashboard(request):
   print(context['devices'])
 
   return render(request, 'dashboard.html', context)
-
-
-
 
 
 
@@ -182,9 +164,6 @@ def recipes(request):
 
 
 
-
-
-
 @login_required
 def add_recipe(request):
 
@@ -217,28 +196,44 @@ def add_recipe(request):
   return redirect('recipes')
   # return render(request, 'recipes.html', context)
 
+
+
 @login_required
 def cabinet(request, id):
   # Request for a specific cabinet
   context = { 'devices': get_and_update_status(request.user) }
 
-  # If AJAX
-  if request.method == "POST":  #and request.is_ajax():
-    return JsonResponse(data={"success":True}, status=200)
-
-  # If the given ID doesn't exist
-  if not Device.objects.filter(serial_number=id).exists():
+  if not Device.objects.filter(owner=request.user, serial_number=id).exists():
     messages.error(request, 'Invalid device ID')
     return redirect('dashboard')
 
-  device = Device.objects.get(serial_number=id)
+  device = Device.objects.get(owner=request.user, serial_number=id)
+  update_form = UpdateDeviceForm(instance=device)
+
+  if request.method == "POST":
+    update_form = UpdateDeviceForm(request.POST)
+    if update_form.is_valid():
+      for (key, value) in update_form.cleaned_data.items():
+        setattr(device, key, value)
+      device.save()
+
+  delete_form = DeleteDeviceForm()
   context = {
+    'update_form': update_form,
+    'delete_form': delete_form,
     'devices': get_and_update_status(request.user),
     'device': device,
     'items': ItemEntry.objects.filter(location=device),
-    "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
+    # "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
+    "unknown_items": list(map(
+      lambda cat: IconicImage.objects.get(user=request.user, category=cat),
+      [item.type for item in ItemEntry.objects.filter(location=device, type__name="UNKNOWN ITEM")]
+    ))
   }
-  return render(request, 'inv.html', context)
+  print(context)
+  return render(request, 'inventory.html', context)
+
+
 
 @login_required
 def register_device(request):
@@ -252,16 +247,16 @@ def register_device(request):
   if request.method == 'GET':
     devices = Device.objects.filter(owner=request.user)
     num = len(devices)
-    names = [d.name for d in devices]
-    while f'device {num}' in names:
+    while f'Device {num}' in [d.name for d in devices]:
       num += 1
-    form = DeviceRegistrationForm(initial={'name': f'device {num}'})
+    form = DeviceRegistrationForm(initial={'name': f'Device {num}'})
     context['form'] = form
     return render(request, 'add_device.html', context)
 
   form = DeviceRegistrationForm(request.POST)
+  context['form'] = form
+
   if not form.is_valid():
-    context['form'] = form
     return render(request, 'add_device.html', context)
 
   recaptcha_response = request.POST.get('g-recaptcha-response')
@@ -273,20 +268,16 @@ def register_device(request):
     }).json()
 
   if not response['success']:
-    context['form'] = form
     messages.error(request, 'reCAPTCHA failed')
     return render(request, 'add_device.html', context)
-
 
   try:
     device = Device.objects.get(serial_number=form.cleaned_data["serial_number"])
   except Exception as e:
     messages.error(request, 'Invalid serial number')
-    context['form'] = form
     return render(request, 'add_device.html', context)
 
   if device.status != NOT_REGISTERED:
-    context['form'] = form
     if device.owner == request.user:
       messages.warning(request, 'You have already registered this device')
     else:
@@ -302,75 +293,40 @@ def register_device(request):
   messages.success(request, 'Device registration successful!')
   return redirect('dashboard')
 
+
+
 @login_required
 def delete_device(request, id):
-# See addrbook2 for example
-
-  context = { 'devices': get_and_update_status(request.user) }
-
-  if request.method != 'POST':
-    return render(request, 'dashboard.html', context)
-
-  device = get_object_or_404(Device, id=id)
-  if device.owner != request.user:
+  if not Device.objects.filter(owner=request.user, serial_number=id).exists():
+    messages.error(request, 'Invalid device ID')
     return redirect('dashboard')
 
-  messages.info(request, 'Cabinet {0} has been deleted.'.format(device.name))
-  device.owner = None
-  device.status = NOT_REGISTERED
-  device.save()
+  device = Device.objects.get(serial_number=id)
 
-  # OJO: recreate device list after deleting the device (duh)
+  if request.method != 'POST':
+    return redirect('dashboard')
+
+  form = DeleteDeviceForm(request.POST)
+  if form.is_valid():
+    if form.cleaned_data['name'] == device.name:
+      items = ItemEntry.objects.filter(location=device)        
+
+      device.owner = None
+      device.status = NOT_REGISTERED
+      device.save()
+
+      items.delete()
+      messages.info(request, 'Cabinet {0} has been deleted.'.format(device.name))
+    else:
+      messages.warning(request, "Input doesn't match device name")
+
   context = { 'devices': get_and_update_status(request.user) }
 
   return redirect('dashboard')
 
+
+
 @login_required
-def add_item(request, id, ajax):
-# Param: id = cabinet number
-#KNOWN BUGS: empty field error redirect not working
-
-  # print("326: ")
-  # print(request)
-  # print("id: ")
-  # print(id)
-  # print("ajax: ")
-  # print(ajax)
-
-  # Set context with current list of items so we can easily return if we discover errors.
-  context = { 'items': ItemEntry.objects.all() }
-
-  # Adds the new item to the database if the request parameter is present
-  if 'item' not in request.POST or not request.POST['item']:
-    messages.warning(request, 'You must enter an item to add.')
-    return render(request, 'inv.html', context)
-
-  user = request.user
-  loc = Device.objects.get(id=id)
-
-  # If the category doesn't exist, try
-  try:
-    new_cat = Category(name=request.POST['item'],
-                       user_gen=True,
-                       creator=user,
-                       desc_folder='n/a')
-    new_cat.save()
-  except:
-    new_cat = Category.objects.get(name=request.POST['item'])
-
-  print("new_cat: ")
-  print(new_cat)
-  new_item = ItemEntry(location=loc,
-                       type=new_cat, # cat
-                       thumbnail="")
-  new_item.save()
-
-  # TODO: check that this works as expected
-  if(ajax):
-    return get_list_json_dumps_serializer(request, id)
-  return redirect('cabinet', id)
-
-
 def get_list_json_dumps_serializer(request, id):
   response_data = []
   # TODO: 
@@ -389,30 +345,7 @@ def get_list_json_dumps_serializer(request, id):
   # print(response_json)
   return JsonResponse(data=response_data, safe=False)
 
-@login_required
-def delete_item(request, id):
 
-  context = { 'devices': get_and_update_status(request.user) }
-
-  if request.method != 'POST':
-    return render(request, 'inv.html', context)
-
-  entry = get_object_or_404(ItemEntry, id=id)
-  cab_id = entry.location.id
-  # TODO: determine how necessary the message actually is
-  messages.info(request, 'Item {0} has been deleted.'.format(entry.type.name))
-  entry.delete()
-
-  context = { 'devices': get_and_update_status(request.user),
-              'items': ItemEntry.objects.all() }
-
-  # return render(request, 'inv.html', context)
-  return redirect('cabinet', cab_id)
-
-def ajax_del_item(request, id):
-  entry = get_object_or_404(ItemEntry, id=id)
-  cab_id = entry.location.id
-  return redirect('cabinet', cab_id)
 
 @csrf_exempt
 def update_inventory(request):
@@ -422,24 +355,10 @@ def update_inventory(request):
       }, status=METHOD_NOT_ALLOWED)
 
   data = json.loads(request.body.decode('utf-8'))
-
-  schema = {
-    "type": "object",
-    "properties": {
-      "serial_number": {"type": "string"},
-      "image": {"type": "string"},
-      "secret": {"type": "string"},
-      "timestamp": {"type": "integer"},
-    },
-    "additionalProperties": False,
-    "required": ["serial_number", "image", "secret", "timestamp"],
-  }
-  try:
-    jsonschema.validate(instance=data, schema=schema)
-  except jsonschema.exceptions.ValidationError as err:
+  if not validate_json(data):
     return JsonResponse({
       'error': 'Invalid request body'
-    }, status=BAD_REQUEST)
+    }, status=BAD_REQUEST) 
 
   try:
     device = Device.objects.get(serial_number=data['serial_number'])
@@ -451,7 +370,6 @@ def update_inventory(request):
     if data['secret'] != device.key:
       raise Exception('Invalid secret')
   except Exception as e:
-    print(e)
     return JsonResponse({
         'error': f'Invalid request: {e}'
       }, status=FORBIDDEN)
@@ -546,9 +464,23 @@ def update_inventory(request):
     return JsonResponse({'success': 'Unable to identify item'}, status=SUCCESS)
 
 
+
 @login_required
 def id_unknown_item(request, id):
-  entry = get_object_or_404(IconicImage, id=id, user=request.user)
+  try:
+    item = ItemEntry.objects.get(id=id)
+    if item.location.owner != request.user:
+      return redirect('dashboard')
+  except Exception as e:
+    return redirect('dashboard')
+
+  iconic_images = IconicImage.objects.filter(user=request.user)
+  entry = None
+  for image in iconic_images:
+    if image.associated_item_entry == item:
+      entry = image
+  if not entry:
+    return redirect('dashboard')
 
   if request.method == 'GET':
     context = {"entry": entry, 'form': ImageIdForm(), "id": id}
@@ -580,12 +512,114 @@ def id_unknown_item(request, id):
 
 
   request.session['message'] = "Identification successful!"
-  return redirect('profile')
+  return redirect('dashboard')
 
 
 
+################## Helper Functions ##################
+def get_and_update_status(user):
+  """helper function that gets all the devices for that user, and updates their online/offline status"""
 
+  devices = Device.objects.filter(owner=user)
+
+  for device in devices:
+    device.update_online_status()
+
+  return devices
+
+
+
+def validate_json(data):
+  schema = {
+    "type": "object",
+    "properties": {
+      "serial_number": {"type": "string"},
+      "image": {"type": "string"},
+      "secret": {"type": "string"},
+      "timestamp": {"type": "integer"},
+    },
+    "additionalProperties": False,
+    "required": ["serial_number", "image", "secret", "timestamp"],
+  }
+  try:
+    jsonschema.validate(instance=data, schema=schema)
+  except jsonschema.exceptions.ValidationError as err:
+    return False
+  
+  return True
+
+
+################## Unused Functions ##################
 def shopping_list(request):
   context = {}
 
   return
+
+
+
+@login_required
+def add_item(request, id, ajax):
+# Param: id = cabinet number
+#KNOWN BUGS: empty field error redirect not working
+
+  # Set context with current list of items so we can easily return if we discover errors.
+  context = { 'items': ItemEntry.objects.all() }
+
+  # Adds the new item to the database if the request parameter is present
+  if 'item' not in request.POST or not request.POST['item']:
+    messages.warning(request, 'You must enter an item to add.')
+    return render(request, 'inventory.html', context)
+
+  user = request.user
+  loc = Device.objects.get(id=id)
+
+  # If the category doesn't exist, try
+  try:
+    new_cat = Category(name=request.POST['item'],
+                       user_gen=True,
+                       creator=user,
+                       desc_folder='n/a')
+    new_cat.save()
+  except:
+    new_cat = Category.objects.get(name=request.POST['item'])
+
+  print("new_cat: ")
+  print(new_cat)
+  new_item = ItemEntry(location=loc,
+                       type=new_cat, # cat
+                       thumbnail="")
+  new_item.save()
+
+  # TODO: check that this works as expected
+  if(ajax):
+    return get_list_json_dumps_serializer(request, id)
+  return redirect('cabinet', id)
+
+
+
+@login_required
+def delete_item(request, id):
+
+  context = { 'devices': get_and_update_status(request.user) }
+
+  if request.method != 'POST':
+    return render(request, 'inventory.html', context)
+
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
+  # TODO: determine how necessary the message actually is
+  messages.info(request, 'Item {0} has been deleted.'.format(entry.type.name))
+  entry.delete()
+
+  context = { 'devices': get_and_update_status(request.user),
+              'items': ItemEntry.objects.all() }
+
+  # return render(request, 'inventory.html', context)
+  return redirect('cabinet', cab_id)
+
+
+
+def ajax_del_item(request, id):
+  entry = get_object_or_404(ItemEntry, id=id)
+  cab_id = entry.location.id
+  return redirect('cabinet', cab_id)

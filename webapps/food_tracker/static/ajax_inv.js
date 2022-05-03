@@ -37,50 +37,64 @@ function displayError(message) {
 }
 
 function updateList(items) {
-
-    // Removes the old to-do list items
-    // let list = document.getElementById("inv-list")
-    // while (list.hasChildNodes()) {
-    //     list.removeChild(list.firstChild)
-    // }
-
-    console.log(items)
-
-    // Removes items from todolist if they not in items
-    $("li").each(function() {
-        let my_id = parseInt(this.id.substring("id_item_".length))
-        let id_in_items = false
-        $(items).each(function() {
-            if (this.id == my_id) id_in_items = true
-        })
-        if (!id_in_items) this.remove()
+    items.sort(item => sanitize(item.type))
+    $("#inv-list").empty()
+    $("#unknown-list").empty()
+    let types = {}
+    items.forEach(item => {
+        let type = sanitize(item.type)
+        if (type != "UNKNOWN ITEM") {
+            types[type] = (types[type] | 0) + 1
+        } else {
+            $("#unknown-list").append(
+                `<li class="list-group-item">
+                    <span>${type}</span>
+                    <a class="btn btn-primary btn-sm float-end" href=${get_id_unknown_url(item.id)}>Identify</a>
+                </li>`
+            )
+        }
     })
 
-    // Adds each new todolist item to the list (only if it's not already here)
-    $(items).each(function() {
-        let my_id = "id_item_" + this.id
+    for (let [type, quantity] of Object.entries(types)) {
+        $("#inv-list").append(
+            `<li class="list-group-item">
+                <span>${type}</span>
+                <span class="badge rounded-pill bg-primary float-end">${quantity}</span>
+            </li>`
+        )
+    }
 
-        // If "id_item_" isn't already on the list
-        if (document.getElementById(my_id) == null) {
+    if ($('#inv-list li').length == 0) {
+        $('#inv-list').append(
+            `<div class="h5 my-2 text-muted">This cabinet is empty</div>`
+        )
+    }
 
-            // Builds a new HTML list item for the todo-list
-            let deleteButton = "<button onclick='deleteItem(" + this.id + ")'>X</button> "
+    if ($('#unknown-list li').length == 0) {
+        $('#unidentified-items')[0].classList.add('d-none')
+    } else {
+        $('#unidentified-items')[0].classList.remove('d-none')
+    }
+    
+    // $("#inv-list li").each(function() {
+    //     let my_id = parseInt(this.id.substring("id_item_".length))
+    //     if (!items.find(item => item.id == my_id)) {
+    //         this.remove()
+    //     }
+    // })
 
-            $("#inv-list").append(
-                '<li id="id_item_' + this.id + '">' +
-                sanitize(this.type) + " " + // .name
-                deleteButton +
-                ' <span class="details">' +
-                "(id=" + this.id // type.id
-                + ", location=" + this.location //.name
-                + ", type=" + this.type //.name
-                + ", thumbnail=" + this.thumbnail
-                + ")"
-                + '</span>'
-                + '</li>'
-                )
-        }    
-    })
+    // // Adds each new item to the list (only if it's not already here)
+    // $(items).each(function() {
+    //     let my_id = "id_item_" + this.id
+
+    //     if (document.getElementById(my_id) == null) {
+    //         $("#inv-list").append(
+    //             `<li id="id_item_${this.id}" class="list-group-item">
+    //                 ${sanitize(this.type)}
+    //             </li>`
+    //         )
+    //     }    
+    // })
 }
 
 function sanitize(s) {

@@ -35,6 +35,15 @@ class DeviceRegistrationForm(forms.ModelForm):
     #     # We must return the cleaned data we got from the cleaned_data dict
     #     return serial_number
 
+class UpdateDeviceForm(forms.ModelForm):
+    class Meta:
+        model = Device
+        fields = ['name']
+
+class DeleteDeviceForm(forms.ModelForm):
+    class Meta:
+        model = Device
+        fields = ['name']
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -51,7 +60,7 @@ class RecipeForm(forms.Form):
 
 class ImageIdForm(forms.Form):
     category = ModelChoiceField( \
-                                    queryset=Category.objects.all(), \
+                                    queryset=Category.objects.all().exclude(name="UNKNOWN ITEM"), \
                                     widget=forms.Select, \
                                     required=False, \
                                     label="Please identify the above item as an existing category")

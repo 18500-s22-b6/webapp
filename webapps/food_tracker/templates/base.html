@@ -85,26 +85,6 @@
                 </a>
               </li>
 
-              {% comment %} <li>
-                <button class="nav-link link-dark px-3 {% if devices %}disabled{% endif %}"
-                    data-bs-toggle="collapse" data-bs-target="#devices" aria-expanded="true" aria-controls="devices">
-                  <i class="fa fa-microchip bi me-2" aria-hidden="true"></i>
-                  My Devices <i class="fas fa-angle-down"></i>
-                </button>
-              </li>
-              <li class="collapse nav nav-pills flex-column px-3" id="devices">
-                <table>
-                  {% for device in devices %}
-                    <tr>
-                      <td>
-                        <a href="{% url 'cabinet' id=device.serial_number %}" class="nav-link link-dark">
-                          {{ device.name }}
-                        </a>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </table>
-              </li> {% endcomment %}
               <hr>
               <li>
                 <a href="{% url 'profile' %}" class="nav-link link-dark px-3 {% block profile %}{% endblock %}">
