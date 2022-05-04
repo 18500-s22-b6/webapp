@@ -30,13 +30,23 @@ TODO
         <div class="h5 my-2 text-muted">No available recipes, please check back later</div>
     {% else %}
         {% for recipe in recipes %}
-            <div class="card text-center m-2" style="width: 15rem;">
+            <div class="card text-center m-2 btn btn-light" style="width: 15rem;">
                 <div class="card-body">
-                    <h5 class="card-title my-2">{{ recipe.name }}</h5>
-                    <p class="card-text">
-                        <div>
-                            {{ recipe.id|get_num_of_ingredients:True }} ingredient{% if recipe.id|get_num_of_ingredients > 1 %}s{% endif %}</p>
+                    <h5 class="card-title my-2">
+                        {{ recipe.name }}
+                        <div class="text-muted small m-1">
+                            by 
+                            {% if recipe.author %}
+                                {{ recipe.author.first_name }}
+                            {% else %}
+                                FoodTracker
+                            {% endif %}
                         </div>
+                    </h5>
+                    <p class="card-text">
+                        {{ recipe.id|get_num_of_ingredients:True }} ingredient{% if recipe.id|get_num_of_ingredients > 1 %}s{% endif %}
+                    </p>
+
                     <a href="{% url 'public_recipe' recipe.id %}" class="btn btn-primary stretched-link">View</a>                
                 </div>
             </div>

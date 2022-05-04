@@ -15,13 +15,11 @@ TODO
 {% block content %}
     <div class="container">
         <div class="row my-5">
-        <div class="h2 mb-4">Dashboard</div>
-        <div class="h4 mb-4">My Devices <a href="{% url 'add_device' %}"><i class="fas fa-plus-circle text-success h5"></i></a></div>
-        {% if not devices %}
-            <div class="h5 my-2 text-muted">You don't have any devices, please register <a href="{% url 'add_device' %}">here</a></div>
-        {% else %}
+            <div class="h2 mb-4">Dashboard</div>
+
+            <div class="h4 mb-4"><i class="fa fa-microchip" aria-hidden="true"></i> My Devices</div>
             {% for device in devices %}
-                <div class="card text-center m-2" style="width: 15rem;">
+                <div class="card text-center m-2 btn btn-light" style="width: 15rem;">
                     <div class="card-body">
                         <h5 class="card-title my-2">{{ device.name }}</h5>
                         <h6 class="card-title my-2 text-{{ device.status|get_status_style }} text-uppercase">{{ device.status|get_status }}</h6>
@@ -29,17 +27,19 @@ TODO
                         <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>                
                     </div>
                     {% if device.serial_number|has_unid %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span class="visually-hidden">unread messages</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"></span>
                     {% endif %}
                 </div>
             {% endfor %}
-        {% endif %}
-        <div class="h4 my-4">My Recipes <a href="{% url 'add_recipe' %}"><i class="fas fa-plus-circle text-success h5"></i></a></div>
-        {% if not recipes %}
-            <div class="h5 my-2 text-muted">You don't have any recipes, create your own <a href="{% url 'add_recipe' %}">here</a></div>
-        {% else %}
+            <div class="card text-center m-2 btn btn-light" style="width: 15rem; min-height: 10rem">
+                <div class="card-body justify-content-center align-items-center d-flex">
+                    <a href="{% url 'add_device' %}"><i class="h1 fas fa-plus text-muted stretched-link opacity-25"></i></a>
+                </div>
+            </div>
+
+            <div class="h4 my-4"><i class="fas fa-cookie-bite"></i> My Recipes </div>
             {% for recipe in recipes %}
-                <div class="card text-center m-2" style="width: 15rem;">
+                <div class="card text-center m-2 btn btn-light" style="width: 15rem;">
                     <div class="card-body">
                         <h5 class="card-title my-2">{{ recipe.name }}</h5>
                         <p class="card-text">{{ recipe.id|get_num_of_ingredients }} ingredient{% if recipe.id|get_num_of_ingredients > 1 %}s{% endif %}</p>
@@ -47,7 +47,11 @@ TODO
                     </div>
                 </div>
             {% endfor %}
-        {% endif %}
+            <div class="card text-center m-2 btn btn-light" style="width: 15rem; min-height: 10rem">
+                <div class="card-body justify-content-center align-items-center d-flex">
+                    <a href="{% url 'add_recipe' %}"><i class="h1 fas fa-plus text-muted stretched-link opacity-25"></i></a>
+                </div>
+            </div>
         </div>
     </div>
 
