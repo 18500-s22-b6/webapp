@@ -50,12 +50,16 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'phone_number']
 
-class RecipeForm(forms.Form):
+class RecipeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'ingredients']
+
     name = forms.CharField(max_length=50)
     ingredients = MyModelMultipleChoiceField( \
-                                    queryset=Category.objects.all(), \
+                                    queryset=Category.objects.all().exclude(name="UNKNOWN ITEM"), \
                                     widget=forms.CheckboxSelectMultiple, \
-                                    required=False, \
+                                    required=True, \
                                     label="Ingredients")
 
 class ImageIdForm(forms.Form):

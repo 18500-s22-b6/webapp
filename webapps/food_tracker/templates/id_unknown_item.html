@@ -5,34 +5,32 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="row mt-5">
-        <div class="text-left mb-3">
-            <a class="btn btn-link p-0" onclick="history.back()" style="text-decoration: none">
-                <i class="fas fa-angle-left"></i> Back
-            </a>
-        </div>
-        <div class="mb-4">
-            <div class="h5">
-                <span class="h3">Identify Item</span> 
+    <div class="container">
+        <div class="row mt-5">
+            <div class="text-left mb-3">
+                <a class="btn btn-link p-0" onclick="history.back()" style="text-decoration: none">
+                    <i class="fas fa-angle-left"></i> Back
+                </a>
             </div>
-            <img src="{{ entry.image.url }}" style="height: 200px"/>
+            <div class="mb-4">
+                <div class="h5">
+                    <span class="h3">Identify Item</span> 
+                </div>
+                <img src="{{ entry.image.url }}" style="height: 200px"/>
+            </div>
+
+            <form method="post" action="{% url 'id_unknown_item' id %}" style="width: 50%">
+                {% for field in form %}
+                    {{ field|as_crispy_field }}
+                {% endfor %}
+        
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
         </div>
 
-        <form method="post" action="{% url 'id_unknown_item' id %}" style="width: 50%">
-            {% for field in form %}
-                {{ field|as_crispy_field }}
-            {% endfor %}
-    
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary">Save</button>
-        </form>
+
     </div>
-
-
-</div>
-
-    <h1></h1>
     
 
     {% block script %}

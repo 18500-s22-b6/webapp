@@ -45,14 +45,14 @@ TODO:
     <div class="row mt-5">
         <div class="text-left mb-3">
             <a class="btn btn-link p-0" href="{% url 'dashboard' %}" style="text-decoration: none">
-                <i class="fas fa-angle-left"></i> Back
+                <i class="fas fa-angle-left"></i> Dashboard
             </a>
         </div>
         <div class="mb-4">
             <span class="align-top badge bg-{{ device.status|get_status_style }} text-uppercase">{{ device.status|get_status }}</span>
             <div class="h5">
                 <span class="h3">{{ device.name }}</span> 
-                <button class="mx-2 align-middle btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#modal-edit" style="text-decoration: none">Edit</button></div>
+                <button class="mx-2 align-top btn p-0" data-bs-toggle="modal" data-bs-target="#modal-edit" style="text-decoration: none"><i class="fas fa-edit"></i></div>
             <div class="text-muted">Serial Number: {{ device.serial_number }}</div>
         </div>
     </div>

@@ -16,7 +16,7 @@ TODO
     <div class="container">
         <div class="row my-5">
         <div class="h2 mb-4">Dashboard</div>
-        <div class="h4 mb-4">My Devices</div>
+        <div class="h4 mb-4">My Devices <a href="{% url 'add_device' %}"><i class="fas fa-plus-circle text-success h5"></i></a></div>
         {% if not devices %}
             <div class="h5 my-2 text-muted">You don't have any devices, please register <a href="{% url 'add_device' %}">here</a></div>
         {% else %}
@@ -34,10 +34,19 @@ TODO
                 </div>
             {% endfor %}
         {% endif %}
-        <div class="h4 my-4">My Recipes</div>
+        <div class="h4 my-4">My Recipes <a href="{% url 'add_recipe' %}"><i class="fas fa-plus-circle text-success h5"></i></a></div>
         {% if not recipes %}
-            <div class="h5 my-2 text-muted">You don't have any recipes, create your own <a href="{% url 'recipes' %}">here</a></div>
+            <div class="h5 my-2 text-muted">You don't have any recipes, create your own <a href="{% url 'add_recipe' %}">here</a></div>
         {% else %}
+            {% for recipe in recipes %}
+                <div class="card text-center m-2" style="width: 15rem;">
+                    <div class="card-body">
+                        <h5 class="card-title my-2">{{ recipe.name }}</h5>
+                        <p class="card-text">{{ recipe.id|get_num_of_ingredients }} ingredient{% if recipe.id|get_num_of_ingredients > 1 %}s{% endif %}</p>
+                        <a href="{% url 'recipe' recipe.id %}" class="btn btn-primary stretched-link">View</a>                
+                    </div>
+                </div>
+            {% endfor %}
         {% endif %}
         </div>
     </div>

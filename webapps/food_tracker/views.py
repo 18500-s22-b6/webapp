@@ -46,19 +46,11 @@ def login(request):
 
 @login_required
 def profile(request):
-  print(request)
   # If this is their first time logging in
   if not request.user.phone_number:
     return redirect('register_user')
 
   context = { 'devices': get_and_update_status(request.user) }
-
-  # TODO: error messaging was changed
-  if 'message' in request.session:
-    print(request.session['message'])
-    messages.error(request, request.session['message'])
-    # context['message'] = request.session['message']
-    del request.session['message']
 
   if User.objects.filter(email=request.user.email):
     return render(request, 'profile.html', context)
@@ -109,67 +101,173 @@ def logout_user(request):
 
 @login_required
 def dashboard(request):
-  context = {}
-  context['devices'] = get_and_update_status(request.user)
-  print(context['devices'])
+  context = {
+    'devices': get_and_update_status(request.user),
+    'recipes': Recipe.objects.filter(author=request.user)
+  }
 
   return render(request, 'dashboard.html', context)
 
 
 
 @login_required
-def recipes(request):
-  context = { 'devices': get_and_update_status(request.user),
-              # 'recipes': Recipe.objects.filter(author=request.user),
-              'items':ItemEntry.objects.all() }
+def recipe(request, id):
+  try:
+    recipe = Recipe.objects.get(author=request.user, id=id)
+  except Exception as e:
+    messages.error(request, "Recipe doesn't exist")
+    return redirect('dashboard')
+  
+  form = RecipeForm(instance=recipe)
 
-  if 'message' in request.session:
-    # context['message'] = request.session['message']
-    messages.error(request, request.session['message'])
-    del request.session['message']
-
-
-  # Django template query filtering solution: dictionary
-  d = {}
-  for recipe in Recipe.objects.all():
-    # d[0] represents ingr that exist
-    # d[1] represents ingr that are missing
-    d[recipe.name] = [[] , []]
-    for ingr in recipe.ingredients.all():
-      if(ItemEntry.objects.filter(type=ingr)):
-        d[recipe.name][0].append(ingr)
-      else:
-        d[recipe.name][1].append(ingr)
-
-  context['recipes'] = d
-
-  # User hit the button to generate a shopping list
   if request.method == 'POST':
-    name = request.POST.get('recipe')
-    l = d.get(name, None)
-    if l:
-      # OJO: print is a proxy for emailing the user
-      # print(l[1])
-      # TODO: time limit on number of clicks per second
-      # TODO: is html being so visible client-side okay?
-      rlist = [request.user.email] # , request.user.phone_number]
-      send_mail(subject='FT Shopping List', message=str(l[1]),
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=rlist,
-                fail_silently=False)
-    else:
-      print(name + " doesn't exist")
-    return render(request, 'recipes.html', context)
+    form = RecipeForm(request.POST)
+    if form.is_valid():
+      recipe.name = form.cleaned_data['name']
+      recipe.ingredients.set(form.cleaned_data["ingredients"])
+      recipe.save()
 
-  # Otherwise, regular recipes viewer
+  context = {
+    'form': form,
+    'recipe': recipe,
+    'public': False,
+    'site_key': settings.GOOGLE_RECAPTCHA_KEY,
+  }
+  return render(request, 'recipe.html', context)
+
+
+
+@login_required
+def public_recipe(request, id):
+  try:
+    recipe = PublicRecipe.objects.get(id=id)
+  except Exception as e:
+    messages.error(request, "Recipe doesn't exist")
+    return redirect('recipes')
+
+  context = {
+    'recipe': recipe,
+    'public': True,
+  }
+  return render(request, 'recipe.html', context)
+
+
+
+# <i class="fas fa-share-alt"></i>
+@login_required
+def publish_recipe(request, id):
+  try:
+    recipe = Recipe.objects.get(author=request.user, id=id)
+  except Exception as e:
+    messages.error(request, "Recipe doesn't exist")
+    return redirect('dashboard')
+
+  new_recipe = PublicRecipe(
+    author=request.user,
+    name=recipe.name,
+  )
+  new_recipe.save()
+  new_recipe.ingredients.set(recipe.ingredients.all())
+
+  messages.success(request, 'Recipe shared successfully')
+  return redirect('public_recipe', new_recipe.id)
+
+
+@login_required
+def save_public_recipe(request, id):
+  try:
+    recipe = PublicRecipe.objects.get(id=id)
+  except Exception as e:
+    messages.error(request, "Recipe doesn't exist")
+    return redirect('recipes')
+  
+  new_recipe = Recipe(
+    author=request.user,
+    name=recipe.name,
+  )
+  new_recipe.save()
+  new_recipe.ingredients.set(recipe.ingredients.all())
+
+  messages.success(request, 'Recipe created successfully')
+  return redirect('recipe', new_recipe.id)
+
+
+
+@login_required
+def delete_recipe(request, id):
+  try:
+    recipe = Recipe.objects.get(author=request.user, id=id)
+  except Exception as e:
+    messages.error(request, "Recipe doesn't exist")
+    return redirect('dashboard')
+  
+  if request.method == 'POST':
+    recipe.delete()
+  
+  return redirect('dashboard')
+
+
+
+@login_required
+def email_grocery_list(request, id):
+  try:
+    recipe = Recipe.objects.get(author=request.user, id=id)
+  except Exception as e:
+    messages.error(request, "Recipe doesn't exist")
+    return redirect('dashboard')
+
+  if request.method == 'POST':
+    recaptcha_response = request.POST.get('g-recaptcha-response')
+    response = requests.post(
+      url=RECAPTCHA_VERIFICATION_URL,
+      data={
+        'secret': settings.GOOGLE_RECAPTCHA_SECRET,
+        'response': recaptcha_response,
+      }).json()
+
+    if not response['success']:
+      messages.error(request, 'reCAPTCHA failed')
+      return redirect('recipe', id)
+
+    # Send email
+    missing = []
+    for i in recipe.ingredients.all():
+      if not ItemEntry.objects.filter(type=i):
+        missing.append(i)
+    if not missing:
+      message = "Everything is in stock'"
+    else:
+      message = str(missing)
+
+    print(message)
+    recipents = [request.user.email]
+    send_mail(subject='FT Shopping List', 
+              message=message,
+              from_email=settings.EMAIL_HOST_USER,
+              recipient_list=recipents,
+              fail_silently=False)
+    print('sending email...')
+    
+    messages.success(request, 'Email sent successfully')
+    return redirect('recipe', id)
+
+  return redirect('recipe', id)
+
+
+
+@login_required
+def recipes(request):
+  recipes = PublicRecipe.objects.all()
+  context = {
+    'recipes': recipes,
+  }
+
   return render(request, 'recipes.html', context)
 
 
 
 @login_required
 def add_recipe(request):
-  ##### If GET, the user just clicked on the link
-  ##### i.e. just render the website, plain and simple
   if request.method == 'GET':
     context = { 'form': RecipeForm(),
                 'devices': get_and_update_status(request.user) }
@@ -182,9 +280,7 @@ def add_recipe(request):
                 'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
-  # context = {'devices': get_and_update_status(request.user) }
   user = request.user
-  # TODO: change when done debugging to email=data['email']
   new_recipe = Recipe(author = user,
                       name = form.cleaned_data["name"])
                       # ingredients = form.cleaned_data["ingredients"]
@@ -192,8 +288,7 @@ def add_recipe(request):
   new_recipe.ingredients.set(form.cleaned_data["ingredients"])
 
   messages.success(request, 'Recipe saved successfully!')
-  return redirect('recipes')
-  # return render(request, 'recipes.html', context)
+  return redirect('recipe', new_recipe.id)
 
 
 
@@ -229,7 +324,6 @@ def cabinet(request, id):
       [item.type for item in ItemEntry.objects.filter(location=device, type__name="UNKNOWN ITEM")]
     ))
   }
-  print(context)
   return render(request, 'inventory.html', context)
 
 

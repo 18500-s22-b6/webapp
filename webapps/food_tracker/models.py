@@ -78,6 +78,12 @@ class Recipe(models.Model):
     name = models.CharField(max_length=50)
     ingredients = models.ManyToManyField(Category, blank=True)
 
+class PublicRecipe(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(User, on_delete=models.PROTECT, null=True, blank=True)
+    name = models.CharField(max_length=50)
+    ingredients = models.ManyToManyField(Category, blank=True)
+
 # User registered Iconic images
 # May have an associated ItemEntry, which will have it's category updated
 # When the image is identified by the

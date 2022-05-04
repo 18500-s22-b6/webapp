@@ -1,0 +1,184 @@
+<!-- recipes.html -->
+<!-- 
+
+TODO
+    - support writing items in recipes that aren't in the fridge (yet)
+    - mark presence of item somewhere with a checkmark
+    - make recipes editable
+    - add delete recipe button
+ -->
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block dashboard %}
+    {% if not public %}active{% endif %}
+{% endblock %}
+
+{% block recipes %}
+    {% if public %}active{% endif %}
+{% endblock %}
+
+{% load template_filters %}
+
+{% block head %}
+  <title>Recipe for {{ recipe.name }} - Food Tracker</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-5">
+        <div class="text-left mb-3">
+            {% if public %}
+            <a class="btn btn-link p-0" href="{% url 'recipes' %}" style="text-decoration: none">
+                <i class="fas fa-angle-left"></i> Public Recipes
+            </a>
+            {% else %}
+            <a class="btn btn-link p-0" href="{% url 'dashboard' %}" style="text-decoration: none">
+                <i class="fas fa-angle-left"></i> Dashboard
+            </a>
+            {% endif %}
+            {% if not public %}
+                <div class="float-end">
+                    <button class="align-top btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#modal-email" style="text-decoration: none"><i class="far fa-envelope"></i> Email Grocery List</button>
+                    <span class="mx-1"></span>
+                    <a href="{% url 'publish_recipe' recipe.id %}" class="align-top btn btn-link p-0" style="text-decoration: none"><i class="fas fa-share-alt"></i> Publish This Recipe</a>
+                </div>
+            {% else %}
+                <a class="align-top btn btn-link p-0 float-end" href="{% url 'save_public_recipe' recipe.id %}" style="text-decoration: none"><i class="far fa-heart"></i> Save This Recipe</a>
+            {% endif %}
+        </div>
+        <div class="mb-2">
+            <div class="h5">
+                <span class="h3">{{ recipe.name }}</span> 
+                {% if not public %}
+                    <button class="mx-2 align-top btn p-0" data-bs-toggle="modal" data-bs-target="#modal-edit" style="text-decoration: none"><i class="fas fa-edit"></i>
+                {% endif %}
+            </div>
+
+            {% if public %}
+            <div class="text-muted">
+                Created by 
+                {% if recipe.author %}
+                    {{ recipe.author.first_name }}
+                {% else %}
+                    your friends at FoodTracker
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="my-3">
+        <div class="h5">Ingredients</div>
+        <ul class="list-group list-group-flush text-capitalize">
+            {% for i in recipe.id|get_ingredients:public %}
+                <li class="list-group-item">
+                    <span>{{ i }}</span>
+                    <span class="float-end">
+                        {% if i|in_stock:user.id %}
+                            <i class="fas fa-check-circle text-success"></i>
+                        {% else %}
+                            <i class="fas fa-times-circle text-secondary"></i>
+                        {% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% if not public %}
+    <div class="mt-4"><button class="btn btn-link text-muted p-0" data-bs-toggle="modal" data-bs-target="#modal-delete" >Delete this recipe</button></div>
+
+
+    <div class="modal fade" id="modal-email" aria-hidden="true" aria-labelledby="modal-email" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel">Email Grocery List for "{{ recipe.name }}"</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form method="post" action="{% url 'email_grocery_list' recipe.id %}">
+
+                {% csrf_token %} 
+
+                <div class="modal-body">
+                    An email containing the grocery list will be sent to <span class="text-primary">{{ user.email }}</span>.
+                    <script src='https://www.google.com/recaptcha/api.js'></script>
+                    <div class="g-recaptcha mt-3" data-sitekey="{{ site_key }}"></div>
+                </div>
+                  
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit">Send</button>
+                </div>
+
+            </form>
+
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-edit" aria-hidden="true" aria-labelledby="modal-edit" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel">Edit Recipe "{{ recipe.name }}"</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form method="post" action="{% url 'recipe' recipe.id %}">
+
+                {% csrf_token %} 
+
+                <div class="modal-body">
+                    {% for field in form %}
+                        {{ field|as_crispy_field }}
+                    {% endfor %}
+                </div>
+                  
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit">Save</button>
+                </div>
+
+            </form>
+
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-delete" aria-hidden="true" aria-labelledby="modal-delete" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalToggleLabel">Delete Recipe "{{ recipe.name }}"?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              
+              <form method="post" action="{% url 'delete_recipe' recipe.id %}">
+  
+                  {% csrf_token %} 
+  
+                  <div class="modal-body">
+                      This recipe will be deleted permanently.
+                  </div>
+                    
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                      <button class="btn btn-danger" type="submit">Delete</button>
+                  </div>
+  
+              </form>
+
+          </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
