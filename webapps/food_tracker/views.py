@@ -1,4 +1,5 @@
 from http.client import METHOD_NOT_ALLOWED
+from socket import CAN_RAW
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
@@ -586,7 +587,16 @@ def update_inventory(request):
       return JsonResponse({'success': f'Inventory updated to include new item: {best_guess_category_name}'}, status=SUCCESS)
     else:
       #item has been removed from the inventory
-      ItemEntry.objects.all().filter(location=device, type__name=best_guess_category_name).first().delete()
+      Item_to_del = ItemEntry.objects.all().filter(location=device, type__name=best_guess_category_name).first()
+      try:
+        unknown_cat = Category.objects.get(name = "UNKNOWN ITEM")
+      except:
+        unknown_cat = None
+      #Remove the associated iconic entry, if needed
+      if Item_to_del.type == unknown_cat:
+        IconicImage.objects.get(associated_item_entry = Item_to_del).delete()
+
+      Item_to_del.delete()
       return JsonResponse({'success': f'Removed item {best_guess_category_name}'}, status=SUCCESS)
   elif best_guess is None:
     return JsonResponse({'success': 'No change detected'}, status=SUCCESS)
