@@ -832,7 +832,9 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
     return
 
 def is_likely_confusion(best_class, matches_dict):
-    return False
+    #found from testing to be a good heuristic
+    thresh = .1
+    return matches_dict[best_class] < thresh
 
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
     """
@@ -907,7 +909,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("TopDown", bg_path="bg.jpeg")
+    out = test_arbitrary_images("Bin2", bg_path="bg.jpeg")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
