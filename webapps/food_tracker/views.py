@@ -426,7 +426,6 @@ def delete_device(request, id):
 @login_required
 def get_list_json_dumps_serializer(request, id):
   response_data = []
-  # TODO:
   items__in = ItemEntry.objects.filter(location__owner=request.user).filter(location__id=id)
   for model_item in items__in:
     my_item = {
@@ -739,7 +738,6 @@ def delete_item(request, id):
 
   entry = get_object_or_404(ItemEntry, id=id)
   cab_id = entry.location.id
-  # TODO: determine how necessary the message actually is
   messages.info(request, 'Item {0} has been deleted.'.format(entry.type.name))
   entry.delete()
 

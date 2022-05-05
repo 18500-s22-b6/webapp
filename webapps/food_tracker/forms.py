@@ -22,8 +22,6 @@ class DeviceRegistrationForm(forms.ModelForm):
         model = Device
         fields = ['serial_number', 'name']
     name = forms.CharField(required=True)
-    ### TODO: form validation doesn't work
-    ### Temporarily allow duplicate registrations, preferable over NULL regis
 
     # # Customizes form validation for the username field.
     # def clean_serial_number(self):
