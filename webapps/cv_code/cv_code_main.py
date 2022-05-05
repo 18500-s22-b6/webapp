@@ -831,7 +831,7 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
 
     return
 
-def is_likely_confusion():
+def is_likely_confusion(best_class, matches_dict):
     return False
 
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
