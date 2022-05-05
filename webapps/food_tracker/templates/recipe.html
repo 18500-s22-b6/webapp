@@ -1,5 +1,5 @@
 <!-- recipes.html -->
-<!-- 
+<!--
 
 TODO
     - support writing items in recipes that aren't in the fridge (yet)
@@ -50,7 +50,7 @@ TODO
         </div>
         <div class="mb-2">
             <div class="h5">
-                <span class="h3">{{ recipe.name }}</span> 
+                <span class="h3">{{ recipe.name }}</span>
                 {% if not public %}
                     <button class="mx-2 align-top btn p-0" data-bs-toggle="modal" data-bs-target="#modal-edit" style="text-decoration: none"><i class="fas fa-edit"></i>
                 {% endif %}
@@ -58,7 +58,7 @@ TODO
 
             {% if public %}
             <div class="text-muted">
-                Created by 
+                Created by
                 {% if recipe.author %}
                     {{ recipe.author.first_name }}
                 {% else %}
@@ -94,22 +94,22 @@ TODO
     <div class="modal fade" id="modal-email" aria-hidden="true" aria-labelledby="modal-email" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            
+
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalToggleLabel">Email Grocery List for "{{ recipe.name }}"</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
             <form method="post" action="{% url 'email_grocery_list' recipe.id false %}">
 
-                {% csrf_token %} 
+                {% csrf_token %}
 
                 <div class="modal-body">
                     An email containing the grocery list will be sent to <span class="text-primary">{{ user.email }}</span>.
                     <script src='https://www.google.com/recaptcha/api.js'></script>
                     <div class="g-recaptcha mt-3" data-sitekey="{{ site_key }}"></div>
                 </div>
-                  
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button class="btn btn-primary" type="submit">Send</button>
@@ -124,22 +124,22 @@ TODO
     <div class="modal fade" id="modal-edit" aria-hidden="true" aria-labelledby="modal-edit" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            
+
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalToggleLabel">Edit Recipe "{{ recipe.name }}"</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
             <form method="post" action="{% url 'recipe' recipe.id %}">
 
-                {% csrf_token %} 
+                {% csrf_token %}
 
                 <div class="modal-body">
                     {% for field in form %}
                         {{ field|as_crispy_field }}
                     {% endfor %}
                 </div>
-                  
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button class="btn btn-primary" type="submit">Save</button>
@@ -154,25 +154,25 @@ TODO
     <div class="modal fade" id="modal-delete" aria-hidden="true" aria-labelledby="modal-delete" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-            
+
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalToggleLabel">Delete Recipe "{{ recipe.name }}"?</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              
+
               <form method="post" action="{% url 'delete_recipe' recipe.id %}">
-  
-                  {% csrf_token %} 
-  
+
+                  {% csrf_token %}
+
                   <div class="modal-body">
                       This recipe will be deleted permanently.
                   </div>
-                    
+
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                       <button class="btn btn-danger" type="submit">Delete</button>
                   </div>
-  
+
               </form>
 
           </div>
@@ -181,4 +181,3 @@ TODO
     {% endif %}
 </div>
 {% endblock %}
-

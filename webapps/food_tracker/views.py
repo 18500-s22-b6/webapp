@@ -249,23 +249,23 @@ def email_grocery_list(request, id, sms):
     missing = []
     for i in recipe.ingredients.all():
       if not ItemEntry.objects.filter(type=i):
-        missing.append(i)
+        missing.append(str(i))
     if not missing:
-      message = "Everything is in stock'"
+      message = "Everything is in stock"
     else:
-      message = str(missing)
+      message = (', '.join(missing)) # str(missing)
 
     if sms: 
-      recipients = [request.user.phone_number + "@txt.att.net", 
-                    request.user.phone_number + "@tmomail.net",
-                    request.user.phone_number + "@vtext.com", 
-                    request.user.phone_number + "@vmobl.com"]
+      recipients = [str(request.user.phone_number) + "@txt.att.net", 
+                    str(request.user.phone_number) + "@tmomail.net",
+                    str(request.user.phone_number) + "@vtext.com"] #, 
+                    # str(request.user.phone_number) + "@vmobl.com"]
     else: 
       recipients = [request.user.email]
 
     print(message)
     
-    send_mail(subject='FT Shopping List', 
+    send_mail(subject='FT Shopping List: '+ str(recipe.name), 
               message=message,
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=recipients,
