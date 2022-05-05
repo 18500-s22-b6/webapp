@@ -831,6 +831,9 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
 
     return
 
+def is_likely_confusion():
+    return False
+
 def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_classes, items_already_present_in_shelf = None):
     """
     This is the only function that should be called externally to this module.
@@ -859,9 +862,9 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     (pre_dif, post_diff, (x,y,w,h)) = diff.get_largest_dif(bg_image, new_img, return_bounds=True)
     target_dict = dict()
 
-    #TODO: find reasonable size for this
     #If we don't have a large enough diff, there probably wasn't a change
-    if pre_dif.shape[0] * pre_dif.shape[1] < 100:
+    #Smallest item we support is baking powder, which is ~200 by 250
+    if pre_dif.shape[0] * pre_dif.shape[1] < 200*200:
         return None
 
     for img, img_name in [(pre_dif, "pre_diff"), (post_diff, "post_diff")]:
@@ -890,17 +893,15 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 
-    #TODO: have a better heuristic here
-    if True:
+    if best_guess_is_post:
+        is_likely_confusion_bool = is_likely_confusion(best_guess_class_name, matches_dict["post_diff"])
+    else:
+        is_likely_confusion_bool = is_likely_confusion(best_guess_class_name, matches_dict["pre_diff"])
+    if not is_likely_confusion_bool:
         return (best_guess_class_name, best_guess_is_post)
     else:
         #if we couldn't identify it, return the post diff
         return post_diff
-
-    return best_guess_huerstics(matches_dict)
-
-
-
 
 
 
