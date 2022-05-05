@@ -498,6 +498,7 @@ def keep_alive(request):
       }, status=FORBIDDEN)
 
   device.last_ping = datetime.datetime.now().astimezone(datetime.timezone.utc)
+  device.save()
 
   return HttpResponse("OK")
 
