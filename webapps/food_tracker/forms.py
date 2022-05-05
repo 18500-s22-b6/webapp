@@ -44,6 +44,7 @@ class DeleteDeviceForm(forms.ModelForm):
     class Meta:
         model = Device
         fields = ['name']
+    name = forms.CharField(required=True)
 
 class UserForm(forms.ModelForm):
     class Meta:
