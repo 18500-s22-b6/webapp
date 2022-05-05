@@ -488,9 +488,9 @@ def keep_alive(request):
     if device.status == NOT_REGISTERED:
       raise Exception('Device is not registered')
 
-    #TODO: do we need to hash this?
-    # hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
-    if data['secret'] != device.key:
+
+    hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
+    if hashed_str != device.key:
       raise Exception('Invalid secret')
   except Exception as e:
     return JsonResponse({
