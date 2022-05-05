@@ -1,18 +1,30 @@
 <!-- add_recipe.html -->
 
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
-{% block recipes %}active{% endblock %}
+{% block dashboard %}active{% endblock %}
 
 {% block content %}
+    <div class="container">
+        <div class="row mt-5">
+            <div class="text-left mb-3">
+                <a class="btn btn-link p-0" onclick="history.back()" style="text-decoration: none">
+                    <i class="fas fa-angle-left"></i> Back
+                </a>
+            </div>
+            <div class="mb-4">
+                <div class="h5">
+                    <span class="h3">Create Recipe</span> 
+                </div>
+            </div>
 
-    <h1>Add recipe</h1>
-    <form method="post" action="{% url 'add_recipe' %}">
-        <table>
-            {{form}}
-        </table>
-        {% csrf_token %} 
-        <button type="submit">Save</button>
-    </form>
-    
+            <form method="post" action="{% url 'add_recipe' %}" style="width: 50%">
+                {% for field in form %}
+                    {{ field|as_crispy_field }}
+                {% endfor %}
+                {% csrf_token %} 
+                <button type="submit" class="btn btn-primary">Save</button>
+            </form>
+        </div>
 {% endblock %}

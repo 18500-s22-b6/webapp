@@ -10,29 +10,48 @@ TODO
 
 {% block dashboard %}active{% endblock %}
 
+{% load template_filters %}
+
 {% block content %}
     <div class="container">
         <div class="row my-5">
-        <div class="h2 mb-4">Dashboard</div>
-        {% if not devices %}
-            <div class="h4 my-3 text-muted">You don't have any devices, please register <a href="{% url 'add_device' %}">here</a></div>
-        {% else %}
-            <div class="h4 mb-4">My Devices</div>
+            <div class="h2 mb-4">Dashboard</div>
+
+            <div class="h4 mb-4"><i class="fa fa-microchip" aria-hidden="true"></i> My Devices</div>
             {% for device in devices %}
-                <div class="card text-center m-2" style="width: 15rem;">
+                <div class="card text-center m-2 btn btn-light" style="width: 15rem;">
                     <div class="card-body">
                         <h5 class="card-title my-2">{{ device.name }}</h5>
-                        <h6 class="card-title my-2 text-success">{{ device.status }}</h6>
-                        <p class="card-text">This cabinet contains {{ device.inventory }} items</p>
-                        <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>
+                        <h6 class="card-title my-2 text-{{ device.status|get_status_style }} text-uppercase">{{ device.status|get_status }}</h6>
+                        <p class="card-text">Contains {{ device.serial_number|get_num_of_items }} item{% if device.serial_number|get_num_of_items > 1 %}s{% endif %}</p>
+                        <a href="{% url 'cabinet' id=device.serial_number %}" class="btn btn-primary stretched-link">View</a>                
                     </div>
-                    {% if device.unid %}
-                        <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"><span class="visually-hidden">unread messages</span>
+                    {% if device.serial_number|has_unid %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-danger p-2"></span>
                     {% endif %}
                 </div>
             {% endfor %}
-        {% endif %}
+            <div class="card text-center m-2 btn btn-light" style="width: 15rem; min-height: 10rem">
+                <div class="card-body justify-content-center align-items-center d-flex">
+                    <a href="{% url 'add_device' %}"><i class="h1 fas fa-plus text-muted stretched-link opacity-25"></i></a>
+                </div>
+            </div>
 
+            <div class="h4 my-4"><i class="fas fa-cookie-bite"></i> My Recipes </div>
+            {% for recipe in recipes %}
+                <div class="card text-center m-2 btn btn-light" style="width: 15rem;">
+                    <div class="card-body">
+                        <h5 class="card-title my-2">{{ recipe.name }}</h5>
+                        <p class="card-text">{{ recipe.id|get_num_of_ingredients }} ingredient{% if recipe.id|get_num_of_ingredients > 1 %}s{% endif %}</p>
+                        <a href="{% url 'recipe' recipe.id %}" class="btn btn-primary stretched-link">View</a>                
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="card text-center m-2 btn btn-light" style="width: 15rem; min-height: 10rem">
+                <div class="card-body justify-content-center align-items-center d-flex">
+                    <a href="{% url 'add_recipe' %}"><i class="h1 fas fa-plus text-muted stretched-link opacity-25"></i></a>
+                </div>
+            </div>
         </div>
     </div>
 

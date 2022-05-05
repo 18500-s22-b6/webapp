@@ -9,6 +9,7 @@ TODO
  -->
 
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block recipes %}active{% endblock %}
 
 {% load template_filters %}
@@ -18,53 +19,40 @@ TODO
 {% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="row my-5">
+    <div class="mb-4">
+        <div class="h2">Discover Recipes</div>
+        <a href="{% url 'add_recipe' %}">Create your own</a>
+    </div>
 
-    <h1>Recipes</h1>
-    <a href="{% url 'add_recipe' %}">Add recipe</a>
-    <ul>
-         {% for name, recipe in recipes.items %} 
-        <li>{{ name }} 
-            <form method="post" action="{% url 'recipes' %}">
-                <input type = "hidden" name='recipe' value='{{name}}'> 
-                {% csrf_token %}
-                <button type="submit">send email</button>
-            </form>
-        </li>
+    {% if not recipes %}
+        <div class="h5 my-2 text-muted">No available recipes, please check back later</div>
+    {% else %}
+        {% for recipe in recipes %}
+            <div class="card text-center m-2 btn btn-light" style="width: 15rem;">
+                <div class="card-body">
+                    <h5 class="card-title my-2">
+                        {{ recipe.name }}
+                        <div class="text-muted small m-1">
+                            by 
+                            {% if recipe.author %}
+                                {{ recipe.author.first_name }}
+                            {% else %}
+                                FoodTracker
+                            {% endif %}
+                        </div>
+                    </h5>
+                    <p class="card-text">
+                        {{ recipe.id|get_num_of_ingredients:True }} ingredient{% if recipe.id|get_num_of_ingredients > 1 %}s{% endif %}
+                    </p>
 
-            <!-- See template_filters.py for more info -->
-            <!-- for type, ingrs in recipe.items %} -->
-            <!-- OJO: "ingr" = Category, *NOT* ItemEntry -->
-            <ul>
-                <!--  if ingr in ItemEntry|in_cat:ingr %} -->
-                {% for ingr in recipe.0 %}
-                    <li><input type="checkbox" checked> {{ ingr.name }}</li>
-                {% endfor %}
-                {% for ingr in recipe.1 %}
-                    <li><input type="checkbox"> {{ ingr.name }}</li>
-                {% endfor %}
-                
-                <!-- else %} -->
-        
-                <!-- endif %} -->
-            </ul>
-
-            <!-- endfor %} -->
-            <!--  for ingr in recipe.missing %} -->
-            <ul>
-
-                
-            </ul>
+                    <a href="{% url 'public_recipe' recipe.id %}" class="btn btn-primary stretched-link">View</a>                
+                </div>
+            </div>
         {% endfor %}
-    </ul>
-
-    
-    
-    
-    <!-- <h1>Cabinet name</h1>
-    <ul>
-        <li>Spice 1</li>
-        <li>Spice 2</li>
-        <li>Spice 3</li>
-    </ul> -->
+    {% endif %}
+    </div>
+</div>
 {% endblock %}
 

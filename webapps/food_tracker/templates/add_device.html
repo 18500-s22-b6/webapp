@@ -3,18 +3,37 @@
 
 {% extends "base.html" %}
 {% block register_device %}active{% endblock %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 
-    <h1>Device registration</h1>
-    <form method="post" action="{% url 'add_device' %}">
-        <table>
-            {{form}}
-        </table>
-        {% csrf_token %} 
-        <script src='https://www.google.com/recaptcha/api.js'></script>
-        <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
-        <button type="submit">Complete registration</button>
-    </form>
     
+    
+    <div class="container py-5">
+        <div class="h2 text-center pb-3">Register New Device</div>
+        <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 2rem;">
+            <div class="card-body p-5 mx-3">
+
+
+                <form method="post" action="{% url 'add_device' %}">
+
+                    {% for field in form %}
+                        {{ field|as_crispy_field }}
+                    {% endfor %}
+
+                    {% csrf_token %} 
+                    <script src='https://www.google.com/recaptcha/api.js'></script>
+                    <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+                    <div class="d-grid gap-2 py-3">
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 {% endblock %}

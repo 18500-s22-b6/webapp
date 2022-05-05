@@ -63,7 +63,7 @@
     <div class="container-fluid">
       <div class="row" style="min-height: 100vh !important;">
 
-        <div class="col-auto bg-light" id="sidebar" style="width:280px">
+        <div class="col-auto bg-light" id="sidebar" style="width:230px">
           <div class="position-fixed my-3">
             <ul class="nav nav-pills flex-column px-3">
               <li>
@@ -80,31 +80,11 @@
               </li>
               <li>
                 <a href="{% url 'recipes' %}" class="nav-link link-dark px-3 {% block recipes %}{% endblock %}">
-                  <i class="fas fa-cookie-bite bi me-2"></i>
-                  Recipes
+                  <i class="far fa-compass bi me-2"></i>
+                  Discover
                 </a>
               </li>
 
-              {% comment %} <li>
-                <button class="nav-link link-dark px-3 {% if devices %}disabled{% endif %}"
-                    data-bs-toggle="collapse" data-bs-target="#devices" aria-expanded="true" aria-controls="devices">
-                  <i class="fa fa-microchip bi me-2" aria-hidden="true"></i>
-                  My Devices <i class="fas fa-angle-down"></i>
-                </button>
-              </li>
-              <li class="collapse nav nav-pills flex-column px-3" id="devices">
-                <table>
-                  {% for device in devices %}
-                    <tr>
-                      <td>
-                        <a href="{% url 'cabinet' id=device.serial_number %}" class="nav-link link-dark">
-                          {{ device.name }}
-                        </a>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </table>
-              </li> {% endcomment %}
               <hr>
               <li>
                 <a href="{% url 'profile' %}" class="nav-link link-dark px-3 {% block profile %}{% endblock %}">
