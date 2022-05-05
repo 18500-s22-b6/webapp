@@ -255,25 +255,25 @@ def get_grocery_list(request, id):
     else:
       message = (', '.join(missing)) # str(missing)
 
-    if request.POST['action'] == 'sms': 
-      recipients = [str(request.user.phone_number) + "@txt.att.net", 
+    if request.POST['action'] == 'sms':
+      recipients = [str(request.user.phone_number) + "@txt.att.net",
                     str(request.user.phone_number) + "@tmomail.net",
-                    str(request.user.phone_number) + "@vtext.com"] #, 
+                    str(request.user.phone_number) + "@vtext.com"] #,
                     # str(request.user.phone_number) + "@vmobl.com"]
-    elif request.POST['action'] == 'email': 
+    elif request.POST['action'] == 'email':
       recipients = [request.user.email]
     else:
       messages.error(request, "Invalid action")
       return redirect('recipe', id)
 
     print(message)
-    
-    send_mail(subject='FT Shopping List: '+ str(recipe.name), 
+
+    send_mail(subject='FT Shopping List: '+ str(recipe.name),
               message=message,
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=recipients,
               fail_silently=False)
-    
+
     messages.success(request, f"Grocery list sent successfully by {request.POST['action']}")
     return redirect('recipe', id)
 
@@ -497,7 +497,7 @@ def keep_alive(request):
         'error': f'Invalid request: {e}'
       }, status=FORBIDDEN)
 
-  device.update_online_status()
+  device.last_ping = datetime.datetime.now().astimezone(datetime.timezone.utc)
 
   return HttpResponse("OK")
 
