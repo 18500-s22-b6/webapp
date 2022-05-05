@@ -100,7 +100,7 @@ TODO
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-            <form method="post" action="{% url 'email_grocery_list' recipe.id %}">
+            <form method="post" action="{% url 'email_grocery_list' recipe.id, false %}">
 
                 {% csrf_token %} 
 

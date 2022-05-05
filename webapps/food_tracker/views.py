@@ -43,6 +43,10 @@ def login(request):
   return render(request, 'login.html')
 
 
+def privacy(request):
+  return render(request, 'privacy.html')
+
+
 
 @login_required
 def profile(request):
@@ -209,7 +213,7 @@ def delete_recipe(request, id):
 
 
 @login_required
-def email_grocery_list(request, id):
+def email_grocery_list(request, id, sms):
   try:
     recipe = Recipe.objects.get(author=request.user, id=id)
   except Exception as e:
@@ -239,8 +243,16 @@ def email_grocery_list(request, id):
     else:
       message = str(missing)
 
+    if sms: 
+      recipients = [request.user.phone_number + "@txt.att.net", 
+                    request.user.phone_number + "@tmomail.net",
+                    request.user.phone_number + "@vtext.com", 
+                    request.user.phone_number + "@vmobl.com"]
+    else: 
+      recipents = [request.user.email]
+
     print(message)
-    recipents = [request.user.email]
+    
     send_mail(subject='FT Shopping List', 
               message=message,
               from_email=settings.EMAIL_HOST_USER,
