@@ -7,6 +7,7 @@ class CustomUserAdmin(UserAdmin):
         'username', 'email', 'first_name', 'last_name', 'is_staff',
         'phone_number', 'image_url'
         )
+    readonly_fields = ('last_ping',)
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Device)

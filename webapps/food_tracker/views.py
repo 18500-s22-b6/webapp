@@ -1,6 +1,6 @@
 from http.client import METHOD_NOT_ALLOWED
 from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout
 from django.urls import reverse
 from django.contrib import messages
@@ -29,6 +29,11 @@ from .models import *
 from .forms import *
 from .constants import *
 import numpy as np
+
+
+
+def phone_check(user):
+  return user.phone_number
 
 
 
@@ -104,6 +109,7 @@ def logout_user(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def dashboard(request):
   context = {
     'devices': get_and_update_status(request.user),
@@ -115,6 +121,7 @@ def dashboard(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def recipe(request, id):
   try:
     recipe = Recipe.objects.get(author=request.user, id=id)
@@ -142,6 +149,7 @@ def recipe(request, id):
 
 
 @login_required
+@user_passes_test(phone_check)
 def public_recipe(request, id):
   try:
     recipe = PublicRecipe.objects.get(id=id)
@@ -159,6 +167,7 @@ def public_recipe(request, id):
 
 # <i class="fas fa-share-alt"></i>
 @login_required
+@user_passes_test(phone_check)
 def publish_recipe(request, id):
   try:
     recipe = Recipe.objects.get(author=request.user, id=id)
@@ -178,6 +187,7 @@ def publish_recipe(request, id):
 
 
 @login_required
+@user_passes_test(phone_check)
 def save_public_recipe(request, id):
   try:
     recipe = PublicRecipe.objects.get(id=id)
@@ -198,6 +208,7 @@ def save_public_recipe(request, id):
 
 
 @login_required
+@user_passes_test(phone_check)
 def delete_recipe(request, id):
   try:
     recipe = Recipe.objects.get(author=request.user, id=id)
@@ -213,7 +224,8 @@ def delete_recipe(request, id):
 
 
 @login_required
-def email_grocery_list(request, id):
+@user_passes_test(phone_check)
+def get_grocery_list(request, id):
   try:
     recipe = Recipe.objects.get(author=request.user, id=id)
   except Exception as e:
@@ -237,22 +249,32 @@ def email_grocery_list(request, id):
     missing = []
     for i in recipe.ingredients.all():
       if not ItemEntry.objects.filter(type=i):
-        missing.append(i)
+        missing.append(str(i))
     if not missing:
-      message = "Everything is in stock'"
+      message = "Everything is in stock"
     else:
-      message = str(missing)
+      message = (', '.join(missing)) # str(missing)
+
+    if request.POST['action'] == 'sms':
+      recipients = [str(request.user.phone_number) + "@txt.att.net",
+                    str(request.user.phone_number) + "@tmomail.net",
+                    str(request.user.phone_number) + "@vtext.com"] #,
+                    # str(request.user.phone_number) + "@vmobl.com"]
+    elif request.POST['action'] == 'email':
+      recipients = [request.user.email]
+    else:
+      messages.error(request, "Invalid action")
+      return redirect('recipe', id)
 
     print(message)
-    recipents = [request.user.email]
-    send_mail(subject='FT Shopping List',
+
+    send_mail(subject='FT Shopping List: '+ str(recipe.name),
               message=message,
               from_email=settings.EMAIL_HOST_USER,
-              recipient_list=recipents,
+              recipient_list=recipients,
               fail_silently=False)
-    print('sending email...')
 
-    messages.success(request, 'Email sent successfully')
+    messages.success(request, f"Grocery list sent successfully by {request.POST['action']}")
     return redirect('recipe', id)
 
   return redirect('recipe', id)
@@ -260,6 +282,7 @@ def email_grocery_list(request, id):
 
 
 @login_required
+@user_passes_test(phone_check)
 def recipes(request):
   recipes = PublicRecipe.objects.all()
   context = {
@@ -271,6 +294,7 @@ def recipes(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def add_recipe(request):
   if request.method == 'GET':
     context = { 'form': RecipeForm(),
@@ -297,6 +321,7 @@ def add_recipe(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def cabinet(request, id):
   # Request for a specific cabinet
   context = { 'devices': get_and_update_status(request.user) }
@@ -333,6 +358,7 @@ def cabinet(request, id):
 
 
 @login_required
+@user_passes_test(phone_check)
 def register_device(request):
 # Assumption that all "approved" devices will already be added in the database
 # New registrations simply assign owner to existing devices
@@ -393,6 +419,7 @@ def register_device(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def delete_device(request, id):
   if not Device.objects.filter(owner=request.user, serial_number=id).exists():
     messages.error(request, 'Invalid device ID')
@@ -424,6 +451,7 @@ def delete_device(request, id):
 
 
 @login_required
+@user_passes_test(phone_check)
 def get_list_json_dumps_serializer(request, id):
   response_data = []
   items__in = ItemEntry.objects.filter(location__owner=request.user).filter(location__id=id)
@@ -459,16 +487,17 @@ def keep_alive(request):
     if device.status == NOT_REGISTERED:
       raise Exception('Device is not registered')
 
-    #TODO: do we need to hash this?
-    # hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
-    if data['secret'] != device.key:
+
+    hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
+    if hashed_str != device.key:
       raise Exception('Invalid secret')
   except Exception as e:
     return JsonResponse({
         'error': f'Invalid request: {e}'
       }, status=FORBIDDEN)
 
-  device.update_online_status()
+  device.last_ping = datetime.datetime.now().astimezone(datetime.timezone.utc)
+  device.save()
 
   return HttpResponse("OK")
 
@@ -490,9 +519,8 @@ def update_inventory(request):
     if device.status == NOT_REGISTERED:
       raise Exception('Device is not registered')
 
-    #TODO: do we need to hash this?
-    # hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
-    if data['secret'] != device.key:
+    hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
+    if hashed_str != device.key:
       raise Exception('Invalid secret')
   except Exception as e:
     return JsonResponse({
@@ -504,6 +532,8 @@ def update_inventory(request):
     return JsonResponse({
         'error': f'Invalid request: timestamp {data["timestamp"]} is older than last_val {device.last_val}'
       }, status=FORBIDDEN)
+
+  device.last_val = data["timestamp"]
 
   # convert image back to PIL object
   img_bytes = base64.b64decode(data["image"].encode('utf-8'))
@@ -597,6 +627,7 @@ def update_inventory(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def id_unknown_item(request, id):
   try:
     item = ItemEntry.objects.get(id=id)
@@ -680,6 +711,11 @@ def validate_json(data):
   return True
 
 
+
+
+
+
+
 ################## Unused Functions ##################
 def shopping_list(request):
   context = {}
@@ -689,6 +725,7 @@ def shopping_list(request):
 
 
 @login_required
+@user_passes_test(phone_check)
 def add_item(request, id, ajax):
 # Param: id = cabinet number
 #KNOWN BUGS: empty field error redirect not working
@@ -729,6 +766,7 @@ def add_item(request, id, ajax):
 
 
 @login_required
+@user_passes_test(phone_check)
 def delete_item(request, id):
 
   context = { 'devices': get_and_update_status(request.user) }
