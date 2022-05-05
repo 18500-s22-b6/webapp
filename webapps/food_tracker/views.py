@@ -350,8 +350,8 @@ def cabinet(request, id):
     'items': ItemEntry.objects.filter(location=device),
     # "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
     "unknown_items": list(map(
-      lambda cat: IconicImage.objects.get(user=request.user, category=cat),
-      [item.type for item in ItemEntry.objects.filter(location=device, type__name="UNKNOWN ITEM")]
+      lambda item: IconicImage.objects.get(associated_item_entry=item),
+      [item for item in ItemEntry.objects.filter(location=device, type__name="UNKNOWN ITEM")]
     ))
   }
   return render(request, 'inventory.html', context)
