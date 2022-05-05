@@ -121,7 +121,7 @@ def recipe(request, id):
   except Exception as e:
     messages.error(request, "Recipe doesn't exist")
     return redirect('dashboard')
-  
+
   form = RecipeForm(instance=recipe)
 
   if request.method == 'POST':
@@ -184,7 +184,7 @@ def save_public_recipe(request, id):
   except Exception as e:
     messages.error(request, "Recipe doesn't exist")
     return redirect('recipes')
-  
+
   new_recipe = Recipe(
     author=request.user,
     name=recipe.name,
@@ -204,10 +204,10 @@ def delete_recipe(request, id):
   except Exception as e:
     messages.error(request, "Recipe doesn't exist")
     return redirect('dashboard')
-  
+
   if request.method == 'POST':
     recipe.delete()
-  
+
   return redirect('dashboard')
 
 
@@ -245,13 +245,13 @@ def email_grocery_list(request, id):
 
     print(message)
     recipents = [request.user.email]
-    send_mail(subject='FT Shopping List', 
+    send_mail(subject='FT Shopping List',
               message=message,
               from_email=settings.EMAIL_HOST_USER,
               recipient_list=recipents,
               fail_silently=False)
     print('sending email...')
-    
+
     messages.success(request, 'Email sent successfully')
     return redirect('recipe', id)
 
@@ -442,7 +442,36 @@ def get_list_json_dumps_serializer(request, id):
   # print(response_json)
   return JsonResponse(data=response_data, safe=False)
 
+@csrf_exempt
+def keep_alive(request):
+  if request.method != 'POST':
+    return JsonResponse({
+        'error': 'Only POST requests are supported'
+      }, status=METHOD_NOT_ALLOWED)
 
+  data = json.loads(request.body.decode('utf-8'))
+  if not validate_json(data):
+    return JsonResponse({
+      'error': 'Invalid request body'
+    }, status=BAD_REQUEST)
+
+  try:
+    device = Device.objects.get(serial_number=data['serial_number'])
+    if device.status == NOT_REGISTERED:
+      raise Exception('Device is not registered')
+
+    #TODO: do we need to hash this?
+    # hashed_str = hashlib.sha256(data['secret'].encode()).hexdigest()
+    if data['secret'] != device.key:
+      raise Exception('Invalid secret')
+  except Exception as e:
+    return JsonResponse({
+        'error': f'Invalid request: {e}'
+      }, status=FORBIDDEN)
+
+  device.update_online_status()
+
+  return HttpResponse("OK")
 
 @csrf_exempt
 def update_inventory(request):
@@ -469,6 +498,12 @@ def update_inventory(request):
   except Exception as e:
     return JsonResponse({
         'error': f'Invalid request: {e}'
+      }, status=FORBIDDEN)
+
+  device.update_online_status()
+  if data["timestamp"] <= device.last_val:
+    return JsonResponse({
+        'error': f'Invalid request: timestamp {data["timestamp"]} is older than last_val {device.last_val}'
       }, status=FORBIDDEN)
 
   # convert image back to PIL object
