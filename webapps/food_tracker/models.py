@@ -21,7 +21,7 @@ class Device(models.Model):
     serial_number = models.CharField(max_length=32)
     status = models.IntegerField()
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
-    name = models.CharField(blank=False, max_length = 50, default="device")
+    name = models.CharField(blank=True, max_length = 50, default="device")
     most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
     last_ping = models.DateTimeField(auto_now_add=True)   
