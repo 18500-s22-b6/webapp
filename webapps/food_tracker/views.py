@@ -43,6 +43,10 @@ def login(request):
   return render(request, 'login.html')
 
 
+def privacy(request):
+  return render(request, 'privacy.html')
+
+
 
 @login_required
 def profile(request):

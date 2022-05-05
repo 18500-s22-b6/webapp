@@ -24,6 +24,7 @@ from food_tracker import views
 
 urlpatterns = [
     path('admin', admin.site.urls),
+    path('privacy', views.privacy, name='privacy'),
     path('', views.home, name='home'),
     path('', include('social_django.urls', namespace='social')),
     path('dashboard', views.dashboard, name='dashboard'),

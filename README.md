@@ -86,3 +86,8 @@ sudo chown www-data:www-data db.sqlite3
 
 ***** read django logs
 cat /var/log/apache2/error.log
+
+
+----------
+PRIVACY POLICY & ACCOUNT DELETION
+Please refer to b6foodtracker.com/privacy for more information.
