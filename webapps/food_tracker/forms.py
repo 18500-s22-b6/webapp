@@ -21,6 +21,7 @@ class DeviceRegistrationForm(forms.ModelForm):
     class Meta:
         model = Device
         fields = ['serial_number', 'name']
+    name = forms.CharField(required=True)
     ### TODO: form validation doesn't work
     ### Temporarily allow duplicate registrations, preferable over NULL regis
 
