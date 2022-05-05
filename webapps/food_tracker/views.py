@@ -506,6 +506,8 @@ def update_inventory(request):
         'error': f'Invalid request: timestamp {data["timestamp"]} is older than last_val {device.last_val}'
       }, status=FORBIDDEN)
 
+  device.last_val = data["timestamp"]
+
   # convert image back to PIL object
   img_bytes = base64.b64decode(data["image"].encode('utf-8'))
   cur_img_bytes_io = io.BytesIO(img_bytes)
