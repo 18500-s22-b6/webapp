@@ -244,19 +244,19 @@ def email_grocery_list(request, id, sms):
       message = str(missing)
 
     if sms: 
-      recipients = [request.user.phone_number + "@txt.att.net", 
-                    request.user.phone_number + "@tmomail.net",
-                    request.user.phone_number + "@vtext.com", 
-                    request.user.phone_number + "@vmobl.com"]
+      recipients = [str(request.user.phone_number) + "@txt.att.net", 
+                    str(request.user.phone_number) + "@tmomail.net",
+                    str(request.user.phone_number) + "@vtext.com", 
+                    str(request.user.phone_number) + "@vmobl.com"]
     else: 
-      recipents = [request.user.email]
+      recipients = [request.user.email]
 
     print(message)
     
     send_mail(subject='FT Shopping List', 
               message=message,
               from_email=settings.EMAIL_HOST_USER,
-              recipient_list=recipents,
+              recipient_list=recipients,
               fail_silently=False)
     print('sending email...')
     
