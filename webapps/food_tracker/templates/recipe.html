@@ -40,7 +40,7 @@ TODO
             {% endif %}
             {% if not public %}
                 <div class="float-end">
-                    <button class="align-top btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#modal-email" style="text-decoration: none"><i class="far fa-envelope"></i> Email Grocery List</button>
+                    <button class="align-top btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#modal-get" style="text-decoration: none"><i class="fas fa-shopping-basket"></i> Get Grocery List</button>
                     <span class="mx-1"></span>
                     <a href="{% url 'publish_recipe' recipe.id %}" class="align-top btn btn-link p-0" style="text-decoration: none"><i class="fas fa-share-alt"></i> Publish This Recipe</a>
                 </div>
@@ -91,28 +91,29 @@ TODO
     <div class="mt-4"><button class="btn btn-link text-muted p-0" data-bs-toggle="modal" data-bs-target="#modal-delete" >Delete this recipe</button></div>
 
 
-    <div class="modal fade" id="modal-email" aria-hidden="true" aria-labelledby="modal-email" tabindex="-1">
+    <div class="modal fade" id="modal-get" aria-hidden="true" aria-labelledby="modal-get" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
 
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalToggleLabel">Email Grocery List for "{{ recipe.name }}"</h5>
+              <h5 class="modal-title" id="exampleModalToggleLabel">Get Grocery List for "{{ recipe.name }}"</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form method="post" action="{% url 'email_grocery_list' recipe.id false %}">
+            <form method="post" action="{% url 'get_grocery_list' recipe.id %}">
 
                 {% csrf_token %}
 
                 <div class="modal-body">
-                    An email containing the grocery list will be sent to <span class="text-primary">{{ user.email }}</span>.
+                    Your grocery list for "{{ recipe.name }}" will be sent to <span class="text-primary">{{ user.email }}</span> by Email or <span class="text-primary">{{ user.phone_number }}</span> by SMS.
                     <script src='https://www.google.com/recaptcha/api.js'></script>
                     <div class="g-recaptcha mt-3" data-sitekey="{{ site_key }}"></div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary" type="submit">Send</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-outline-primary" type="submit" name="action" value="sms"><i class="fas fa-sms"></i> Text Me</button>
+                    <button class="btn btn-outline-primary" type="submit" name="action" value="email"><i class="far fa-envelope"></i> Email Me</button>
                 </div>
 
             </form>

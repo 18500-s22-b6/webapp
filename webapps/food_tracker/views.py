@@ -225,7 +225,7 @@ def delete_recipe(request, id):
 
 @login_required
 @user_passes_test(phone_check)
-def email_grocery_list(request, id, sms):
+def get_grocery_list(request, id):
   try:
     recipe = Recipe.objects.get(author=request.user, id=id)
   except Exception as e:
@@ -255,13 +255,16 @@ def email_grocery_list(request, id, sms):
     else:
       message = (', '.join(missing)) # str(missing)
 
-    if sms: 
+    if request.POST['action'] == 'sms': 
       recipients = [str(request.user.phone_number) + "@txt.att.net", 
                     str(request.user.phone_number) + "@tmomail.net",
                     str(request.user.phone_number) + "@vtext.com"] #, 
                     # str(request.user.phone_number) + "@vmobl.com"]
-    else: 
+    elif request.POST['action'] == 'email': 
       recipients = [request.user.email]
+    else:
+      messages.error(request, "Invalid action")
+      return redirect('recipe', id)
 
     print(message)
     
@@ -271,7 +274,7 @@ def email_grocery_list(request, id, sms):
               recipient_list=recipients,
               fail_silently=False)
     
-    messages.success(request, 'Grocery list sent successfully')
+    messages.success(request, f"Grocery list sent successfully by {request.POST['action']}")
     return redirect('recipe', id)
 
   return redirect('recipe', id)
