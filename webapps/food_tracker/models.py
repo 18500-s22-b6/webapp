@@ -24,7 +24,6 @@ class Device(models.Model):
     name = models.CharField(blank=True, max_length = 50)
     most_recent_image = models.ImageField(blank=True, null=True, upload_to='images/user_bg_images/')
     key = models.CharField(max_length = 100)
-    last_ping = models.DateTimeField(auto_now_fadd=True)
     last_val = models.IntegerField(default=0)
 
     def update_online_status(self):
