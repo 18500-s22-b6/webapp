@@ -437,6 +437,7 @@ def delete_device(request, id):
 
       device.owner = None
       device.status = NOT_REGISTERED
+      device.most_recent_image = None
       device.save()
 
       items.delete()
