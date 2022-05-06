@@ -834,7 +834,7 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
 
 def is_likely_confusion(best_class, matches_dict):
     #found from testing to be a good heuristic
-    thresh = .1
+    thresh = .01
     (num_total_desc, num_matches) = matches_dict[best_class]
     return num_matches/num_total_desc < thresh
 

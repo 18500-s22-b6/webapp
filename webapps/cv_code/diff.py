@@ -91,8 +91,9 @@ def find_largest_diff_bounds(before, after):
     diff_averg = np.average(croped_before_blured - cropped_after_blured)
 
     #somewhere between 3 and 5 likely good based on initial testing
-    total_avg_thresh = 3
-    dif_averg_thresh = 10
+    #This completly screwed over in more rigorous tesing, so I'm setting it to 0
+    total_avg_thresh = 0
+    dif_averg_thresh = 0
 
     if abs(cropped_before_avrg - cropped_after_avrg) < total_avg_thresh or diff_averg < dif_averg_thresh:
         #return inconsequential cropped region
