@@ -87,6 +87,9 @@ sudo chown www-data:www-data db.sqlite3
 ***** read django logs
 cat /var/log/apache2/error.log
 
+***** update static
+python3 manage.py collectstatic
+
 
 ----------
 PRIVACY POLICY & ACCOUNT DELETION
