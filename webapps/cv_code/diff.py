@@ -148,13 +148,9 @@ def get_largest_dif_folder(before_file_path, after_folder_path, keep_before=Fals
 
 
 if __name__ == "__main__":
-<<<<<<< Updated upstream
     # get_largest_dif_folder("~/Downloads/18500/webapp/webapps/cv_code/Bin2/cur_img67.jpeg", "TopDown")
     # get_largest_dif_folder("/Volumes/PRINT/bg.jpeg", "/Volumes/PRINT/test2")
     get_largest_dif_folder("/Volumes/PRINT/cur_img12.jpeg", "/Volumes/PRINT/test")
-=======
-    get_largest_dif_folder("real_bg.jpeg", "/Users/keatondrebes/Desktop/webapp/webapps/cv_code/output/undistort_output")
->>>>>>> Stashed changes
 
 
 
