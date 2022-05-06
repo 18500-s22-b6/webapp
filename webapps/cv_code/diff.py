@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import shutil
+import math
 
 def do_blur_diff(bg_img, new_img):
     # grayA = cv2.cvtColor(imageA, cv2.COLOR_BGR2GRAY)
@@ -75,8 +76,20 @@ def find_largest_diff_bounds(before, after):
     # cv2.imshow('mask',mask)
     # cv2.imshow('filled after',filled_after)
     # cv2.waitKey(0)
+    (x,y,w,h) = cv2.boundingRect(largest_contour)
 
-    return cv2.boundingRect(largest_contour)
+    croped_before_avrg = np.average(before[y:y+h, x:x+w])
+    cropped_after_avrg = np.average(after[y:y+h, x:x+w])
+
+    #somewhere between 3 and 5 likely good based on initial testing
+    thresh = 4
+
+    if abs(croped_before_avrg - cropped_after_avrg) < thresh:
+        #return tiny cropped region
+        return (2,2,1,1)
+
+
+    return (x,y,w,h)
 
 
 def get_largest_dif(before, after, return_bounds = False):
@@ -103,16 +116,16 @@ def get_largest_dif_folder(before_file_path, after_folder_path, keep_before=Fals
     for img_name in os.listdir(after_folder_path):
         after = cv2.imread(os.path.join(after_folder_path, img_name))
         (cropped_before_img, cropped_after_img) = get_largest_dif(before, after)
-        if keep_before:
+        if keep_before and not len(cropped_before_img) > 0:
             cv2.imwrite(os.path.join(out_dir, img_name), cropped_before_img)
-        else:
+        elif len(cropped_after_img) > 0:
             cv2.imwrite(os.path.join(out_dir, img_name), cropped_after_img)
 
 
 
 
 if __name__ == "__main__":
-    get_largest_dif_folder("real_bg.jpeg", "output/undistort_output")
+    get_largest_dif_folder("/Users/keatondrebes/Desktop/webapp/webapps/cv_code/Bin2/cur_img40.jpeg", "Bin2")
 
 
 
