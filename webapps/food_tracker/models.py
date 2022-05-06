@@ -15,7 +15,6 @@ class User(AbstractUser):
     id = models.AutoField(primary_key=True)
 
 
-
 # Cabinet and Device are synonymous, in case of documentation discrepancy
 class Device(models.Model):
     serial_number = models.CharField(max_length=32)
@@ -99,3 +98,13 @@ class IconicImage(models.Model):
     associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.PROTECT, blank=True, null=True)
 
 
+#register default supported items (if they arn't already registered)
+for default_item in ["Applesauce", "BakingPowder", "Beans", "Ceereal", "Crackers", "CrushedTomatoes", "Milk", "Shredded cheese", "Spaghetti", "Yogurt"]:
+    try:
+        cat = Category.objects.get(name=default_item)
+    except:
+        cat = Category(name=default_item,
+                            user_gen=False,
+                            creator=None,
+                            desc_folder='n/a')
+        cat.save()
