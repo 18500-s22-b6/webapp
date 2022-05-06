@@ -347,11 +347,11 @@ def cabinet(request, id):
     'devices': get_and_update_status(request.user),
     'device': device,
     'items': ItemEntry.objects.filter(location=device),
-    # "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM"),
-    "unknown_items": list(map(
-      lambda item: IconicImage.objects.get(associated_item_entry=item),
-      [item for item in ItemEntry.objects.filter(location=device, type__name="UNKNOWN ITEM")]
-    ))
+    "unknown_items": IconicImage.objects.filter(user=request.user, category__name="UNKNOWN ITEM", associated_item_entry__location=device),
+    # "unknown_items": list(map(
+    #   lambda item: IconicImage.objects.get(associated_item_entry=item),
+    #   [item for item in ItemEntry.objects.filter(location=device, type__name="UNKNOWN ITEM")]
+    # ))
   }
   return render(request, 'inventory.html', context)
 
