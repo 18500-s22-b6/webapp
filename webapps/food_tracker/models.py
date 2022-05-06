@@ -95,11 +95,10 @@ class IconicImage(models.Model):
     )
     image = models.ImageField(upload_to= f'images/user_registered_iconic_images/')
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
-    associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.PROTECT, blank=True, null=True)
+    associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.SET_NULL, blank=True, null=True)
 
 
-if __name__ == "__main__":
-    #register default supported items (if they arn't already registered)
+def register_defaults():
     for default_item in ["Applesauce", "BakingPowder", "Beans", "Ceereal", "Crackers", "CrushedTomatoes", "Milk", "Shredded cheese", "Spaghetti", "Yogurt"]:
         try:
             cat = Category.objects.get(name=default_item)
@@ -109,3 +108,5 @@ if __name__ == "__main__":
                                 creator= None,
                                 desc_folder='n/a')
             cat.save()
+
+#register_defaults()
