@@ -434,7 +434,6 @@ def delete_device(request, id):
   if form.is_valid():
     if form.cleaned_data['name'] == device.name:
       items = ItemEntry.objects.filter(location=device)
-      iconics =
 
       device.owner = None
       device.status = NOT_REGISTERED
