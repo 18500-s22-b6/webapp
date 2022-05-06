@@ -138,8 +138,9 @@ if __name__ == "__main__":
     (K, D) = (DEFAULT_K, DEFAULT_D)
     imgs = [cv2.imread("bg.jpeg")]
     names = ["bg.jpeg"]
-    for fname in os.listdir("TopDown"):
-        img = cv2.imread(os.path.join("TopDown", fname))
+    targetDir = "Bin2"
+    for fname in os.listdir(targetDir):
+        img = cv2.imread(os.path.join(targetDir, fname))
         imgs.append(img)
         names.append(fname)
     undistorted_imgs = undistort_imgs(imgs, K, D)

@@ -139,7 +139,7 @@ def test_sanity(alg, matcher, image_class, kp_detector=None):
     #read arbitrary real/iconic images
     image_dir = os.path.join(os.getcwd(), "Images")
     real_path = os.path.join(image_dir, image_class, "Real")
-    real_image_path = os.path.join(real_path, os.listdir(real_path)[2])
+    real_image_path = os.path.join(real_path, os.listdir(real_path)[0])
     img1 = cv.imread(real_image_path, 1)
 
     iconic_path = os.path.join(image_dir, image_class, "Iconic")
@@ -861,7 +861,8 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
         img = cv.imread(new_iconic_img_path, 1)
         key_points = alg.detect(img,None)
         kp, desc = alg.compute(img, key_points)
-        iconic_dict[new_iconic_name] = (kp, desc)
+        if len(kp) > 0:
+            iconic_dict[new_iconic_name] = (kp, desc)
 
     (pre_dif, post_diff, (x,y,w,h)) = diff.get_largest_dif(bg_image, new_img, return_bounds=True)
     target_dict = dict()
@@ -914,7 +915,10 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
 
 
 if __name__ == "__main__":
-    out = test_arbitrary_images("Bin2", bg_path="bg.jpeg")
+    #out = test_arbitrary_images("Bin2", bg_path="bg.jpeg")
+    matcher = cv.BFMatcher(cv.NORM_L1,crossCheck=False)
+
+    test_sanity(DEFAULT_ALG, matcher, "Crackers")
     # alg_info_dict_to_excel(out, f"SIFT_{subfolder_name}_test")
 
     # orb = cv.ORB_create(nfeatures=10000)
