@@ -78,16 +78,25 @@ def find_largest_diff_bounds(before, after):
     # cv2.waitKey(0)
     (x,y,w,h) = cv2.boundingRect(largest_contour)
 
-    croped_before_avrg = np.average(before[y:y+h, x:x+w])
+    cropped_before_avrg = np.average(before[y:y+h, x:x+w])
     cropped_after_avrg = np.average(after[y:y+h, x:x+w])
 
+    blur_dim = 50
+    kernel = np.ones((blur_dim,blur_dim),np.float32)/(blur_dim * blur_dim)
+    if len(before[y:y+h, x:x+w]) == 0:
+        return (x,y,w,h)
+    croped_before_blured = cv2.filter2D(before[y:y+h, x:x+w],-1,kernel)
+    cropped_after_blured = cv2.filter2D(after[y:y+h, x:x+w],-1,kernel)
+
+    diff_averg = np.average(croped_before_blured - cropped_after_blured)
+
     #somewhere between 3 and 5 likely good based on initial testing
-    thresh = 4
+    total_avg_thresh = 4
+    dif_averg_thresh = 20
 
-    if abs(croped_before_avrg - cropped_after_avrg) < thresh:
-        #return tiny cropped region
+    if abs(cropped_before_avrg - cropped_after_avrg) < total_avg_thresh or diff_averg < dif_averg_thresh:
+        #return inconsequential cropped region
         return (2,2,1,1)
-
 
     return (x,y,w,h)
 
@@ -125,7 +134,7 @@ def get_largest_dif_folder(before_file_path, after_folder_path, keep_before=Fals
 
 
 if __name__ == "__main__":
-    get_largest_dif_folder("/Users/keatondrebes/Desktop/webapp/webapps/cv_code/Bin2/cur_img40.jpeg", "Bin2")
+    get_largest_dif_folder("/Users/keatondrebes/Desktop/webapp/webapps/cv_code/Bin2/cur_img67.jpeg", "Bin2")
 
 
 

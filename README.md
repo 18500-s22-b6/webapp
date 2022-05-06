@@ -72,6 +72,7 @@ python3 manage.py startapp food_tracker
 python3 manage.py createsuperuser
 (Use admin console by using (Base url)/admin) and entering username and password
 
+<<<<<<< Updated upstream
 
 ----------
 EC2 INFORMATION
@@ -94,3 +95,7 @@ python3 manage.py collectstatic
 ----------
 PRIVACY POLICY & ACCOUNT DELETION
 Please refer to b6foodtracker.com/privacy for more information.
+=======
+For use on the ec2 instance
+cat /var/log/apache2/error.log
+>>>>>>> Stashed changes
