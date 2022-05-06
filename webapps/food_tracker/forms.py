@@ -77,7 +77,7 @@ class ImageIdForm(forms.Form):
         user = kwargs.pop('user', None)
         super(ImageIdForm, self).__init__(*args, **kwargs)
         if user:
-            self.fields['ingredients'].queryset = Category.objects\
+            self.fields['category'].queryset = Category.objects\
                             .filter(Q(creator=user) | Q(creator=None))\
                             .exclude(name="UNKNOWN ITEM")
 
