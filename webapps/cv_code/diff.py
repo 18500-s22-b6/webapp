@@ -80,7 +80,6 @@ def find_largest_diff_bounds(before, after):
 
     croped_before_avrg = np.average(before[y:y+h, x:x+w])
     cropped_after_avrg = np.average(after[y:y+h, x:x+w])
-    import pdb; pdb.set_trace()
 
     #somewhere between 3 and 5 likely good based on initial testing
     thresh = 4
