@@ -1,5 +1,4 @@
 from http.client import METHOD_NOT_ALLOWED
-from socket import CAN_RAW
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import logout

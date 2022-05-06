@@ -48,7 +48,7 @@ class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     user_gen = models.BooleanField()
-    creator = models.ForeignKey(User, on_delete=models.PROTECT)
+    creator = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
     desc_folder = models.CharField(max_length = 200) # extended max len
 
     def __str__(self):
@@ -98,13 +98,14 @@ class IconicImage(models.Model):
     associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.PROTECT, blank=True, null=True)
 
 
-#register default supported items (if they arn't already registered)
-for default_item in ["Applesauce", "BakingPowder", "Beans", "Ceereal", "Crackers", "CrushedTomatoes", "Milk", "Shredded cheese", "Spaghetti", "Yogurt"]:
-    try:
-        cat = Category.objects.get(name=default_item)
-    except:
-        cat = Category(name=default_item,
-                            user_gen=False,
-                            creator=None,
-                            desc_folder='n/a')
-        cat.save()
+if __name__ == "__main__":
+    #register default supported items (if they arn't already registered)
+    for default_item in ["Applesauce", "BakingPowder", "Beans", "Ceereal", "Crackers", "CrushedTomatoes", "Milk", "Shredded cheese", "Spaghetti", "Yogurt"]:
+        try:
+            cat = Category.objects.get(name=default_item)
+        except:
+            cat = Category(name=default_item,
+                                user_gen=False,
+                                creator= None,
+                                desc_folder='n/a')
+            cat.save()
