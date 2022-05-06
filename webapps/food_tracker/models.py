@@ -60,7 +60,7 @@ class ItemEntry(models.Model):
     id = models.AutoField(primary_key=True)
     location = models.ForeignKey(Device, on_delete=models.PROTECT)
     type = models.ForeignKey(Category, on_delete=models.PROTECT)
-    image = models.ImageField(upload_to= f'images/ItemEntries/')
+    image = models.ImageField(upload_to= f'images/ItemEntries/', null=True, blank=True)
     thumbnail = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
