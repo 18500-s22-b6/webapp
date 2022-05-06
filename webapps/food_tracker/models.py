@@ -99,15 +99,15 @@ class IconicImage(models.Model):
     associated_item_entry = models.ForeignKey(ItemEntry, on_delete=models.SET_NULL, blank=True, null=True)
 
 
-def register_defaults():
-    for default_item in ["Applesauce", "BakingPowder", "Beans", "Ceereal", "Crackers", "CrushedTomatoes", "Milk", "Shredded cheese", "Spaghetti", "Yogurt"]:
-        try:
-            cat = Category.objects.get(name=default_item)
-        except:
-            cat = Category(name=default_item,
-                                user_gen=False,
-                                creator= None,
-                                desc_folder='n/a')
-            cat.save()
+# def register_defaults():
+#     for default_item in ["Applesauce", "BakingPowder", "Beans", "Ceereal", "Crackers", "CrushedTomatoes", "Milk", "Shredded cheese", "Spaghetti", "Yogurt"]:
+#         try:
+#             cat = Category.objects.get(name=default_item)
+#         except:
+#             cat = Category(name=default_item,
+#                                 user_gen=False,
+#                                 creator= None,
+#                                 desc_folder='n/a')
+#             cat.save()
 
-register_defaults()
+# register_defaults()
