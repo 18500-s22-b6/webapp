@@ -33,9 +33,21 @@ def find_largest_diff_bounds(before, after):
     # returns the bounding rectangle around the largest difference found between the before and after images
     # in the form of (x,y,w,h)
     # Convert images to grayscale
+    
+    
+    scale_percent = 0.05 # percent of original size
+    width = int(before.shape[1] * scale_percent)
+    height = int(before.shape[0] * scale_percent)
+    dim = (width, height)
+    
+    # resize image
+    before_scaled = cv2.resize(before, dim, interpolation = cv2.INTER_AREA)
+    after_scaled = cv2.resize(after, dim, interpolation = cv2.INTER_AREA)
 
-    before_gray = cv2.cvtColor(before, cv2.COLOR_BGR2GRAY)
-    after_gray = cv2.cvtColor(after, cv2.COLOR_BGR2GRAY)
+
+
+    before_gray = cv2.cvtColor(before_scaled, cv2.COLOR_BGR2GRAY)
+    after_gray = cv2.cvtColor(after_scaled, cv2.COLOR_BGR2GRAY)
 
     # Compute SSIM between two images
     (score, diff) = structural_similarity(before_gray, after_gray, full=True)
@@ -53,8 +65,8 @@ def find_largest_diff_bounds(before, after):
     contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours = contours[0] if len(contours) == 2 else contours[1]
 
-    mask = np.zeros(before.shape, dtype='uint8')
-    filled_after = after.copy()
+    mask = np.zeros(before_scaled.shape, dtype='uint8')
+    filled_after = after_scaled.copy()
 
     largest_contour = None
     largest_contour_size = 0
@@ -62,42 +74,41 @@ def find_largest_diff_bounds(before, after):
         area = cv2.contourArea(c)
         if area > 40:
             x,y,w,h = cv2.boundingRect(c)
-            # cv2.rectangle(before, (x, y), (x + w, y + h), (36,255,12), 2)
-            # cv2.rectangle(after, (x, y), (x + w, y + h), (36,255,12), 2)
+            # cv2.rectangle(before_scaled, (x, y), (x + w, y + h), (36,255,12), 2)
+            # cv2.rectangle(after_scaled, (x, y), (x + w, y + h), (36,255,12), 2)
             # cv2.drawContours(mask, [c], 0, (0,255,0), -1)
             # cv2.drawContours(filled_after, [c], 0, (0,255,0), -1)
             if area > largest_contour_size:
                 largest_contour_size = area
                 largest_contour = c
 
-    # cv2.imshow('before', before)
-    # cv2.imshow('after', after)
+    # cv2.imshow('before', before_scaled)
+    # cv2.imshow('after', after_scaled)
     # cv2.imshow('diff',diff)
     # cv2.imshow('mask',mask)
     # cv2.imshow('filled after',filled_after)
     # cv2.waitKey(0)
-    (x,y,w,h) = cv2.boundingRect(largest_contour)
+    (x,y,w,h) = (int(i/scale_percent) for i in cv2.boundingRect(largest_contour))
 
-    cropped_before_avrg = np.average(before[y:y+h, x:x+w])
-    cropped_after_avrg = np.average(after[y:y+h, x:x+w])
+    # cropped_before_avrg = np.average(before[y:y+h, x:x+w])
+    # cropped_after_avrg = np.average(after[y:y+h, x:x+w])
 
-    blur_dim = 50
-    kernel = np.ones((blur_dim,blur_dim),np.float32)/(blur_dim * blur_dim)
-    if len(before[y:y+h, x:x+w]) == 0:
-        return (x,y,w,h)
-    croped_before_blured = cv2.filter2D(before[y:y+h, x:x+w],-1,kernel)
-    cropped_after_blured = cv2.filter2D(after[y:y+h, x:x+w],-1,kernel)
+    # blur_dim = 50
+    # kernel = np.ones((blur_dim,blur_dim),np.float32)/(blur_dim * blur_dim)
+    # if len(before[y:y+h, x:x+w]) == 0:
+    #     return (x,y,w,h)
+    # croped_before_blured = cv2.filter2D(before[y:y+h, x:x+w],-1,kernel)
+    # cropped_after_blured = cv2.filter2D(after[y:y+h, x:x+w],-1,kernel)
 
-    diff_averg = np.average(croped_before_blured - cropped_after_blured)
+    # diff_averg = np.average(croped_before_blured - cropped_after_blured)
 
-    #somewhere between 3 and 5 likely good based on initial testing
-    #This completly screwed over in more rigorous tesing, so I'm setting it to 0
-    total_avg_thresh = 0
-    dif_averg_thresh = 0
+    # #somewhere between 3 and 5 likely good based on initial testing
+    # total_avg_thresh = 3
+    # dif_averg_thresh = 10
 
-    if abs(cropped_before_avrg - cropped_after_avrg) < total_avg_thresh or diff_averg < dif_averg_thresh:
-        #return inconsequential cropped region
-        return (2,2,1,1)
+    # if abs(cropped_before_avrg - cropped_after_avrg) < total_avg_thresh or diff_averg < dif_averg_thresh:
+    #     #return inconsequential cropped region
+    #     return (2,2,1,1)
 
     return (x,y,w,h)
 
@@ -124,6 +135,8 @@ def get_largest_dif_folder(before_file_path, after_folder_path, keep_before=Fals
 
     before = cv2.imread(before_file_path)
     for img_name in os.listdir(after_folder_path):
+        if img_name[0] == '.':
+            continue
         after = cv2.imread(os.path.join(after_folder_path, img_name))
         (cropped_before_img, cropped_after_img) = get_largest_dif(before, after)
         if keep_before and not len(cropped_before_img) > 0:
@@ -135,7 +148,9 @@ def get_largest_dif_folder(before_file_path, after_folder_path, keep_before=Fals
 
 
 if __name__ == "__main__":
-    get_largest_dif_folder("/Users/keatondrebes/Desktop/webapp/webapps/cv_code/Bin2/cur_img67.jpeg", "Bin2")
+    # get_largest_dif_folder("~/Downloads/18500/webapp/webapps/cv_code/Bin2/cur_img67.jpeg", "TopDown")
+    # get_largest_dif_folder("/Volumes/PRINT/bg.jpeg", "/Volumes/PRINT/test2")
+    get_largest_dif_folder("/Volumes/PRINT/cur_img12.jpeg", "/Volumes/PRINT/test")
 
 
 
