@@ -567,7 +567,10 @@ def update_inventory(request):
   best_guess = cv_code.get_best_guess_or_none(old_bg_path, new_image_path, iconic_dict,existing_categories)
 
   if isinstance(best_guess, tuple):
-    (best_guess_category_name, is_post) = best_guess
+    (best_guess_category_name, is_post, diff) = best_guess
+
+    _ret, buf = cv2.imencode('.jpg', diff)
+    img_file = ContentFile(buf.tobytes())
 
     if is_post:
       #new item has been added to the inventory
@@ -582,7 +585,9 @@ def update_inventory(request):
 
       new_item = ItemEntry(location=device,
                             type=cat, # cat
-                            thumbnail="")
+                            thumbnail="",
+                            image=img_file,)
+      new_item.image.save(f"unknown.png", img_file, save=True)
       new_item.save()
       return JsonResponse({'success': f'Inventory updated to include new item: {best_guess_category_name}'}, status=SUCCESS)
     else:

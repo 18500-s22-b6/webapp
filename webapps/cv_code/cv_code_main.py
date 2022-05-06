@@ -785,6 +785,7 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
 
     src_image = cv.imread(img_path)[y:y+h, x:x+w]
     if False:
+        #debug code
         src_image_hsv = cv.cvtColor(src_image, cv.COLOR_BGR2HSV)
 
         lower_white = np.array([0,0,0])
@@ -901,7 +902,10 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     else:
         is_likely_confusion_bool = is_likely_confusion(best_guess_class_name, matches_dict["pre_diff"])
     if not is_likely_confusion_bool:
-        return (best_guess_class_name, best_guess_is_post)
+        if best_guess_is_post:
+            return (best_guess_class_name, best_guess_is_post, post_diff)
+        else:
+            return (best_guess_class_name, best_guess_is_post, pre_dif)
     else:
         #if we couldn't identify it, return the post diff
         return post_diff
