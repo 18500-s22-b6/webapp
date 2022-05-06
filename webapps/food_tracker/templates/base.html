@@ -32,7 +32,8 @@
             <button class="btn" type="button" id="menu-btn" data-bs-toggle="" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
               <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand text-primary align-middle" style="--bs-text-opacity: .75" href="{% url 'home' %}">Food Tracker</a>
+            <a class="navbar-brand text-primary align-middle" style="--bs-text-opacity: .75" href="{% url 'home' %}">
+              <img src="{% static 'FT_circle.png' %}" width="32" height="32" class="rounded-circle me-2">Food Tracker</a>
           </div>
           <div>
             {% if user.is_authenticated %}
