@@ -129,7 +129,7 @@ def recipe(request, id):
     messages.error(request, "Recipe doesn't exist")
     return redirect('dashboard')
 
-  form = RecipeForm(instance=recipe)
+  form = RecipeForm(instance=recipe, **{'user': request.user})
 
   if request.method == 'POST':
     form = RecipeForm(request.POST)
@@ -297,7 +297,7 @@ def recipes(request):
 @user_passes_test(phone_check)
 def add_recipe(request):
   if request.method == 'GET':
-    context = { 'form': RecipeForm(),
+    context = { 'form': RecipeForm(**{'user': request.user}),
                 'devices': get_and_update_status(request.user) }
     return render(request, 'add_recipe.html', context)
 
@@ -660,14 +660,14 @@ def id_unknown_item(request, id):
     return redirect('dashboard')
 
   if request.method == 'GET':
-    context = {"entry": entry, 'form': ImageIdForm(), "id": id}
+    context = {"entry": entry, 'form': ImageIdForm(**{'user': request.user}), "id": id}
     return render(request, 'id_unknown_item.html', context)
 
   ##### If POST, "submit" button was pressed
   form = ImageIdForm(request.POST)
   if not form.is_valid():
     #TODO: raise a proper error
-    context = {"entry": entry, 'form': ImageIdForm(), "id": id}
+    context = {"entry": entry, 'form': ImageIdForm(**{'user': request.user}), "id": id}
     return render(request, 'id_unknown_item.html', context)
 
   if form.cleaned_data["category"]:

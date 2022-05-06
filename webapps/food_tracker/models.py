@@ -48,7 +48,7 @@ class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     user_gen = models.BooleanField()
-    creator = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
+    creator = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     desc_folder = models.CharField(max_length = 200) # extended max len
 
     def __str__(self):

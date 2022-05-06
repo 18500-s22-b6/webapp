@@ -3,6 +3,7 @@
 
 from unicodedata import category
 from django import forms
+from django.db.models import Q
 from food_tracker.models import *
 
 #####
@@ -53,19 +54,35 @@ class UserForm(forms.ModelForm):
 
 class RecipeForm(forms.ModelForm):
     class Meta:
-        model = User
+        model = Recipe
         fields = ['name', 'ingredients']
+    
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(RecipeForm, self).__init__(*args, **kwargs)
+        if user:
+            self.fields['ingredients'].queryset = Category.objects\
+                            .filter(Q(creator=user) | Q(creator=None))\
+                            .exclude(name="UNKNOWN ITEM")
 
     name = forms.CharField(max_length=50)
-    ingredients = MyModelMultipleChoiceField( \
-                                    queryset=Category.objects.all().exclude(name="UNKNOWN ITEM"), \
-                                    widget=forms.CheckboxSelectMultiple, \
-                                    required=True, \
-                                    label="Ingredients")
+    ingredients = MyModelMultipleChoiceField(
+                        queryset=Category.objects.all(),\
+                        widget=forms.CheckboxSelectMultiple, \
+                        required=True, \
+                        label="Ingredients")
 
 class ImageIdForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(ImageIdForm, self).__init__(*args, **kwargs)
+        if user:
+            self.fields['ingredients'].queryset = Category.objects\
+                            .filter(Q(creator=user) | Q(creator=None))\
+                            .exclude(name="UNKNOWN ITEM")
+
     category = ModelChoiceField( \
-                                    queryset=Category.objects.all().exclude(name="UNKNOWN ITEM"), \
+                                    queryset=Category.objects.all(), \
                                     widget=forms.Select, \
                                     required=False, \
                                     label="Please identify the above item as an existing category")
