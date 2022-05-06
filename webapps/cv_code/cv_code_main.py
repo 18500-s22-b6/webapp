@@ -866,7 +866,7 @@ def get_best_guess_or_none(bg_image_path, new_image_path, additional_iconic_clas
     target_dict = dict()
 
     #If we don't have a large enough diff, there probably wasn't a change
-    #Smallest item we support is baking powder, which is ~200 by 250
+    #Smallest item we support is baking powder, which is ~200 by ~250
     if pre_dif.shape[0] * pre_dif.shape[1] < 200*200:
         return None
 
