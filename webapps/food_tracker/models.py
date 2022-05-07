@@ -28,7 +28,7 @@ class Device(models.Model):
 
     def update_online_status(self):
         if self.status != NOT_REGISTERED:
-            if datetime.datetime.now().astimezone(datetime.timezone.utc) - self.last_ping  > datetime.timedelta(minutes=5):
+            if datetime.datetime.now().astimezone(datetime.timezone.utc) - self.last_ping  > datetime.timedelta(minutes=3):
                 self.status = OFFLINE
             else:
                 self.status = ONLINE
