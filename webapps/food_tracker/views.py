@@ -421,6 +421,7 @@ def register_device(request):
   device.owner = request.user
   for key, value in form.cleaned_data.items():
     setattr(device, key, value)
+  device.update_online_status()
   device.save()
 
   messages.success(request, 'Device registration successful!')
@@ -704,10 +705,12 @@ def id_unknown_item(request, id):
 
 
 ################## Helper Functions ##################
-def get_and_update_status(user):
+def get_and_update_status(user, serial_number=None):
   """helper function that gets all the devices for that user, and updates their online/offline status"""
-
-  devices = Device.objects.filter(owner=user)
+  if id:
+    devices = Device.objects.filter(owner=user)
+  else:
+    devices = Device.objects.filter(owner=user, serial_number=serial_number)
 
   for device in devices:
     device.update_online_status()
