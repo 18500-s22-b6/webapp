@@ -667,7 +667,7 @@ def is_likely_milk(img_hsv, diff_bounds, iconic_map):
 
 def is_likely_yogurt(img_hsv, diff_bounds, iconic_map):
     (x,y,w,h) = diff_bounds
-    return img_num_white_pixels(img_hsv) > w*h*0.5
+    return img_num_white_pixels(img_hsv) > w*h*0.5 and w*h > 300 * 300
 
 
 def is_likely_applesauce(img_hsv, diff_bounds, iconic_map):
