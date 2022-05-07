@@ -356,6 +356,16 @@ def cabinet(request, id):
   return render(request, 'inventory.html', context)
 
 
+{
+  #The UTF-8 encoded image
+  'Image': "iVHjgfghjkJHGF...",
+  #the hardware device's Serial ID
+  'SerialID': "0x6BF017...",
+  #The secret key used for validation
+  'Secret': "v9@+hY...",
+  #The communication number, used to prevent repeated requests
+  'ComNo': 13,
+}
 
 @login_required
 @user_passes_test(phone_check)

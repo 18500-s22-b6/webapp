@@ -663,9 +663,12 @@ def img_num_white_pixels(img_hsv):
 def is_likely_milk(img_hsv, diff_bounds, iconic_map):
 
     (x,y,w,h) = diff_bounds
+    return img_num_white_pixels(img_hsv) > w*h*0.5 and w*h > 140000
 
-    # return img_num_white_pixels(img_hsv) > w*h*0.1 and w*h > 140000
-    return False
+def is_likely_yogurt(img_hsv, diff_bounds, iconic_map):
+    (x,y,w,h) = diff_bounds
+    return img_num_white_pixels(img_hsv) > w*h*0.5
+
 
 def is_likely_applesauce(img_hsv, diff_bounds, iconic_map):
     # applies hueristics to check if the image is likely to be an applesauce
@@ -814,6 +817,8 @@ def apply_hueristics_to_iconic_map(iconic_map, diff_bounds, img_path, img_name=N
         #next, let's do a check for milk, so we can return early if we find it
         iconic_map["Milk"] = (iconic_map["Milk"][0], iconic_map["Milk"][0])
         return
+    elif is_likely_yogurt(src_image_HSV, diff_bounds, iconic_map) and iconic_map["Yogurt"]:
+        iconic_map["Yogurt"] = (iconic_map["Yogurt"][0], iconic_map["Yogurt"][0])
 
 
     is_apple = is_likely_applesauce(src_image_HSV, diff_bounds, iconic_map)
