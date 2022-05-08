@@ -258,7 +258,7 @@ def get_grocery_list(request, id):
     if request.POST['action'] == 'sms':
       recipients = [str(request.user.phone_number)[2:] + "@txt.att.net",
                     str(request.user.phone_number) + "@tmomail.net",
-                    str(request.user.phone_number) + "@vtext.com"] #,
+                    str(request.user.phone_number)[2:] + "@vtext.com"] #,
                     # str(request.user.phone_number) + "@vmobl.com"]
     elif request.POST['action'] == 'email':
       recipients = [request.user.email]
